@@ -177,9 +177,9 @@ const SelectTattoo = ({
   }
 
   const themeContext = useContext(ThemeContext);
-  customStyles.control.background = `rgba(${themeContext.secondaryBackground || '0, 0, 0'}, 0.8)`;
-  customStyles.menu.background = `rgba(${themeContext.secondaryBackground || '0, 0, 0'}, 0.8)`;
-  customStyles.menuList.background = `rgba(${themeContext.secondaryBackground || '0, 0, 0'}, 0.8)`;
+  customStyles.control.background = `rgba(${themeContext?.secondaryBackground || '0, 0, 0'}, 0.8)`;
+  customStyles.menu.background = `rgba(${themeContext?.secondaryBackground || '0, 0, 0'}, 0.8)`;
+  customStyles.menuList.background = `rgba(${themeContext?.secondaryBackground || '0, 0, 0'}, 0.8)`;
 
   return (
     <Container>

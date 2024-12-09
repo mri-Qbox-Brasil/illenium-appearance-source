@@ -120,9 +120,15 @@ const SelectInput = ({ title, items, defaultValue, clientValue, onChange }: Sele
   };
 
   const themeContext = useContext(ThemeContext);
-  customStyles.control.background = `rgba(${themeContext.secondaryBackground || '0, 0, 0'}, 0.8)`;
-  customStyles.menu.background = `rgba(${themeContext.secondaryBackground || '0, 0, 0'}, 0.8)`;
-  customStyles.menuList.background = `rgba(${themeContext.secondaryBackground || '0, 0, 0'}, 0.8)`;
+
+  // Verifica se o tema está definido antes de usá-lo
+if (!themeContext) {
+  console.warn('ThemeContext is undefined. Using default theme.');
+}
+
+  customStyles.control.background = `rgba(${themeContext?.secondaryBackground || '0, 0, 0'}, 0.8)`;
+  customStyles.menu.background = `rgba(${themeContext?.secondaryBackground || '0, 0, 0'}, 0.8)`;
+  customStyles.menuList.background = `rgba(${themeContext?.secondaryBackground || '0, 0, 0'}, 0.8)`;
 
   return (
     <Container>
@@ -139,7 +145,7 @@ const SelectInput = ({ title, items, defaultValue, clientValue, onChange }: Sele
         onMenuOpen={onMenuOpen}
         className={"Select" + title}
         classNamePrefix={"Select" + title}
-        menuPortalTarget={document.body}
+        menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
       />
     </Container>
   );

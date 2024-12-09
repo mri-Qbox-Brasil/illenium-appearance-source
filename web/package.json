@@ -12,9 +12,9 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-icons": "^4.1.0",
-    "react-select": "^4.2.1",
+    "react-select": "^5.8.3",
     "react-spring": "^8.0.27",
-    "styled-components": "^5.2.1",
+    "styled-components": "^6.1.13",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
@@ -46,10 +46,11 @@
   "devDependencies": {
     "@types/react": "^18.0.5",
     "@types/react-dom": "^18.0.1",
-    "@types/react-select": "^4.0.13",
-    "@types/styled-components": "^5.1.7",
+    "@types/react-select": "^5.0.1",
+    "@types/styled-components": "^5.1.34",
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
+    "@vitejs/plugin-react": "^1.3.1",
     "eslint": "^7.18.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^7.2.0",
@@ -59,9 +60,8 @@
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "prettier": "^2.2.1", 
-    "@vitejs/plugin-react": "^1.3.1",
-    "vite": "^2.9.6", 
-    "typescript": "^4.0.3"
+    "prettier": "^2.2.1",
+    "typescript": "^4.0.3",
+    "vite": "^2.9.6"
   }
 }

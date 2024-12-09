@@ -496,23 +496,33 @@ const Appearance = () => {
   );
 
   useEffect(() => {
-    if(!locales) {
-      Nui.post('appearance_get_locales').then(result => setLocales(result));
+    if (!locales) {
+      Nui.post('appearance_get_locales').then((result) => setLocales(result));
     }
-
-    Nui.onEvent('appearance_display', (data : any) => {
+  
+    const handleDisplay = (data: any) => {
       setDisplay({ appearance: true, asynchronous: data.asynchronous });
-    });
-
-    Nui.onEvent('appearance_hide', () => {
+    };
+  
+    const handleHide = () => {
       setDisplay({ appearance: false, asynchronous: false });
       setData(APPEARANCE_INITIAL_STATE);
       setStoredData(APPEARANCE_INITIAL_STATE);
       //setAppearanceSettings(SETTINGS_INITIAL_STATE);
       setCamera(CAMERA_INITIAL_STATE);
       setRotate(ROTATE_INITIAL_STATE);
-    });
-  }, []);
+    };
+  
+    Nui.onEvent('appearance_display', handleDisplay);
+    Nui.onEvent('appearance_hide', handleHide);
+  
+    // Função de limpeza para remover eventos ao desmontar
+    return () => {
+      Nui.offEvent('appearance_display', handleDisplay);
+      Nui.offEvent('appearance_hide', handleHide);
+    };
+  }, [locales]); // Dependência para que só execute novamente quando 'locales' mudar
+  
 
   const fetchData = useCallback(async () => {
     const result = await Nui.post('appearance_get_data');

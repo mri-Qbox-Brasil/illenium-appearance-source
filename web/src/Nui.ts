@@ -1,7 +1,7 @@
 import { mocks } from './mock';
 
 interface Events {
-  [key: string]: any;
+  [key: string]: Function[];
 }
 
 declare function GetParentResourceName(): string;
@@ -67,11 +67,28 @@ async function post(event: string, data = {}): Promise<any> {
 }
 
 function onEvent(type: string, func: any): void {
-  if (events[type]) {
-    console.log(`[Nui] Event ${type} is already declared.`);
-    return;
+  if (!events[type]) {
+    events[type] = [];
   }
-  events[type] = func;
+
+  // Evitar múltiplos registros do mesmo callback
+  if (!events[type].includes(func)) {
+    events[type].push(func);
+  } else {
+    console.log(`[Nui] Event ${type} is already registered with this callback.`);
+  }
+}
+
+function offEvent(type: string, func: any): void {
+  if (!events[type]) return;
+
+  // Remove o callback específico
+  events[type] = events[type].filter((callback) => callback !== func);
+
+  // Remove o evento completamente se não houver mais callbacks
+  if (events[type].length === 0) {
+    delete events[type];
+  }
 }
 
 function emitEvent(type: string, payload: any): void {
@@ -82,17 +99,20 @@ function emitEvent(type: string, payload: any): void {
   );
 }
 
-const Nui = { post, onEvent, emitEvent };
+const Nui = { post, onEvent, offEvent, emitEvent };
 
 export default Nui;
 
 export const EventListener = () => {
   window.addEventListener('message', (e: MessageEvent) => {
-    if (!events[e.data.type]) return;
-    events[e.data.type](e.data.payload);
+    const eventCallbacks = events[e.data.type];
+    if (!eventCallbacks) return;
+
+    // Chama todos os callbacks registrados para o evento
+    eventCallbacks.forEach((callback) => callback(e.data.payload));
   });
 
-  window.addEventListener('keydown', e => {
+  window.addEventListener('keydown', (e) => {
     if (e.key === 'd') {
       Nui.post('rotate_right');
     } else if (e.key === 'a') {

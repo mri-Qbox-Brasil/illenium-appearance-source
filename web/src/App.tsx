@@ -25,17 +25,41 @@ const App: React.FC = () => {
   const [currentTheme, setCurrentTheme] = useState(defaultTheme);
 
   const getCurrentTheme = (themeData: any) => {
-    for (let index = 0; index < themeData.themes.length; index++) {
-      if (themeData.themes[index].id === themeData.currentTheme) {
-        return themeData.themes[index];
-      }
+    if (!themeData || !Array.isArray(themeData.themes)) {
+      console.warn('Dados inválidos para getCurrentTheme:', themeData);
+      return defaultTheme;
     }
+  
+    return themeData.themes.find((theme: any) => theme.id === themeData.currentTheme) || defaultTheme;
   };
+  
 
   const loadTheme = useCallback(async () => {
-    const themeData = await Nui.post('get_theme_configuration');
-    setCurrentTheme(getCurrentTheme(themeData));
+    try {
+      const themeData = await Nui.post('get_theme_configuration');
+      console.log('Como vem o tema? ', themeData);
+  
+      // Se o tema não for retornado ou for inválido, usar o tema padrão
+      if (!themeData || !themeData.themes || !Array.isArray(themeData.themes)) {
+        console.warn('Nenhum dado válido de tema recebido. Usando tema padrão.');
+        setCurrentTheme(defaultTheme);
+        return;
+      }
+  
+      // Obter o tema correspondente
+      const selectedTheme = getCurrentTheme(themeData);
+      if (selectedTheme) {
+        setCurrentTheme(selectedTheme);
+      } else {
+        console.warn('Tema correspondente não encontrado. Usando tema padrão.');
+        setCurrentTheme(defaultTheme);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar o tema:', error);
+      setCurrentTheme(defaultTheme); // Usar tema padrão em caso de erro
+    }
   }, []);
+  
 
   useEffect(() => {
     loadTheme().catch(console.error);
