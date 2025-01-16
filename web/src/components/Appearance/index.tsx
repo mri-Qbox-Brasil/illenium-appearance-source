@@ -3,6 +3,8 @@ import { useTransition as useTransitionAnimation, animated } from 'react-spring'
 import { useNuiState } from '../../hooks/nuiState';
 import Nui from '../../Nui';
 import mock from '../../mock';
+import mockConfig from '../../../mock-data/configs.json';
+import mockLocales from '../../../mock-data/locales.json';
 
 import {
   CustomizationConfig,
@@ -40,7 +42,7 @@ import Tattoos from './Tattoos';
 import { Wrapper, Container } from './styles';
 import { ThemeContext } from 'styled-components';
 
-if (!import.meta.env.PROD) {
+if (!import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE == 'true') {
   mock('appearance_get_settings', () => ({
     appearanceSettings: {
       ...SETTINGS_INITIAL_STATE,
@@ -87,9 +89,18 @@ const Appearance = () => {
   const { display, setDisplay, locales, setLocales } = useNuiState();
 
   const wrapperTransition = useTransitionAnimation(display.appearance, null, {
-    from: { transform: 'translateX(-50px)', opacity: 0 },
-    enter: { transform: 'translateY(0)', opacity: 1 },
-    leave: { transform: 'translateX(-50px)', opacity: 0 },
+    from: { 
+      transform: `'translateX(${import.meta.env.VITE_SHOW_APPEARANCE == 'true' ? '0px' : '-50px'})`,
+      opacity: import.meta.env.VITE_SHOW_APPEARANCE == 'true' ? 1 : 0  
+    },
+    enter: { 
+      transform: 'translateY(0)',
+      opacity: 1 
+    },
+    leave: { 
+      transform: 'translateX(-50px)',
+      opacity: 0 
+    },
   });
 
   const saveModalTransition = useTransitionAnimation(saveModal, null, {
@@ -497,7 +508,7 @@ const Appearance = () => {
 
   useEffect(() => {
     if(!locales) {
-      Nui.post('appearance_get_locales').then(result => setLocales(result));
+      Nui.post('appearance_get_locales').then(result => setLocales(result || mockLocales));
     }
 
     Nui.onEvent('appearance_display', (data : any) => {
@@ -516,7 +527,7 @@ const Appearance = () => {
 
   const fetchData = useCallback(async () => {
     const result = await Nui.post('appearance_get_data');
-    setConfig(result.config);
+    setConfig(result.config || mockConfig);
     setStoredData(result.appearanceData);
     setData(result.appearanceData); 
   }, []);
