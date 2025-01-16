@@ -20,8 +20,8 @@ interface NuiContextData {
 
 const INITIAL_STATE: NuiState = {
   display: {
-    appearance: false,
-    asynchronous: false,
+    appearance: !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE == 'true',
+    asynchronous: !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE == 'true',
   },
 };
 
