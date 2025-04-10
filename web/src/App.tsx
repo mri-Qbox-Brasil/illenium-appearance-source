@@ -1,6 +1,5 @@
 import { NuiStateProvider } from './hooks/nuiState';
 import GlobalStyles from './styles/global';
-import mockThemes from '../mock-data/themes.json';
 import Appearance from './components/Appearance';
 import { ThemeProvider } from 'styled-components';
 import Nui from './Nui';
@@ -34,7 +33,7 @@ const App: React.FC = () => {
 
   const loadTheme = useCallback(async () => {
     const themeData = await Nui.post('get_theme_configuration');
-    setCurrentTheme(getCurrentTheme(themeData || mockThemes));
+    setCurrentTheme(getCurrentTheme(themeData));
   }, []);
 
   useEffect(() => {

@@ -42,7 +42,7 @@ import Tattoos from './Tattoos';
 import { Wrapper, Container } from './styles';
 import { ThemeContext } from 'styled-components';
 
-if (!import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE == 'true') {
+if (!import.meta.env.PROD) {
   mock('appearance_get_settings', () => ({
     appearanceSettings: {
       ...SETTINGS_INITIAL_STATE,
@@ -89,17 +89,17 @@ const Appearance = () => {
   const { display, setDisplay, locales, setLocales } = useNuiState();
 
   const wrapperTransition = useTransitionAnimation(display.appearance, null, {
-    from: { 
-      transform: `'translateX(${import.meta.env.VITE_SHOW_APPEARANCE == 'true' ? '0px' : '-50px'})`,
-      opacity: import.meta.env.VITE_SHOW_APPEARANCE == 'true' ? 1 : 0  
+    from: {
+      transform: `'translateX(-50px)`,
+      opacity: 0
     },
-    enter: { 
+    enter: {
       transform: 'translateY(0)',
-      opacity: 1 
+      opacity: 1
     },
-    leave: { 
+    leave: {
       transform: 'translateX(-50px)',
-      opacity: 0 
+      opacity: 0
     },
   });
 
@@ -529,7 +529,7 @@ const Appearance = () => {
     const result = await Nui.post('appearance_get_data');
     setConfig(result.config || mockConfig);
     setStoredData(result.appearanceData);
-    setData(result.appearanceData); 
+    setData(result.appearanceData);
   }, []);
 
   const fetchSettings = useCallback(async () => {

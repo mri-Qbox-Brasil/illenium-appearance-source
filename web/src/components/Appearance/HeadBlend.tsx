@@ -3,6 +3,7 @@ import { useNuiState } from '../../hooks/nuiState';
 import Section from './components/Section';
 import Item from './components/Item';
 import Input from './components/Input';
+import StringInput from './components/StringInput';
 import RangeInput from './components/RangeInput';
 
 import { PedHeadBlend, HeadBlendSettings } from './interfaces';
@@ -24,7 +25,7 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange }: HeadBl
   return (
     <Section title={locales.headBlend.title}>
       <Item title={locales.headBlend.shape.title}>
-        <Input
+        <StringInput
           title={locales.headBlend.shape.firstOption}
           min={settings.shapeFirst.min}
           max={settings.shapeFirst.max}
@@ -32,7 +33,7 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange }: HeadBl
           clientValue={storedData.shapeFirst}
           onChange={value => handleHeadBlendChange('shapeFirst', value)}
         />
-        <Input
+        <StringInput
           title={locales.headBlend.shape.secondOption}
           min={settings.shapeSecond.min}
           max={settings.shapeSecond.max}

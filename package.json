@@ -12,5 +12,8 @@
     "format": "yarn format:game && yarn format:web",
     "build": "yarn build:game && yarn build:web",
     "release": "yarn build && node release.js"
+  },
+  "dependencies": {
+    "fivem-appearance": "file:"
   }
 }
