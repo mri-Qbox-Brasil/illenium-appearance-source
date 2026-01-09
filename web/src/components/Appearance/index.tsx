@@ -39,8 +39,7 @@ import Options from './Options';
 import Modal from '../Modal';
 import Tattoos from './Tattoos';
 
-import { Wrapper, Container } from './styles';
-import { ThemeContext } from 'styled-components';
+import { cn } from '../../lib/utils';
 
 if (!import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE == 'true') {
   mock('appearance_get_settings', () => ({
@@ -89,17 +88,17 @@ const Appearance = () => {
   const { display, setDisplay, locales, setLocales } = useNuiState();
 
   const wrapperTransition = useTransitionAnimation(display.appearance, null, {
-    from: { 
+    from: {
       transform: `'translateX(${import.meta.env.VITE_SHOW_APPEARANCE == 'true' ? '0px' : '-50px'})`,
-      opacity: import.meta.env.VITE_SHOW_APPEARANCE == 'true' ? 1 : 0  
+      opacity: import.meta.env.VITE_SHOW_APPEARANCE == 'true' ? 1 : 0
     },
-    enter: { 
+    enter: {
       transform: 'translateY(0)',
-      opacity: 1 
+      opacity: 1
     },
-    leave: { 
+    leave: {
       transform: 'translateX(-50px)',
-      opacity: 0 
+      opacity: 0
     },
   });
 
@@ -507,6 +506,10 @@ const Appearance = () => {
   );
 
   useEffect(() => {
+    if (!import.meta.env.PROD && import.meta.env.VITE_ENV === 'development') {
+      setDisplay({ appearance: true, asynchronous: false });
+    }
+
     if(!locales) {
       Nui.post('appearance_get_locales').then(result => setLocales(result || mockLocales));
     }
@@ -529,7 +532,7 @@ const Appearance = () => {
     const result = await Nui.post('appearance_get_data');
     setConfig(result.config || mockConfig);
     setStoredData(result.appearanceData);
-    setData(result.appearanceData); 
+    setData(result.appearanceData);
   }, []);
 
   const fetchSettings = useCallback(async () => {
@@ -563,8 +566,11 @@ const Appearance = () => {
         ({ item, key, props: style }) =>
           item && (
             <animated.div key={key} style={style}>
-              <Wrapper>
-                <Container>
+              <div className={cn(
+                "fixed inset-0 flex items-start justify-start overflow-hidden text-foreground font-sans pointer-events-none",
+                !import.meta.env.PROD && "is-dev"
+              )}>
+                <div className="h-full w-full max-w-[450px] flex flex-col gap-0 p-5 bg-background/95 border-r border-border backdrop-blur-md overflow-y-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 pointer-events-auto">
                   {config.ped && (
                     <Ped
                       settings={appearanceSettings.ped}
@@ -654,21 +660,23 @@ const Appearance = () => {
                       handleClearTattoos={handleClearTattoos}
                     />
                   )}
-                </Container>
-                <Options
-                  camera={camera}
-                  rotate={rotate}
-                  clothes={clothes}
-                  handleSetClothes={handleSetClothes}
-                  handleSetCamera={handleSetCamera}
-                  handleTurnAround={handleTurnAround}
-                  handleRotateLeft={handleRotateLeft}
-                  handleRotateRight={handleRotateRight}
-                  handleSave={handleSaveModal}
-                  handleExit={handleExitModal}
-                  enableExit={config.enableExit}
-                />
-              </Wrapper>
+                </div>
+                <div className="pointer-events-auto h-full">
+                  <Options
+                    camera={camera}
+                    rotate={rotate}
+                    clothes={clothes}
+                    handleSetClothes={handleSetClothes}
+                    handleSetCamera={handleSetCamera}
+                    handleTurnAround={handleTurnAround}
+                    handleRotateLeft={handleRotateLeft}
+                    handleRotateRight={handleRotateRight}
+                    handleSave={handleSaveModal}
+                    handleExit={handleExitModal}
+                    enableExit={config.enableExit}
+                  />
+                </div>
+              </div>
             </animated.div>
           ),
       )}

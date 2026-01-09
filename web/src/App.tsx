@@ -25,11 +25,13 @@ const App: React.FC = () => {
   const [currentTheme, setCurrentTheme] = useState(defaultTheme);
 
   const getCurrentTheme = (themeData: any) => {
+    if (!themeData || !themeData.themes) return defaultTheme;
     for (let index = 0; index < themeData.themes.length; index++) {
       if (themeData.themes[index].id === themeData.currentTheme) {
         return themeData.themes[index];
       }
     }
+    return defaultTheme;
   };
 
   const loadTheme = useCallback(async () => {
