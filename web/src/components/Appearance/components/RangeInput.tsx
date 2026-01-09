@@ -1,111 +1,48 @@
-import { useCallback, useRef } from 'react';
-import styled from 'styled-components';
+import React, { useRef } from 'react';
+import { cn } from '../../../lib/utils';
 
 interface RangeInputProps {
   title?: string;
-  min: number;
-  max: number;
+  min?: number;
+  max?: number;
   factor?: number;
-  defaultValue?: number;
-  clientValue?: number;
+  defaultValue: number;
+  clientValue: number;
   onChange: (value: number) => void;
+  className?: string;
 }
 
-const Container = styled.div`
-  width: 100%;
-
-  > span {
-    width: 100%;
-
-    display: flex;
-    justify-content: space-between;
-    font-weight: 200;
-  }
-
-  > div {
-    display: flex;
-    align-items: center;
-
-    position: relative;
-
-    margin-top: 10px;
-
-    > small {
-      font-weight: 200;
-      font-size: 8px;
-    }
-  }
-
-  input[type='range'] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 15px;
-    background: rgba(${props => props.theme.secondayBackground || '0, 0, 0'}, 0.8);
-    outline: none;
-    opacity: 1;
-    border-radius: 2px;
-    margin: 0 10px;
-  }
-
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 17px;
-    height: 17px;
-    background: #eeeeee;
-    cursor: pointer;
-    border-radius: 2px;
-  }
-`;
-
 const RangeInput: React.FC<RangeInputProps> = ({
-  min,
-  max,
-  factor = 1,
   title,
-  defaultValue = 1,
+  min = 0,
+  max = 255,
+  factor = 1,
+  defaultValue,
   clientValue,
   onChange,
+  className,
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleContainerClick = useCallback(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [inputRef]);
-
-  const handleChange = useCallback(
-    (e: { target: { value: string } }) => {
-      const parsedValue = parseFloat(e.target.value);
-      onChange(parsedValue);
-    },
-    [onChange],
-  );
+  const displayValue = (val: number) => (val * factor).toFixed(2);
 
   return (
-    <Container onClick={handleContainerClick}>
-      <span>
-        <small>
-          {title}: {defaultValue}
-        </small>
-        <small>{clientValue}</small>
-      </span>
-      <div>
-        <small>{min}</small>
+    <div className={cn("flex flex-col gap-2 w-full", className)}>
+      <div className="flex justify-between items-center px-0.5">
+        <span className="text-xs font-medium text-muted-foreground">{title}</span>
+        <span className="text-[10px] text-muted-foreground/60">{displayValue(defaultValue)} / {displayValue(max)}</span>
+      </div>
+
+      <div className="relative flex items-center group">
         <input
           type="range"
-          ref={inputRef}
-          value={defaultValue}
           min={min}
           max={max}
-          step={factor}
-          onChange={handleChange}
+          step={1}
+          value={defaultValue}
+          onChange={(e) => onChange(parseInt(e.target.value))}
+          className="w-full h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary group-hover:accent-primary-hover"
         />
-        <small>{max}</small>
       </div>
-    </Container>
+    </div>
   );
 };
 

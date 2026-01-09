@@ -1,87 +1,41 @@
-import { useCallback } from 'react';
-import styled, { css } from 'styled-components';
+import React from 'react';
+import { cn } from '../../../lib/utils';
 
 interface ColorInputProps {
-  title?: string;
-  colors?: number[][];
-  defaultValue?: number;
+  title: string;
+  colors: number[][];
+  defaultValue: number;
   clientValue?: number;
   onChange: (value: number) => void;
+  className?: string;
 }
 
-interface ButtonProps {
-  selected: boolean;
-}
-
-const Container = styled.div`
-  width: 100%;
-
-  > span {
-    width: 100%;
-
-    display: flex;
-    justify-content: space-between;
-    font-weight: 200;
-  }
-
-  > div {
-    width: 100%;
-
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: flex-start;
-
-    margin-top: 10px;
-  }
-`;
-
-const Button = styled.button<ButtonProps>`
-  height: 20px;
-  width: 20px;
-
-  border: 2px solid rgba(0, 0, 0, 0.2);
-
-  margin: 1px;
-
-  &:hover {
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    ${props => props.theme.smoothBackgroundTransition ? 'transition: background 0.2s;' : ''}
-    ${props => props.theme.scaleOnHover ? 'transform: scale(1.1);' : ''}
-  }
-
-  ${({ selected }) =>
-    selected &&
-    css`
-      border: 2px solid rgba(255, 255, 255, 1);
-    `}
-`;
-
-const ColorInput: React.FC<ColorInputProps> = ({ title, colors = [], defaultValue, clientValue, onChange }) => {
-  const selectColor = useCallback(
-    (color: number) => {
-      onChange(color);
-    },
-    [onChange],
-  );
-
+const ColorInput: React.FC<ColorInputProps> = ({
+  title,
+  colors,
+  defaultValue,
+  clientValue,
+  onChange,
+  className,
+}) => {
   return (
-    <Container>
-      <span>
-        <small>{`${title}: ${defaultValue}`}</small>
-        <small>{clientValue}</small>
-      </span>
-      <div>
+    <div className={cn("flex flex-col gap-2 w-full", className)}>
+      <span className="text-xs font-medium text-muted-foreground px-0.5">{title}</span>
+      <div className="grid grid-cols-8 gap-1.5 p-2 rounded-md border bg-background/30 max-h-40 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-muted">
         {colors.map((color, index) => (
-          <Button
+          <button
             key={index}
+            onClick={() => onChange(index)}
+            className={cn(
+              "aspect-square w-full rounded-full border border-white/10 transition-all hover:scale-110 focus:ring-2 focus:ring-ring focus:ring-offset-1 focus:ring-offset-background",
+              defaultValue === index && "ring-2 ring-primary ring-offset-1 ring-offset-background scale-110 z-10"
+            )}
             style={{ backgroundColor: `rgb(${color[0]}, ${color[1]}, ${color[2]})` }}
-            selected={defaultValue === index}
-            onClick={() => selectColor(index)}
+            title={`Color ${index}`}
           />
         ))}
       </div>
-    </Container>
+    </div>
   );
 };
 

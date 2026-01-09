@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect, ReactElement, useCallback, ReactNode } from 'react';
-import styled, { css } from 'styled-components';
+import React, { useState, useRef, useEffect, ReactElement, useCallback, ReactNode } from 'react';
 import {
   FaVideo,
   FaStreetView,
@@ -15,21 +14,14 @@ import {
   FaSocks,
 } from 'react-icons/fa';
 import { GiClothes } from 'react-icons/gi';
+import { cn } from '../../lib/utils';
 
 import { CameraState, ClothesState, RotateState } from './interfaces';
-
-interface ToggleButtonProps {
-  active: boolean;
-}
 
 interface ToggleOptionProps {
   active: boolean;
   onClick: () => void;
   children?: ReactNode;
-}
-
-interface ExtendendContainerProps {
-  width: number;
 }
 
 interface ExtendendOptionProps {
@@ -51,181 +43,54 @@ interface OptionsProps {
   enableExit: boolean;
 }
 
-const Container = styled.div`
-  height: 100vh;
-
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-
-  padding: 40px 0;
-
-  > * {
-    & + * {
-      margin-top: 10px;
-    }
-  }
-`;
-
-const ToggleButton = styled.button<ToggleButtonProps>`
-  height: 40px;
-  width: 40px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: 0;
-  border-radius: ${props => props.theme.borderRadius || '4px'};
-
-  box-shadow: 0px 0px 5px rgb(0, 0, 0, 0.2);
-
-  transition: all 0.2s;
-
-  color: rgba(${props => props.theme.fontColor || '255, 255, 255'}, 0.9);
-  background: rgba(${props => props.theme.secondaryBackground || '0, 0, 0'}, 0.7);
-
-  &:hover {
-    color: rgba(${props => props.theme.fontColor || '255, 255, 255'}, 1);
-    background: rgba(${props => props.theme.primaryBackground || '0, 0, 0'}, 0.9);
-    ${props => props.theme.smoothBackgroundTransition ? 'transition: background 0.2s;' : ''}
-    ${props => props.theme.scaleOnHover ? 'transform: scale(1.05);' : ''}
-  }
-
-  &:active {
-    transform: scale(0.8);
-  }
-
-  ${({ active }) =>
-    active &&
-    css`
-      color: rgba(${props => props.theme.fontColorSelected || '0, 0, 0'}, 0.7);
-      background: rgba(${props => props.theme.primaryBackgroundSelected || '255, 255, 255'}, 1);
-
-      &:hover {
-        color: rgba(${props => props.theme.fontColorSelected || '0, 0, 0'}, 0.9);
-        background: rgba(${props => props.theme.primaryBackgroundSelected || '255, 255, 255'}, 1);
-        ${props => props.theme.smoothBackgroundTransition ? 'transition: background 0.2s;' : ''}
-      }
-    `}
-`;
-
-const Option = styled.button`
-  height: 40px;
-  width: 40px;
-
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-
-  border: 0;
-  border-radius: ${props => props.theme.borderRadius || '4px'};
-
-  box-shadow: 0px 0px 5px rgb(0, 0, 0, 0.2);
-
-  transition: all 0.1s;
-
-  color: rgba(${props => props.theme.fontColor || '255, 255, 255'}, 0.9);
-  background: rgba(${props => props.theme.secondaryBackground || '0, 0, 0'}, 0.7);
-
-  &:hover {
-    color: rgba(${props => props.theme.fontColorHover || '255, 255, 255'}, 1);
-    background: rgba(${props => props.theme.primaryBackground || '0, 0, 0'}, 0.9);
-    ${props => props.theme.smoothBackgroundTransition ? 'transition: background 0.2s;' : ''}
-    ${props => props.theme.scaleOnHover ? 'transform: scale(1.05);' : ''}
-  }
-
-  &:active {
-    transform: scale(0.8);
-    color: rgba(${props => props.theme.secondaryBackground || '0, 0, 0'}, 0.7);
-    background: rgba(${props => props.theme.primaryBackgroundSelected || '255, 255, 255'}, 1);
-  }
-`;
-
-const ExtendedContainer = styled.div<ExtendendContainerProps>`
-  height: 40px;
-
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-
-  width: ${({ width }) => `${width + 40}px`};
-
-  transition: width 0.3s;
-
-  overflow: hidden;
-`;
-
-const ExtendedIcon = styled.div`
-  height: 40px;
-  width: 40px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-
-  border: 0;
-  border-radius: ${props => props.theme.borderRadius || '4px'};
-
-  color: rgba(${props => props.theme.fontColor || '255, 255, 255'}, 0.9);
-  background: rgba(${props => props.theme.secondaryBackground || '0, 0, 0'}, 0.7);
-`;
-
-const ExtendedChildren = styled.div`
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-
-  padding-left: 10px;
-
-  > * {
-    & + * {
-      margin-left: 10px;
-    }
-  }
-`;
-
 const ToggleOption: React.FC<ToggleOptionProps> = ({ children, active, onClick }) => {
   return (
-    <ToggleButton type="button" active={active} onClick={onClick}>
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "h-10 w-10 flex items-center justify-center rounded-md transition-all duration-200 shadow-sm",
+        "bg-secondary/70 text-foreground/90 hover:bg-secondary hover:text-foreground",
+        active && "bg-primary text-primary-foreground hover:bg-primary/90"
+      )}
+    >
       {children}
-    </ToggleButton>
+    </button>
   );
 };
 
 const ExtendedOption: React.FC<ExtendendOptionProps> = ({ children, icon }) => {
-  const [extended, setExtended] = useState(true);
-
+  const [extended, setExtended] = useState(false);
   const [width, setWidth] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (ref.current) {
-      setWidth(ref.current.offsetWidth);
-      setExtended(false);
+    if (contentRef.current) {
+      setWidth(contentRef.current.scrollWidth);
     }
-  }, [ref, setWidth]);
-
-  const handleMouseEnter = useCallback(() => {
-    setExtended(true);
-  }, [setExtended]);
-
-  const handleMouseLeave = useCallback(() => {
-    setExtended(false);
-  }, [setExtended]);
+  }, [children]);
 
   return (
-    <ExtendedContainer width={extended ? width : 0} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <ExtendedIcon>{icon}</ExtendedIcon>
-      <ExtendedChildren ref={ref}>{children}</ExtendedChildren>
-    </ExtendedContainer>
+    <div
+      className="flex items-center group relative overflow-visible h-10"
+      onMouseEnter={() => setExtended(true)}
+      onMouseLeave={() => setExtended(false)}
+    >
+      <div className="h-10 w-10 flex items-center justify-center rounded-md bg-secondary/70 text-foreground/90 shadow-sm z-10">
+        {icon}
+      </div>
+      <div
+        className={cn(
+          "flex items-center gap-2 pl-2 transition-all duration-300 ease-in-out overflow-hidden h-10",
+          extended ? "opacity-100" : "opacity-0 w-0 pointer-events-none"
+        )}
+        style={{ width: extended ? `${width + 8}px` : '0px' }}
+      >
+        <div ref={contentRef} className="flex items-center gap-2">
+          {children}
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -243,47 +108,65 @@ const Options: React.FC<OptionsProps> = ({
   enableExit
 }) => {
   return (
-    <Container>
+    <div className="h-full flex flex-col items-start gap-4 py-10 px-4 bg-transparent">
       <ExtendedOption icon={<FaVideo size={20} />}>
         <ToggleOption active={camera.head} onClick={() => handleSetCamera('head')}>
-          <FaSmile size={20} />
+          <FaSmile size={18} />
         </ToggleOption>
         <ToggleOption active={camera.body} onClick={() => handleSetCamera('body')}>
-          <FaMale size={20} />
+          <FaMale size={18} />
         </ToggleOption>
         <ToggleOption active={camera.bottom} onClick={() => handleSetCamera('bottom')}>
-          <FaShoePrints size={20} />
+          <FaShoePrints size={18} />
         </ToggleOption>
       </ExtendedOption>
+
       <ExtendedOption icon={<GiClothes size={20} />}>
         <ToggleOption active={clothes.head} onClick={() => handleSetClothes('head')}>
-          <FaHatCowboy size={20} />
+          <FaHatCowboy size={18} />
         </ToggleOption>
         <ToggleOption active={clothes.body} onClick={() => handleSetClothes('body')}>
-          <FaTshirt size={20} />
+          <FaTshirt size={18} />
         </ToggleOption>
         <ToggleOption active={clothes.bottom} onClick={() => handleSetClothes('bottom')}>
-          <FaSocks size={20} />
+          <FaSocks size={18} />
         </ToggleOption>
       </ExtendedOption>
-      <Option onClick={handleTurnAround}>
+
+      <button
+        type="button"
+        onClick={handleTurnAround}
+        className="h-10 w-10 flex items-center justify-center rounded-md bg-secondary/70 text-foreground/90 hover:bg-secondary hover:text-foreground transition-all shadow-sm"
+      >
         <FaStreetView size={20} />
-      </Option>
+      </button>
+
       <ToggleOption active={rotate.left} onClick={handleRotateLeft}>
-        <FaRedo size={20} />
+        <FaRedo size={18} />
       </ToggleOption>
+
       <ToggleOption active={rotate.right} onClick={handleRotateRight}>
-        <FaUndo size={20} />
+        <FaUndo size={18} />
       </ToggleOption>
-      <Option onClick={handleSave}>
+
+      <button
+        type="button"
+        onClick={handleSave}
+        className="h-10 w-10 flex items-center justify-center rounded-md bg-green-600/70 text-white hover:bg-green-600 transition-all shadow-sm mt-auto"
+      >
         <FaSave size={20} />
-      </Option>
-      {enableExit &&
-      <Option onClick={handleExit}>
-        <FaTimes size={20} />
-      </Option>}
-      
-    </Container>
+      </button>
+
+      {enableExit && (
+        <button
+          type="button"
+          onClick={handleExit}
+          className="h-10 w-10 flex items-center justify-center rounded-md bg-destructive/70 text-destructive-foreground hover:bg-destructive transition-all shadow-sm"
+        >
+          <FaTimes size={20} />
+        </button>
+      )}
+    </div>
   );
 };
 

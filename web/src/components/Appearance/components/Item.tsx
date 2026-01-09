@@ -1,48 +1,24 @@
-import styled from 'styled-components';
-import { ReactNode } from 'react';
+import React from 'react';
+import { cn } from '../../../lib/utils';
 
 interface ItemProps {
   title?: string;
-  children?: ReactNode;
+  children: React.ReactNode;
+  className?: string;
 }
 
-const Container = styled.div`
-  margin-top: 0.5rem;
-
-  display: flex;
-  flex-direction: column;
-
-  padding: 10px;
-  border-radius: 2px;
-
-  background: rgba(${props => props.theme.secondayBackground || '0, 0, 0'}, 0.3);
-
-  span {
-    color: rgba(${props => props.theme.fontColor || '255, 255, 255'}, 1);
-    font-size: 14px;
-  }
-`;
-
-const Inputs = styled.div`
-  width: 100%;
-  display: inline-flex;
-  flex-wrap: wrap;
-
-  margin-top: 10px;
-
-  > div {
-    & + div {
-      margin-top: 10px;
-    }
-  }
-`;
-
-const Item: React.FC<ItemProps> = ({ children, title }) => {
+const Item: React.FC<ItemProps> = ({ title, children, className }) => {
   return (
-    <Container>
-      {title && <span>{title}</span>}
-      <Inputs>{children}</Inputs>
-    </Container>
+    <div className={cn("flex flex-col gap-2 w-full", className)}>
+      {title && (
+        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-muted-foreground mb-1">
+          {title}
+        </label>
+      )}
+      <div className="flex flex-col gap-3">
+        {children}
+      </div>
+    </div>
   );
 };
 

@@ -1,7 +1,6 @@
 import { useNuiState } from '../../hooks/nuiState';
 import Section from './components/Section';
 import Item from './components/Item';
-import { Container, FlexWrapper } from './styles';
 import SelectTattoo from './components/SelectTattoo';
 
 import { TattoosSettings, TattooList, Tattoo } from './interfaces';
@@ -30,10 +29,10 @@ const Tattoos = ({ settings, data, storedData, handleApplyTattoo, handlePreviewT
   return (
     <Section title={locales.tattoos.title}>
       {keys.map(key => (
-        key !== 'ZONE_HAIR' 
-        && 
+        key !== 'ZONE_HAIR'
+        &&
         <Item key={key} title={locales.tattoos.items[key]}>
-          <FlexWrapper>
+          <div className="flex flex-col gap-2">
             <SelectTattoo
               handlePreviewTattoo={handlePreviewTattoo}
               handleApplyTattoo={handleApplyTattoo}
@@ -42,13 +41,15 @@ const Tattoos = ({ settings, data, storedData, handleApplyTattoo, handlePreviewT
               tattoosApplied={data[key] ?? null}
               settings={settings}
             />
-          </FlexWrapper>
+          </div>
         </Item>
       ))}
       <Item>
-      <FlexWrapper>
-          <Button onClick={() => handleClearTattoos()} width="100%">{locales.tattoos.deleteAll}</Button>
-      </FlexWrapper>
+        <div className="flex w-full mt-2">
+          <Button onClick={() => handleClearTattoos()} className="w-full" variant="destructive">
+            {locales.tattoos.deleteAll}
+          </Button>
+        </div>
       </Item>
     </Section>
   );

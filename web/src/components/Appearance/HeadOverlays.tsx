@@ -51,7 +51,7 @@ const HeadOverlays = ({
   isPedFreemodeModel,
   handleHairChange,
   handleHeadOverlayChange,
-  handleEyeColorChange, 
+  handleEyeColorChange,
   handleChangeFade,
   automaticFade
 }: HeadOverlaysProps) => {
@@ -99,7 +99,7 @@ const HeadOverlays = ({
         {!automaticFade && <Input
           title={locales.headOverlays.hair.fade}
           min={0}
-          max={settings?.fade?.length - 1 ?? 0}
+          max={settings.fade.length - 1}
           defaultValue={fadeValue}
           clientValue={storedFadeValue}
           onChange={value => handleChangeFade(value)}
@@ -141,9 +141,9 @@ const HeadOverlays = ({
         />
         <ColorInput
           title={locales.headOverlays.color}
-          colors={settings.headOverlays.eyebrows.color?.items}
-          defaultValue={data.headOverlays.eyebrows.color}
-          clientValue={storedData.headOverlays.eyebrows.color}
+          colors={settings.headOverlays.eyebrows.color?.items || []}
+          defaultValue={data.headOverlays.eyebrows.color || 0}
+          clientValue={storedData.headOverlays.eyebrows.color || 0}
           onChange={value => handleHeadOverlayChange('eyebrows', 'color', value)}
         />
       </Item>
@@ -177,16 +177,16 @@ const HeadOverlays = ({
         />
         <ColorInput
           title={locales.headOverlays.color}
-          colors={settings.headOverlays.makeUp.color?.items}
-          defaultValue={data.headOverlays.makeUp.color}
-          clientValue={storedData.headOverlays.makeUp.color}
+          colors={settings.headOverlays.makeUp.color?.items || []}
+          defaultValue={data.headOverlays.makeUp.color || 0}
+          clientValue={storedData.headOverlays.makeUp.color || 0}
           onChange={value => handleHeadOverlayChange('makeUp', 'color', value)}
         />
         <ColorInput
           title={locales.headOverlays.secondColor}
-          colors={settings.headOverlays.makeUp.color?.items}
-          defaultValue={data.headOverlays.makeUp.secondColor}
-          clientValue={storedData.headOverlays.makeUp.secondColor}
+          colors={settings.headOverlays.makeUp.color?.items || []}
+          defaultValue={data.headOverlays.makeUp.secondColor || 0}
+          clientValue={storedData.headOverlays.makeUp.secondColor || 0}
           onChange={value => handleHeadOverlayChange('makeUp', 'secondColor', value)}
         />
       </Item>
@@ -210,9 +210,9 @@ const HeadOverlays = ({
         />
         <ColorInput
           title={locales.headOverlays.color}
-          colors={settings.headOverlays.blush.color?.items}
-          defaultValue={data.headOverlays.blush.color}
-          clientValue={storedData.headOverlays.blush.color}
+          colors={settings.headOverlays.blush.color?.items || []}
+          defaultValue={data.headOverlays.blush.color || 0}
+          clientValue={storedData.headOverlays.blush.color || 0}
           onChange={value => handleHeadOverlayChange('blush', 'color', value)}
         />
       </Item>
@@ -236,9 +236,9 @@ const HeadOverlays = ({
         />
         <ColorInput
           title={locales.headOverlays.color}
-          colors={settings.headOverlays.lipstick.color?.items}
-          defaultValue={data.headOverlays.lipstick.color}
-          clientValue={storedData.headOverlays.lipstick.color}
+          colors={settings.headOverlays.lipstick.color?.items || []}
+          defaultValue={data.headOverlays.lipstick.color || 0}
+          clientValue={storedData.headOverlays.lipstick.color || 0}
           onChange={value => handleHeadOverlayChange('lipstick', 'color', value)}
         />
       </Item>
@@ -262,9 +262,9 @@ const HeadOverlays = ({
         />
         <ColorInput
           title={locales.headOverlays.color}
-          colors={settings.headOverlays.beard.color?.items}
-          defaultValue={data.headOverlays.beard.color}
-          clientValue={storedData.headOverlays.beard.color}
+          colors={settings.headOverlays.beard.color?.items || []}
+          defaultValue={data.headOverlays.beard.color || 0}
+          clientValue={storedData.headOverlays.beard.color || 0}
           onChange={value => handleHeadOverlayChange('beard', 'color', value)}
         />
       </Item>
@@ -383,9 +383,9 @@ const HeadOverlays = ({
         />
         <ColorInput
           title={locales.headOverlays.color}
-          colors={settings.headOverlays.chestHair.color?.items}
-          defaultValue={data.headOverlays.chestHair.color}
-          clientValue={storedData.headOverlays.chestHair.color}
+          colors={settings.headOverlays.chestHair.color?.items || []}
+          defaultValue={data.headOverlays.chestHair.color || 0}
+          clientValue={storedData.headOverlays.chestHair.color || 0}
           onChange={value => handleHeadOverlayChange('chestHair', 'color', value)}
         />
       </Item>

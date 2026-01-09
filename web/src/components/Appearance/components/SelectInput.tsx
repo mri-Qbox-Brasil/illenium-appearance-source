@@ -1,6 +1,6 @@
-import { useContext, useRef } from 'react';
-import styled, { ThemeContext } from 'styled-components';
+import React, { useRef } from 'react';
 import Select from 'react-select';
+import { cn } from '../../../lib/utils';
 
 interface SelectInputProps {
   title: string;
@@ -8,100 +8,96 @@ interface SelectInputProps {
   defaultValue: string;
   clientValue: string;
   onChange: (value: string) => void;
+  className?: string;
 }
-
-const Container = styled.div`
-  min-width: 0;
-
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-
-  > span {
-    width: 100%;
-
-    display: flex;
-    justify-content: space-between;
-    font-weight: 200;
-  }
-`;
 
 const customStyles: any = {
   control: (styles: any) => ({
     ...styles,
-    marginTop: '10px',
-    background: 'rgba(23, 23, 23, 0.8)',
-    fontSize: '14px',
-    color: '#fff',
-    border: 'none',
-    outline: 'none',
+    background: 'hsl(var(--secondary) / 0.3)',
+    borderColor: 'hsl(var(--border))',
+    minHeight: '32px',
+    height: '32px',
+    borderRadius: 'calc(var(--radius) - 2px)',
     boxShadow: 'none',
+    '&:hover': {
+      borderColor: 'hsl(var(--border))',
+      background: 'hsl(var(--secondary) / 0.5)',
+    }
   }),
-  placeholder: (styles: any) => ({
+  valueContainer: (styles: any) => ({
     ...styles,
-    fontSize: '14px',
-    color: '#fff',
+    padding: '0 8px',
+    height: '32px',
   }),
   input: (styles: any) => ({
     ...styles,
-    fontSize: '14px',
-    color: '#fff',
-  }),
-  singleValue: (styles: any) => ({
-    ...styles,
-    fontSize: '14px',
-    color: '#fff',
-    border: 'none',
-    outline: 'none',
+    margin: '0',
+    padding: '0',
+    color: 'hsl(var(--foreground))',
   }),
   indicatorContainer: (styles: any) => ({
     ...styles,
-    borderColor: '#fff',
-    color: '#fff',
+    padding: '4px',
   }),
   dropdownIndicator: (styles: any) => ({
     ...styles,
-    borderColor: '#fff',
-    color: '#fff',
+    color: 'hsl(var(--muted-foreground))',
+    '&:hover': {
+      color: 'hsl(var(--foreground))',
+    }
   }),
-  menuPortal: (styles: any) => ({
+  indicatorSeparator: () => ({
+    display: 'none',
+  }),
+  singleValue: (styles: any) => ({
     ...styles,
-    color: '#fff',
-    zIndex: 9999,
+    color: 'hsl(var(--foreground))',
+    fontSize: '0.875rem',
   }),
   menu: (styles: any) => ({
     ...styles,
-    background: 'rgba(23, 23, 23, 0.8)',
-    position: 'absolute',
-    marginBottom: '10px',
-    borderRadius: '4px',
+    background: 'hsl(var(--popover))',
+    border: '1px solid hsl(var(--border))',
+    borderRadius: 'var(--radius)',
+    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+    zIndex: 9999,
   }),
   menuList: (styles: any) => ({
     ...styles,
-    background: 'rgba(23, 23, 23, 0.8)',
-    borderRadius: '4px',
+    padding: '4px',
     '&::-webkit-scrollbar': {
-      width: '10px',
+      width: '4px',
     },
     '&::-webkit-scrollbar-track': {
-      background: 'none',
+      background: 'transparent',
     },
     '&::-webkit-scrollbar-thumb': {
-      borderRadius: '4px',
-      background: '#fff',
+      background: 'hsl(var(--muted))',
+      borderRadius: '10px',
     },
   }),
-  option: (styles: any, { isFocused }: any) => ({
+  option: (styles: any, { isFocused, isSelected }: any) => ({
     ...styles,
-    borderRadius: '4px',
-    width: '97%',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    background: isFocused ? 'rgba(255, 255, 255, 0.1)' : 'none',
+    borderRadius: 'calc(var(--radius) - 2px)',
+    fontSize: '0.875rem',
+    padding: '6px 8px',
+    cursor: 'pointer',
+    background: isSelected
+      ? 'hsl(var(--primary))'
+      : isFocused
+        ? 'hsl(var(--accent))'
+        : 'transparent',
+    color: isSelected
+      ? 'hsl(var(--primary-foreground))'
+      : 'hsl(var(--foreground))',
+    '&:active': {
+      background: 'hsl(var(--accent))',
+    }
   }),
 };
 
-const SelectInput = ({ title, items, defaultValue, clientValue, onChange }: SelectInputProps) => {
+const SelectInput = ({ title, items, defaultValue, clientValue, onChange, className }: SelectInputProps) => {
   const selectRef = useRef<any>(null);
 
   const handleChange = (event: any, { action }: any): void => {
@@ -110,38 +106,22 @@ const SelectInput = ({ title, items, defaultValue, clientValue, onChange }: Sele
     }
   };
 
-  const onMenuOpen = () => {
-    setTimeout(() => {
-      const selectedEl = document.getElementsByClassName("Select" + title + "__option--is-selected")[0];
-      if (selectedEl) {
-        selectedEl.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
-      }
-    }, 100);
-  };
-
-  const themeContext = useContext(ThemeContext);
-  customStyles.control.background = `rgba(${themeContext.secondaryBackground || '0, 0, 0'}, 0.8)`;
-  customStyles.menu.background = `rgba(${themeContext.secondaryBackground || '0, 0, 0'}, 0.8)`;
-  customStyles.menuList.background = `rgba(${themeContext.secondaryBackground || '0, 0, 0'}, 0.8)`;
-
   return (
-    <Container>
-      <span>
-        <small>{title}</small>
-        <small>{clientValue}</small>
-      </span>
+    <div className={cn("flex flex-col gap-1.5 w-full", className)}>
+      <div className="flex justify-between items-center px-0.5">
+        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{title}</span>
+        <span className="text-[10px] text-muted-foreground/60">{clientValue}</span>
+      </div>
       <Select
         ref={selectRef}
         styles={customStyles}
         options={items.map(item => ({ value: item, label: item }))}
         value={{ value: defaultValue, label: defaultValue }}
         onChange={handleChange}
-        onMenuOpen={onMenuOpen}
-        className={"Select" + title}
-        classNamePrefix={"Select" + title}
+        classNamePrefix="react-select"
         menuPortalTarget={document.body}
       />
-    </Container>
+    </div>
   );
 };
 

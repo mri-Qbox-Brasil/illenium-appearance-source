@@ -2,8 +2,9 @@ import { useNuiState } from '../../hooks/nuiState';
 
 import Section from './components/Section';
 import Item from './components/Item';
-import { FlexWrapper } from './styles';
 import Input from './components/Input';
+import ImageInput from './components/ImageInput';
+import { IMAGE_CONFIG } from './configs/images';
 
 import { PropSettings, PedProp, PropConfig } from './interfaces';
 
@@ -39,118 +40,44 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
     return null;
   }
 
+  const renderProp = (id: number, title: string) => {
+    if (!settingsById[id]) return null;
+
+    return (
+      <Item title={title}>
+        <div className="flex flex-col gap-2">
+          <ImageInput
+            title={locales.props.drawable}
+            min={settingsById[id].drawable.min}
+            max={settingsById[id].drawable.max}
+            defaultValue={propsById[id].drawable}
+            clientValue={storedPropsById[id].drawable}
+            onChange={value => handlePropDrawableChange(id, value)}
+            imageUrl={IMAGE_CONFIG.baseUrl + IMAGE_CONFIG.patterns.props(id, propsById[id].drawable, propsById[id].texture)}
+          />
+          <Input
+            title={locales.props.texture}
+            min={settingsById[id].texture.min}
+            max={settingsById[id].texture.max}
+            blacklisted={settingsById[id].blacklist.textures}
+            defaultValue={propsById[id].texture}
+            clientValue={storedPropsById[id].texture}
+            onChange={value => handlePropTextureChange(id, value)}
+          />
+        </div>
+      </Item>
+    );
+  };
+
   return (
     <Section title={locales.props.title}>
-      {propConfig.hats && <Item title={locales.props.hats}>
-        <FlexWrapper>
-          <Input
-            title={locales.props.drawable}
-            min={settingsById[0].drawable.min}
-            max={settingsById[0].drawable.max}
-            defaultValue={propsById[0].drawable}
-            clientValue={storedPropsById[0].drawable}
-            blacklisted={settingsById[0].blacklist.drawables}
-            onChange={value => handlePropDrawableChange(0, value)}
-          />
-          <Input
-            title={locales.props.texture}
-            min={settingsById[0].texture.min}
-            max={settingsById[0].texture.max}
-            defaultValue={propsById[0].texture}
-            clientValue={storedPropsById[0].texture}
-            blacklisted={settingsById[0].blacklist.textures}
-            onChange={value => handlePropTextureChange(0, value)}
-          />
-        </FlexWrapper>
-      </Item>}
-      {propConfig.glasses && <Item title={locales.props.glasses}>
-        <FlexWrapper>
-          <Input
-            title={locales.props.drawable}
-            min={settingsById[1].drawable.min}
-            max={settingsById[1].drawable.max}
-            defaultValue={propsById[1].drawable}
-            clientValue={storedPropsById[1].drawable}
-            blacklisted={settingsById[1].blacklist.drawables}
-            onChange={value => handlePropDrawableChange(1, value)}
-          />
-          <Input
-            title={locales.props.texture}
-            min={settingsById[1].texture.min}
-            max={settingsById[1].texture.max}
-            defaultValue={propsById[1].texture}
-            clientValue={storedPropsById[1].texture}
-            blacklisted={settingsById[1].blacklist.textures}
-            onChange={value => handlePropTextureChange(1, value)}
-          />
-        </FlexWrapper>
-      </Item>}
-      {propConfig.ear && <Item title={locales.props.ear}>
-        <FlexWrapper>
-          <Input
-            title={locales.props.drawable}
-            min={settingsById[2].drawable.min}
-            max={settingsById[2].drawable.max}
-            defaultValue={propsById[2].drawable}
-            clientValue={storedPropsById[2].drawable}
-            blacklisted={settingsById[2].blacklist.drawables}
-            onChange={value => handlePropDrawableChange(2, value)}
-          />
-          <Input
-            title={locales.props.texture}
-            min={settingsById[2].texture.min}
-            max={settingsById[2].texture.max}
-            defaultValue={propsById[2].texture}
-            clientValue={storedPropsById[2].texture}
-            blacklisted={settingsById[2].blacklist.textures}
-            onChange={value => handlePropTextureChange(2, value)}
-          />
-        </FlexWrapper>
-      </Item>}
-      {propConfig.watches && <Item title={locales.props.watches}>
-        <FlexWrapper>
-          <Input
-            title={locales.props.drawable}
-            min={settingsById[6].drawable.min}
-            max={settingsById[6].drawable.max}
-            defaultValue={propsById[6].drawable}
-            clientValue={storedPropsById[6].drawable}
-            blacklisted={settingsById[6].blacklist.drawables}
-            onChange={value => handlePropDrawableChange(6, value)}
-          />
-          <Input
-            title={locales.props.texture}
-            min={settingsById[6].texture.min}
-            max={settingsById[6].texture.max}
-            defaultValue={propsById[6].texture}
-            clientValue={storedPropsById[6].texture}
-            blacklisted={settingsById[6].blacklist.textures}
-            onChange={value => handlePropTextureChange(6, value)}
-          />
-        </FlexWrapper>
-      </Item>}
-      {propConfig.bracelets && <Item title={locales.props.bracelets}>
-        <FlexWrapper>
-          <Input
-            title={locales.props.drawable}
-            min={settingsById[7].drawable.min}
-            max={settingsById[7].drawable.max}
-            defaultValue={propsById[7].drawable}
-            clientValue={storedPropsById[7].drawable}
-            blacklisted={settingsById[7].blacklist.drawables}
-            onChange={value => handlePropDrawableChange(7, value)}
-          />
-          <Input
-            title={locales.props.texture}
-            min={settingsById[7].texture.min}
-            max={settingsById[7].texture.max}
-            defaultValue={propsById[7].texture}
-            clientValue={storedPropsById[7].texture}
-            blacklisted={settingsById[7].blacklist.textures}
-            onChange={value => handlePropTextureChange(7, value)}
-          />
-        </FlexWrapper>
-      </Item>}
+      <div className="grid grid-cols-2 gap-4 pb-4">
+        {propConfig.hats && renderProp(0, locales.props.hats)}
+        {propConfig.glasses && renderProp(1, locales.props.glasses)}
+        {propConfig.ear && renderProp(2, locales.props.ear)}
+        {propConfig.watches && renderProp(6, locales.props.watches)}
+        {propConfig.bracelets && renderProp(7, locales.props.bracelets)}
+      </div>
     </Section>
   );
 };
