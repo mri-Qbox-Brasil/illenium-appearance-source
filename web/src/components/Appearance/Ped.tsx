@@ -11,9 +11,10 @@ interface PedProps {
   storedData: string;
   data: string;
   handleModelChange: (value: string) => void;
+  forcedOpen?: boolean;
 }
 
-const Ped = ({ settings, storedData, data, handleModelChange }: PedProps) => {
+const Ped = ({ settings, storedData, data, handleModelChange, forcedOpen }: PedProps) => {
   const { locales } = useNuiState();
 
   if (!locales) {
@@ -21,7 +22,7 @@ const Ped = ({ settings, storedData, data, handleModelChange }: PedProps) => {
   }
 
   return (
-    <Section title={locales.ped.title}>
+    <Section title={locales.ped.title} forcedOpen={forcedOpen}>
       <Item>
         <SelectInput
           title={locales.ped.model}

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useCallback, useContext, ReactNode } from 'react';
 import Locales from '../shared/interfaces/locales';
+import { isEnvBrowser } from '../utils/misc';
 
 interface Display {
   appearance: boolean;
@@ -20,8 +21,8 @@ interface NuiContextData {
 
 const INITIAL_STATE: NuiState = {
   display: {
-    appearance: !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE == 'true',
-    asynchronous: !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE == 'true',
+    appearance: !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE === 'true',
+    asynchronous: !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE === 'true',
   },
 };
 

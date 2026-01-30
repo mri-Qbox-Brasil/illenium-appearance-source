@@ -12,9 +12,10 @@ interface HeadBlendProps {
   storedData: PedHeadBlend;
   data: PedHeadBlend;
   handleHeadBlendChange: (key: keyof PedHeadBlend, value: number) => void;
+  forcedOpen?: boolean;
 }
 
-const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange }: HeadBlendProps) => {
+const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOpen }: HeadBlendProps) => {
   const { locales } = useNuiState();
 
   if (!locales) {
@@ -22,7 +23,7 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange }: HeadBl
   }
 
   return (
-    <Section title={locales.headBlend.title}>
+    <Section title={locales.headBlend.title} forcedOpen={forcedOpen}>
       <Item title={locales.headBlend.shape.title}>
         <Input
           title={locales.headBlend.shape.firstOption}
@@ -79,12 +80,12 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange }: HeadBl
       </Item>
       <Item title={locales.headBlend.race.title}>
         <Input
-            title={locales.headBlend.race.shape}
-            min={settings.shapeThird.min}
-            max={settings.shapeThird.max}
-            defaultValue={data.shapeThird}
-            clientValue={storedData.shapeThird}
-            onChange={value => handleHeadBlendChange('shapeThird', value)}
+          title={locales.headBlend.race.shape}
+          min={settings.shapeThird.min}
+          max={settings.shapeThird.max}
+          defaultValue={data.shapeThird}
+          clientValue={storedData.shapeThird}
+          onChange={value => handleHeadBlendChange('shapeThird', value)}
         />
         <Input
           title={locales.headBlend.race.skin}

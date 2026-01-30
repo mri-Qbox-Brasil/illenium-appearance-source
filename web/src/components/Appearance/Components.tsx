@@ -16,6 +16,7 @@ interface ComponentsProps {
   componentConfig: ComponentConfig;
   hasTracker: boolean;
   isPedFreemodeModel: boolean | undefined;
+  forcedOpen?: boolean;
 }
 
 interface DataById<T> {
@@ -30,7 +31,8 @@ const Components = ({
   handleComponentTextureChange,
   componentConfig,
   hasTracker,
-  isPedFreemodeModel
+  isPedFreemodeModel,
+  forcedOpen
 }: ComponentsProps) => {
   const { locales } = useNuiState();
 
@@ -51,7 +53,7 @@ const Components = ({
   }
 
   return (
-    <Section title={locales.components.title}>
+    <Section title={locales.components.title} forcedOpen={forcedOpen}>
       {!isPedFreemodeModel && <Item title={locales.components.head}>
         <FlexWrapper>
           <Input

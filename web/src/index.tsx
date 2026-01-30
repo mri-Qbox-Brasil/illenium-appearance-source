@@ -1,4 +1,5 @@
 import React from 'react';
+import '@mriqbox/ui-kit/dist/style.css';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import Nui, { EventListener } from './Nui';

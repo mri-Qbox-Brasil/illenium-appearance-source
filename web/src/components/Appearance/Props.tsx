@@ -14,13 +14,14 @@ interface PropsProps {
   handlePropDrawableChange: (prop_id: number, drawable: number) => void;
   handlePropTextureChange: (prop_id: number, texture: number) => void;
   propConfig: PropConfig;
+  forcedOpen?: boolean;
 }
 
 interface DataById<T> {
   [key: number]: T;
 }
 
-const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePropTextureChange, propConfig }: PropsProps) => {
+const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePropTextureChange, propConfig, forcedOpen }: PropsProps) => {
   const { locales } = useNuiState();
 
   const settingsById = settings.reduce((object, { prop_id, drawable, texture, blacklist }) => {
@@ -40,7 +41,7 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
   }
 
   return (
-    <Section title={locales.props.title}>
+    <Section title={locales.props.title} forcedOpen={forcedOpen}>
       {propConfig.hats && <Item title={locales.props.hats}>
         <FlexWrapper>
           <Input

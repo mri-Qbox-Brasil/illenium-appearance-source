@@ -30,43 +30,46 @@ const Container = styled.div`
 
 const Header = styled.div<HeaderProps>`
   width: 100%;
-  height: 40px;
+  height: 48px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  padding: 0 10px;
-  border-radius: ${props => props.theme.borderRadius || '4px'};
+  padding: 0 16px;
+  border-radius: ${props => props.theme.borderRadius || '12px'};
+  margin-bottom: ${({ active }) => (active ? '10px' : '0')};
 
   z-index: 2;
 
-  background: rgba(${props => props.theme.secondaryBackground || '0, 0, 0'}, ${({ active }) => (active ? '0.9' : '0.7')});
+  background: ${({ active, theme }) =>
+    active
+      ? `rgb(${theme.accent || '139, 92, 246'})`
+      : `rgba(${theme.fontColor || '255, 255, 255'}, 0.05)`
+  };
 
-  box-shadow: 0px 0px 5px rgb(0, 0, 0, 0.2);
+  color: ${({ active, theme }) => active ? 'white' : `rgba(${theme.fontColor || '255, 255, 255'}, 0.8)`};
+  
+  border: 1px solid ${({ active, theme }) => active ? 'transparent' : `rgba(${theme.fontColor || '255, 255, 255'}, 0.1)`};
+  box-shadow: ${({ active }) => active ? '0 4px 15px rgba(139, 92, 246, 0.3)' : 'none'};
 
-  transition: background 0.1s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    background: rgba(${props => props.theme.primaryBackground || '0, 0, 0'}, 0.9);
-    transform: scale(1.05);
-    transition: background 0.2s;
+    background: ${({ active, theme }) =>
+    active
+      ? `rgb(${theme.accent || '139, 92, 246'})`
+      : `rgba(${theme.fontColor || '255, 255, 255'}, 0.1)`
+  };
     cursor: pointer;
   }
 
-  ${({ active }) =>
-    active &&
-    css`
-      background: rgba(${props => props.theme.primaryBackground || '0, 0, 0'}, 1);
-      &:hover {
-        ${props => props.theme.smoothBackgroundTransition ? 'transition: background 0.2s;' : ''}
-        background: rgba(${props => props.theme.primaryBackground || '0, 0, 0'}, 1);
-      }
-    `}
-
   span {
     font-size: 15px;
-    font-weight: ${props => props.theme.sectionFontWeight || 'normal'};
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 `;
 
@@ -76,7 +79,7 @@ const Items = styled.div`
   overflow: hidden;
 `;
 
-const Section: React.FC<SectionProps> = ({ children, title, deps = [] }) => {
+const Section: React.FC<SectionProps & { forcedOpen?: boolean }> = ({ children, title, deps = [], forcedOpen = false }) => {
   const [active, setActive] = useState(false);
 
   const [height, setHeight] = useState(0);
@@ -98,6 +101,14 @@ const Section: React.FC<SectionProps> = ({ children, title, deps = [] }) => {
       setHeight(ref.current.offsetHeight);
     }
   }, [ref, setHeight, deps]);
+
+  if (forcedOpen) {
+    return (
+      <Container>
+        <Items>{children}</Items>
+      </Container>
+    );
+  }
 
   return (
     <Container>

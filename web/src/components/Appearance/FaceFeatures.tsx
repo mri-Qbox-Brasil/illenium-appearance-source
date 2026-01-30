@@ -11,9 +11,10 @@ interface FaceFeaturesProps {
   storedData: PedFaceFeatures;
   data: PedFaceFeatures;
   handleFaceFeatureChange: (key: keyof PedFaceFeatures, value: number) => void;
+  forcedOpen?: boolean;
 }
 
-const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange }: FaceFeaturesProps) => {
+const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, forcedOpen }: FaceFeaturesProps) => {
   const { locales } = useNuiState();
 
   if (!locales) {
@@ -21,7 +22,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange }: F
   }
 
   return (
-    <Section title={locales.faceFeatures.title}>
+    <Section title={locales.faceFeatures.title} forcedOpen={forcedOpen}>
       <Item title={locales.faceFeatures.nose.title}>
         <RangeInput
           title={locales.faceFeatures.nose.width}

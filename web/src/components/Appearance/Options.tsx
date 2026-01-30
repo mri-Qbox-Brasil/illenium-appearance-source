@@ -1,41 +1,23 @@
-import { useState, useRef, useEffect, ReactElement, useCallback, ReactNode } from 'react';
+import { useState, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import {
-  FaVideo,
-  FaStreetView,
   FaUndo,
   FaRedo,
-  FaSmile,
-  FaMale,
-  FaShoePrints,
-  FaSave,
-  FaTimes,
+  FaTimes, // Exit
+  FaSyncAlt, // Turn Around
+  FaSearch, // Zoom
+  FaLightbulb, // Light
+  FaMouse, // Rotate icon (visual)
+  FaCamera,
   FaTshirt,
   FaHatCowboy,
   FaSocks,
+  FaMale,
+  FaSmile,
+  FaShoePrints
 } from 'react-icons/fa';
-import { GiClothes } from 'react-icons/gi';
 
 import { CameraState, ClothesState, RotateState } from './interfaces';
-
-interface ToggleButtonProps {
-  active: boolean;
-}
-
-interface ToggleOptionProps {
-  active: boolean;
-  onClick: () => void;
-  children?: ReactNode;
-}
-
-interface ExtendendContainerProps {
-  width: number;
-}
-
-interface ExtendendOptionProps {
-  icon: ReactElement;
-  children?: ReactNode;
-}
 
 interface OptionsProps {
   camera: CameraState;
@@ -49,185 +31,100 @@ interface OptionsProps {
   handleSave: () => void;
   handleExit: () => void;
   enableExit: boolean;
+  layout: 'accordion' | 'tabs';
 }
 
-const Container = styled.div`
+const OverlayContainer = styled.div`
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
   height: 100vh;
+  z-index: 100;
+`;
+
+// --- General Button Styles ---
+const RoundButton = styled.button<{ active?: boolean; variant?: 'primary' | 'danger' | 'default' }>`
+  pointer-events: auto;
+  height: 40px;
+  width: 40px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+  border-radius: 50%;
+
+  color: rgba(255, 255, 255, 0.9);
+  
+  /* Variant Backgrounds */
+  ${({ variant, active }) => {
+    if (variant === 'danger') return 'background: rgba(239, 68, 68, 0.9);'; // Red
+    if (variant === 'primary' || active) return 'background: rgb(139, 92, 246);'; // Purple
+    return 'background: rgba(40, 40, 45, 0.8);'; // Default Dark
+  }}
+
+  /* Hover Effects */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: scale(1.1);
+    ${({ variant, active }) => {
+    if (variant === 'danger') return 'background: rgba(220, 38, 38, 1);';
+    if (variant === 'primary' || active) return 'background: rgb(124, 58, 237);';
+    return 'background: rgba(60, 60, 65, 0.9);';
+  }}
+  }
+
+  svg {
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+  }
+`;
+
+// --- Top Left Strip ---
+const TopLeftStrip = styled.div<{ layout: 'accordion' | 'tabs' }>`
+  position: absolute;
+  top: 30px;
+  left: ${({ layout }) => layout === 'tabs' ? '950px' : 'max(25vw + 40px, 460px)'};
+  
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  
+  transition: left 0.3s ease;
+`;
+
+// --- Bottom Left Strip ---
+const BottomLeftStrip = styled.div<{ layout: 'accordion' | 'tabs' }>`
+  position: absolute;
+  bottom: 30px;
+  left: ${({ layout }) => layout === 'tabs' ? '950px' : 'max(25vw + 40px, 460px)'};
 
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-
-  padding: 40px 0;
-
-  > * {
-    & + * {
-      margin-top: 10px;
-    }
-  }
+  gap: 8px;
+  
+  transition: left 0.3s ease;
 `;
 
-const ToggleButton = styled.button<ToggleButtonProps>`
-  height: 40px;
-  width: 40px;
-
+// --- Sub Menu (Flyout) ---
+const Flyout = styled.div<{ show: boolean }>`
+  position: absolute;
+  left: 100%; /* Append to the right side */
+  top: 0;
+  margin-left: 10px; /* Gap between main button and flyout */
+  
   display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: 0;
-  border-radius: ${props => props.theme.borderRadius || '4px'};
-
-  box-shadow: 0px 0px 5px rgb(0, 0, 0, 0.2);
-
-  transition: all 0.2s;
-
-  color: rgba(${props => props.theme.fontColor || '255, 255, 255'}, 0.9);
-  background: rgba(${props => props.theme.secondaryBackground || '0, 0, 0'}, 0.7);
-
-  &:hover {
-    color: rgba(${props => props.theme.fontColor || '255, 255, 255'}, 1);
-    background: rgba(${props => props.theme.primaryBackground || '0, 0, 0'}, 0.9);
-    ${props => props.theme.smoothBackgroundTransition ? 'transition: background 0.2s;' : ''}
-    ${props => props.theme.scaleOnHover ? 'transform: scale(1.05);' : ''}
-  }
-
-  &:active {
-    transform: scale(0.8);
-  }
-
-  ${({ active }) =>
-    active &&
-    css`
-      color: rgba(${props => props.theme.fontColorSelected || '0, 0, 0'}, 0.7);
-      background: rgba(${props => props.theme.primaryBackgroundSelected || '255, 255, 255'}, 1);
-
-      &:hover {
-        color: rgba(${props => props.theme.fontColorSelected || '0, 0, 0'}, 0.9);
-        background: rgba(${props => props.theme.primaryBackgroundSelected || '255, 255, 255'}, 1);
-        ${props => props.theme.smoothBackgroundTransition ? 'transition: background 0.2s;' : ''}
-      }
-    `}
+  gap: 8px;
+  
+  opacity: ${({ show }) => (show ? 1 : 0)};
+  transform: translateX(${({ show }) => (show ? '0' : '-10px')});
+  pointer-events: ${({ show }) => (show ? 'auto' : 'none')};
+  
+  transition: all 0.2s ease;
 `;
-
-const Option = styled.button`
-  height: 40px;
-  width: 40px;
-
-  position: relative;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-
-  border: 0;
-  border-radius: ${props => props.theme.borderRadius || '4px'};
-
-  box-shadow: 0px 0px 5px rgb(0, 0, 0, 0.2);
-
-  transition: all 0.1s;
-
-  color: rgba(${props => props.theme.fontColor || '255, 255, 255'}, 0.9);
-  background: rgba(${props => props.theme.secondaryBackground || '0, 0, 0'}, 0.7);
-
-  &:hover {
-    color: rgba(${props => props.theme.fontColorHover || '255, 255, 255'}, 1);
-    background: rgba(${props => props.theme.primaryBackground || '0, 0, 0'}, 0.9);
-    ${props => props.theme.smoothBackgroundTransition ? 'transition: background 0.2s;' : ''}
-    ${props => props.theme.scaleOnHover ? 'transform: scale(1.05);' : ''}
-  }
-
-  &:active {
-    transform: scale(0.8);
-    color: rgba(${props => props.theme.secondaryBackground || '0, 0, 0'}, 0.7);
-    background: rgba(${props => props.theme.primaryBackgroundSelected || '255, 255, 255'}, 1);
-  }
-`;
-
-const ExtendedContainer = styled.div<ExtendendContainerProps>`
-  height: 40px;
-
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-
-  width: ${({ width }) => `${width + 40}px`};
-
-  transition: width 0.3s;
-
-  overflow: hidden;
-`;
-
-const ExtendedIcon = styled.div`
-  height: 40px;
-  width: 40px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-
-  border: 0;
-  border-radius: ${props => props.theme.borderRadius || '4px'};
-
-  color: rgba(${props => props.theme.fontColor || '255, 255, 255'}, 0.9);
-  background: rgba(${props => props.theme.secondaryBackground || '0, 0, 0'}, 0.7);
-`;
-
-const ExtendedChildren = styled.div`
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-
-  padding-left: 10px;
-
-  > * {
-    & + * {
-      margin-left: 10px;
-    }
-  }
-`;
-
-const ToggleOption: React.FC<ToggleOptionProps> = ({ children, active, onClick }) => {
-  return (
-    <ToggleButton type="button" active={active} onClick={onClick}>
-      {children}
-    </ToggleButton>
-  );
-};
-
-const ExtendedOption: React.FC<ExtendendOptionProps> = ({ children, icon }) => {
-  const [extended, setExtended] = useState(true);
-
-  const [width, setWidth] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (ref.current) {
-      setWidth(ref.current.offsetWidth);
-      setExtended(false);
-    }
-  }, [ref, setWidth]);
-
-  const handleMouseEnter = useCallback(() => {
-    setExtended(true);
-  }, [setExtended]);
-
-  const handleMouseLeave = useCallback(() => {
-    setExtended(false);
-  }, [setExtended]);
-
-  return (
-    <ExtendedContainer width={extended ? width : 0} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <ExtendedIcon>{icon}</ExtendedIcon>
-      <ExtendedChildren ref={ref}>{children}</ExtendedChildren>
-    </ExtendedContainer>
-  );
-};
 
 const Options: React.FC<OptionsProps> = ({
   camera,
@@ -238,53 +135,84 @@ const Options: React.FC<OptionsProps> = ({
   handleTurnAround,
   handleRotateLeft,
   handleRotateRight,
-  handleExit,
   handleSave,
-  enableExit
+  handleExit,
+  enableExit,
+  layout
 }) => {
+  const [showClothes, setShowClothes] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
+
   return (
-    <Container>
-      <ExtendedOption icon={<FaVideo size={20} />}>
-        <ToggleOption active={camera.head} onClick={() => handleSetCamera('head')}>
-          <FaSmile size={20} />
-        </ToggleOption>
-        <ToggleOption active={camera.body} onClick={() => handleSetCamera('body')}>
-          <FaMale size={20} />
-        </ToggleOption>
-        <ToggleOption active={camera.bottom} onClick={() => handleSetCamera('bottom')}>
-          <FaShoePrints size={20} />
-        </ToggleOption>
-      </ExtendedOption>
-      <ExtendedOption icon={<GiClothes size={20} />}>
-        <ToggleOption active={clothes.head} onClick={() => handleSetClothes('head')}>
-          <FaHatCowboy size={20} />
-        </ToggleOption>
-        <ToggleOption active={clothes.body} onClick={() => handleSetClothes('body')}>
-          <FaTshirt size={20} />
-        </ToggleOption>
-        <ToggleOption active={clothes.bottom} onClick={() => handleSetClothes('bottom')}>
-          <FaSocks size={20} />
-        </ToggleOption>
-      </ExtendedOption>
-      <Option onClick={handleTurnAround}>
-        <FaStreetView size={20} />
-      </Option>
-      <ToggleOption active={rotate.left} onClick={handleRotateLeft}>
-        <FaRedo size={20} />
-      </ToggleOption>
-      <ToggleOption active={rotate.right} onClick={handleRotateRight}>
-        <FaUndo size={20} />
-      </ToggleOption>
-      <Option onClick={handleSave}>
-        <FaSave size={20} />
-      </Option>
-      {enableExit &&
-      <Option onClick={handleExit}>
-        <FaTimes size={20} />
-      </Option>}
-      
-    </Container>
+    <OverlayContainer>
+      {/* --- Top Left: Mode Toggles --- */}
+      <TopLeftStrip layout={layout}>
+        <div
+          style={{ position: 'relative' }}
+          onMouseEnter={() => setShowCamera(true)}
+          onMouseLeave={() => setShowCamera(false)}
+        >
+          <RoundButton active={showCamera} variant="primary">
+            <FaCamera size={18} />
+          </RoundButton>
+          <Flyout show={showCamera}>
+            <RoundButton onClick={() => handleSetCamera('head')} active={camera.head} title="Head">
+              <FaSmile size={16} />
+            </RoundButton>
+            <RoundButton onClick={() => handleSetCamera('body')} active={camera.body} title="Body">
+              <FaMale size={16} />
+            </RoundButton>
+            <RoundButton onClick={() => handleSetCamera('bottom')} active={camera.bottom} title="Feet">
+              <FaShoePrints size={16} />
+            </RoundButton>
+          </Flyout>
+        </div>
+
+        <div
+          style={{ position: 'relative' }}
+          onMouseEnter={() => setShowClothes(true)}
+          onMouseLeave={() => setShowClothes(false)}
+        >
+          <RoundButton active={showClothes} variant="default">
+            <FaTshirt size={18} />
+          </RoundButton>
+          <Flyout show={showClothes}>
+            <RoundButton onClick={() => handleSetClothes('head')} active={clothes.head} title="Hat">
+              <FaHatCowboy size={16} />
+            </RoundButton>
+            <RoundButton onClick={() => handleSetClothes('body')} active={clothes.body} title="Shirt">
+              <FaTshirt size={16} />
+            </RoundButton>
+            <RoundButton onClick={() => handleSetClothes('bottom')} active={clothes.bottom} title="Pants">
+              <FaSocks size={16} />
+            </RoundButton>
+          </Flyout>
+        </div>
+      </TopLeftStrip>
+
+      {/* --- Bottom Left: Actions --- */}
+      <BottomLeftStrip layout={layout}>
+        <RoundButton onClick={handleRotateLeft}>
+          <FaUndo size={14} />
+        </RoundButton>
+        <RoundButton onClick={handleRotateRight}>
+          <FaRedo size={14} />
+        </RoundButton>
+        <RoundButton onClick={handleTurnAround} variant="danger" style={{ background: '#ff5f5f' }}>
+          <FaSyncAlt size={14} />
+        </RoundButton>
+        {enableExit && (
+          <RoundButton onClick={handleExit} style={{ background: '#4b5563' }}>
+            <FaTimes size={16} />
+          </RoundButton>
+        )}
+      </BottomLeftStrip>
+
+      {/* --- Bottom Right: Tools Removed --- */}
+    </OverlayContainer>
   );
 };
 
 export default Options;
+
+

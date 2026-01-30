@@ -15,9 +15,10 @@ interface TattoosProps {
   handlePreviewTattoo: (value: Tattoo, opacity: number) => void;
   handleDeleteTattoo: (value: Tattoo) => void;
   handleClearTattoos: () => void;
+  forcedOpen?: boolean;
 }
 
-const Tattoos = ({ settings, data, storedData, handleApplyTattoo, handlePreviewTattoo, handleDeleteTattoo, handleClearTattoos }: TattoosProps) => {
+const Tattoos = ({ settings, data, storedData, handleApplyTattoo, handlePreviewTattoo, handleDeleteTattoo, handleClearTattoos, forcedOpen }: TattoosProps) => {
   const { locales } = useNuiState();
 
   const { items } = settings;
@@ -28,10 +29,10 @@ const Tattoos = ({ settings, data, storedData, handleApplyTattoo, handlePreviewT
   }
 
   return (
-    <Section title={locales.tattoos.title}>
+    <Section title={locales.tattoos.title} forcedOpen={forcedOpen}>
       {keys.map(key => (
-        key !== 'ZONE_HAIR' 
-        && 
+        key !== 'ZONE_HAIR'
+        &&
         <Item key={key} title={locales.tattoos.items[key]}>
           <FlexWrapper>
             <SelectTattoo
@@ -46,9 +47,9 @@ const Tattoos = ({ settings, data, storedData, handleApplyTattoo, handlePreviewT
         </Item>
       ))}
       <Item>
-      <FlexWrapper>
+        <FlexWrapper>
           <Button onClick={() => handleClearTattoos()} width="100%">{locales.tattoos.deleteAll}</Button>
-      </FlexWrapper>
+        </FlexWrapper>
       </Item>
     </Section>
   );

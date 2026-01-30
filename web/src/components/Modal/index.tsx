@@ -1,4 +1,5 @@
-import { Wrapper, Buttons } from './styles';
+import { MriButton, MriModal } from '@mriqbox/ui-kit';
+import styled from 'styled-components';
 
 interface ModalProps {
   title: string;
@@ -9,20 +10,33 @@ interface ModalProps {
   handleDecline: () => Promise<void> | void;
 }
 
+const StyledModal = styled(MriModal)`
+  display: flex !important;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  min-width: 400px;
+  background-color: #1f2937;
+  color: white;
+  border-radius: 12px;
+`;
+
 const Modal = ({ title, description, accept, decline, handleAccept, handleDecline }: ModalProps) => {
   return (
-    <Wrapper>
-      <p>{title}</p>
-      <span>{description}</span>
-      <Buttons>
-        <button type="button" onClick={handleAccept}>
-          {accept}
-        </button>
-        <button type="button" onClick={handleDecline}>
+    <StyledModal>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: '700', margin: 0 }}>{title}</h2>
+        <p style={{ color: 'rgba(255, 255, 255, 0.6)', margin: 0 }}>{description}</p>
+      </div>
+      <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end', marginTop: '16px' }}>
+        <MriButton variant="secondary" onClick={handleDecline}>
           {decline}
-        </button>
-      </Buttons>
-    </Wrapper>
+        </MriButton>
+        <MriButton onClick={handleAccept}>
+          {accept}
+        </MriButton>
+      </div>
+    </StyledModal>
   );
 };
 

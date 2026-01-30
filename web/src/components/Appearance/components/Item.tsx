@@ -12,14 +12,19 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 
-  padding: 10px;
-  border-radius: 2px;
+  padding: 16px;
+  border-radius: 8px;
 
-  background: rgba(${props => props.theme.secondayBackground || '0, 0, 0'}, 0.3);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 
   span {
-    color: rgba(${props => props.theme.fontColor || '255, 255, 255'}, 1);
-    font-size: 14px;
+    color: rgba(${props => props.theme.fontColor || '255, 255, 255'}, 0.7);
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 `;
 
