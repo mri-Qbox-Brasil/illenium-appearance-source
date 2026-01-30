@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
-export default createGlobalStyle<{theme: any}>`
+export default createGlobalStyle<{ theme: any }>`
   * {
     margin: 0;
     padding: 0;
@@ -9,8 +9,8 @@ export default createGlobalStyle<{theme: any}>`
     font-family: '${props => props.theme.fontFamily}', sans-serif;
   }
   
-  body {
-    background: transparent;
+  html, body {
+    background: transparent !important;
     -webkit-font-smoothing: antialiased;
     overflow: hidden;
     /* background: url('https://cdn.discordapp.com/attachments/694641187901931601/786575235734437938/unknown.png'); */

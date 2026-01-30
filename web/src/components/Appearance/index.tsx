@@ -41,7 +41,7 @@ import Tattoos from './Tattoos';
 import { MriSidebar, MriButton } from '@mriqbox/ui-kit';
 import styled from 'styled-components';
 
-import { Wrapper, Container, ConfirmButton, HeaderContainer, TitleData, SwitchContainer, SwitchButton, TabbedContainer, ContentPanel, NavItem } from './styles';
+import { Wrapper, Container, ConfirmButton, HeaderContainer, TitleData, SwitchContainer, SwitchButton, TabbedContainer, ContentPanel, NavItem, SidebarNav } from './styles';
 
 const StyledSidebar = styled(MriSidebar)`
   width: 280px;
@@ -95,7 +95,7 @@ const StyledConfirmButton = styled(MriButton)`
 
 
 import { ThemeContext } from 'styled-components';
-import { FaCheck, FaThLarge, FaList, FaMale, FaUsers, FaSmile, FaPalette, FaTshirt, FaHatCowboy, FaSkull } from 'react-icons/fa';
+import { FaCheck, FaThLarge, FaList, FaMale, FaUsers, FaSmile, FaPalette, FaTshirt, FaHatCowboy, FaSkull, FaAngleLeft, FaAngleRight, FaCog } from 'react-icons/fa';
 import { ThemeToggleContext } from '../../App';
 import React, { useContext } from 'react';
 
@@ -146,6 +146,7 @@ const Appearance = () => {
   const { display, setDisplay, locales, setLocales } = useNuiState();
   const { theme, setTheme, layout, setLayout } = useContext(ThemeToggleContext);
   const [activeTab, setActiveTab] = useState('ped');
+  const [collapsed, setCollapsed] = useState(false);
 
   const wrapperTransition = useTransitionAnimation(display.appearance, null, {
     from: {
@@ -792,87 +793,85 @@ const Appearance = () => {
           item && (
             <animated.div key={key} style={style}>
               <Wrapper>
-                {layout === 'accordion' ? (
-                  <Container>
-                    <HeaderContainer>
-                      <TitleData>
-                        <h1>mri_Qappearance</h1>
-                        <p>Customize o seu identidade</p>
-                      </TitleData>
-                      <SwitchContainer>
-                        <SwitchButton active={(layout as string) === 'accordion'} onClick={() => setLayout('accordion')}>
-                          <FaThLarge size={14} />
-                        </SwitchButton>
-                        <SwitchButton active={(layout as string) === 'tabs'} onClick={() => setLayout('tabs')}>
-                          <FaList size={14} />
-                        </SwitchButton>
-                      </SwitchContainer>
-                    </HeaderContainer>
-
-                    {/* Render all sections for Accordion */}
-                    {sections.map(section => (
-                      <React.Fragment key={section.id}>
-                        {renderSectionContent(section.id)}
-                      </React.Fragment>
-                    ))}
-
-                    <ConfirmButton onClick={handleSaveModal}>
-                      <FaCheck /> Confirm Character
-                    </ConfirmButton>
-                  </Container>
-                ) : (
-                  <TabbedContainer>
-                    <StyledSidebar
-                      items={sections.map(s => ({
-                        label: s.title,
-                        route: s.id,
-                        icon: s.icon,
-                      }))}
-                      activeRoute={activeTab}
-                      onNavigate={setActiveTab}
-                      footer={
-                        <FooterContainer>
-                          <StyledConfirmButton onClick={handleSaveModal}>
-                            <FaCheck style={{ marginRight: '8px' }} /> Confirm
-                          </StyledConfirmButton>
-                        </FooterContainer>
-                      }
-                    >
-                      <HeaderContainer style={{ order: -1, flexShrink: 0, marginBottom: '20px' }}>
+                <TabbedContainer style={{ width: '75vw', minWidth: '700px' }}>
+                  <SidebarNav style={{ width: collapsed ? '64px' : '280px', transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+                    {!collapsed && (
+                      <HeaderContainer style={{ flexShrink: 0, marginBottom: '20px' }}>
                         <TitleData>
                           <h1>mri_Qappearance</h1>
                           <p>Customização</p>
                         </TitleData>
-                        <SwitchContainer>
-                          <SwitchButton active={(layout as string) === 'accordion'} onClick={() => setLayout('accordion')}>
+                        <SwitchContainer title="Expandir/Recolher Menu">
+                          <SwitchButton active={!collapsed} onClick={() => setCollapsed(false)}>
                             <FaThLarge size={14} />
                           </SwitchButton>
-                          <SwitchButton active={(layout as string) === 'tabs'} onClick={() => setLayout('tabs')}>
+                          <SwitchButton active={collapsed} onClick={() => setCollapsed(true)}>
                             <FaList size={14} />
                           </SwitchButton>
                         </SwitchContainer>
                       </HeaderContainer>
-                    </StyledSidebar>
-                    <ContentPanel>
-                      {renderSectionContent(activeTab)}
-                    </ContentPanel>
-                  </TabbedContainer>
-                )}
+                    )}
 
-                <Options
-                  camera={camera}
-                  rotate={rotate}
-                  clothes={clothes}
-                  handleSetClothes={handleSetClothes}
-                  handleSetCamera={handleSetCamera}
-                  handleTurnAround={handleTurnAround}
-                  handleRotateLeft={handleRotateLeft}
-                  handleRotateRight={handleRotateRight}
-                  handleSave={handleSaveModal}
-                  handleExit={handleExitModal}
-                  enableExit={config.enableExit}
-                  layout={layout}
-                />
+                    {collapsed && (
+                      <div style={{ paddingBottom: '20px', marginBottom: '10px', display: 'flex', justifyContent: 'center' }}>
+                        <SwitchButton active onClick={() => setCollapsed(false)}>
+                          <FaThLarge size={14} />
+                        </SwitchButton>
+                      </div>
+                    )}
+
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', overflowY: 'auto', overflowX: 'hidden' }}>
+                      {sections.map(s => (
+                        <NavItem
+                          key={s.id}
+                          active={activeTab === s.id}
+                          onClick={() => setActiveTab(s.id)}
+                          title={collapsed ? s.title : ''}
+                        >
+                          <s.icon />
+                          {!collapsed && <span>{s.title}</span>}
+                        </NavItem>
+                      ))}
+                    </div>
+
+                    <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                      <NavItem onClick={() => console.log('Settings clicked')} style={{ background: 'rgba(255,255,255,0.03)', justifyContent: collapsed ? 'center' : 'flex-start' }}>
+                        <FaCog />
+                        {!collapsed && <span>Configuração</span>}
+                      </NavItem>
+
+                      {!collapsed && (
+                        <ConfirmButton onClick={handleSaveModal} style={{ marginBottom: 0 }}>
+                          <FaCheck /> Confirmar
+                        </ConfirmButton>
+                      )}
+                      {collapsed && (
+                        <NavItem onClick={handleSaveModal} active title="Confirmar" style={{ background: `rgb(${theme === 'dark' ? '10, 213, 140' : '139, 92, 246'})`, justifyContent: 'center' }}>
+                          <FaCheck />
+                        </NavItem>
+                      )}
+                    </div>
+                  </SidebarNav>
+                  <ContentPanel>
+                    {renderSectionContent(activeTab)}
+                  </ContentPanel>
+
+                  <Options
+                    camera={camera}
+                    rotate={rotate}
+                    clothes={clothes}
+                    handleSetClothes={handleSetClothes}
+                    handleSetCamera={handleSetCamera}
+                    handleTurnAround={handleTurnAround}
+                    handleRotateLeft={handleRotateLeft}
+                    handleRotateRight={handleRotateRight}
+                    handleSave={handleSaveModal}
+                    handleExit={handleExitModal}
+                    enableExit={config.enableExit}
+                    layout={layout}
+                    collapsed={collapsed}
+                  />
+                </TabbedContainer>
               </Wrapper>
             </animated.div>
           ),

@@ -32,15 +32,16 @@ interface OptionsProps {
   handleExit: () => void;
   enableExit: boolean;
   layout: 'accordion' | 'tabs';
+  collapsed?: boolean;
 }
 
 const OverlayContainer = styled.div`
   pointer-events: none;
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   z-index: 100;
 `;
 
@@ -60,9 +61,9 @@ const RoundButton = styled.button<{ active?: boolean; variant?: 'primary' | 'dan
   color: rgba(255, 255, 255, 0.9);
   
   /* Variant Backgrounds */
-  ${({ variant, active }) => {
+  ${({ variant, active, theme }) => {
     if (variant === 'danger') return 'background: rgba(239, 68, 68, 0.9);'; // Red
-    if (variant === 'primary' || active) return 'background: rgb(139, 92, 246);'; // Purple
+    if (variant === 'primary' || active) return `background: rgb(${theme.accent || '10, 213, 140'});`; // Emerald
     return 'background: rgba(40, 40, 45, 0.8);'; // Default Dark
   }}
 
@@ -71,9 +72,9 @@ const RoundButton = styled.button<{ active?: boolean; variant?: 'primary' | 'dan
   
   &:hover {
     transform: scale(1.1);
-    ${({ variant, active }) => {
+    ${({ variant, active, theme }) => {
     if (variant === 'danger') return 'background: rgba(220, 38, 38, 1);';
-    if (variant === 'primary' || active) return 'background: rgb(124, 58, 237);';
+    if (variant === 'primary' || active) return `background: rgb(${theme.accent || '10, 213, 140'}); filter: brightness(1.1);`;
     return 'background: rgba(60, 60, 65, 0.9);';
   }}
   }
@@ -84,10 +85,12 @@ const RoundButton = styled.button<{ active?: boolean; variant?: 'primary' | 'dan
 `;
 
 // --- Top Left Strip ---
-const TopLeftStrip = styled.div<{ layout: 'accordion' | 'tabs' }>`
+const TopLeftStrip = styled.div<{ layout: 'accordion' | 'tabs'; collapsed?: boolean }>`
   position: absolute;
-  top: 30px;
-  left: ${({ layout }) => layout === 'tabs' ? '950px' : 'max(25vw + 40px, 460px)'};
+  top: 40px;
+  left: 100%;
+  margin-left: 8px;
+  max-width: fit-content;
   
   display: flex;
   flex-direction: column;
@@ -97,10 +100,12 @@ const TopLeftStrip = styled.div<{ layout: 'accordion' | 'tabs' }>`
 `;
 
 // --- Bottom Left Strip ---
-const BottomLeftStrip = styled.div<{ layout: 'accordion' | 'tabs' }>`
+const BottomLeftStrip = styled.div<{ layout: 'accordion' | 'tabs'; collapsed?: boolean }>`
   position: absolute;
-  bottom: 30px;
-  left: ${({ layout }) => layout === 'tabs' ? '950px' : 'max(25vw + 40px, 460px)'};
+  bottom: 40px;
+  left: 100%;
+  margin-left: 8px;
+  max-width: fit-content;
 
   display: flex;
   flex-direction: column;
@@ -135,10 +140,10 @@ const Options: React.FC<OptionsProps> = ({
   handleTurnAround,
   handleRotateLeft,
   handleRotateRight,
-  handleSave,
   handleExit,
   enableExit,
-  layout
+  layout,
+  collapsed
 }) => {
   const [showClothes, setShowClothes] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
@@ -146,7 +151,7 @@ const Options: React.FC<OptionsProps> = ({
   return (
     <OverlayContainer>
       {/* --- Top Left: Mode Toggles --- */}
-      <TopLeftStrip layout={layout}>
+      <TopLeftStrip layout={layout} collapsed={collapsed}>
         <div
           style={{ position: 'relative' }}
           onMouseEnter={() => setShowCamera(true)}
@@ -191,7 +196,7 @@ const Options: React.FC<OptionsProps> = ({
       </TopLeftStrip>
 
       {/* --- Bottom Left: Actions --- */}
-      <BottomLeftStrip layout={layout}>
+      <BottomLeftStrip layout={layout} collapsed={collapsed}>
         <RoundButton onClick={handleRotateLeft}>
           <FaUndo size={14} />
         </RoundButton>

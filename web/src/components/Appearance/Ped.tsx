@@ -2,7 +2,8 @@ import { useNuiState } from '../../hooks/nuiState';
 
 import Section from './components/Section';
 import Item from './components/Item';
-import SelectInput from './components/SelectInput';
+import { FaMale, FaFemale, FaUser } from 'react-icons/fa';
+import ImageSelector from './components/ImageSelector';
 
 import { PedSettings } from './interfaces';
 
@@ -21,15 +22,28 @@ const Ped = ({ settings, storedData, data, handleModelChange, forcedOpen }: PedP
     return null;
   }
 
+  const modelItems = settings.model.items.map(model => {
+    let icon = <FaUser />;
+    if (model.includes('_m_') || model.toLowerCase().includes('male')) {
+      icon = <FaMale />;
+    } else if (model.includes('_f_') || model.toLowerCase().includes('female')) {
+      icon = <FaFemale />;
+    }
+
+    return {
+      id: model,
+      icon: icon
+    };
+  });
+
   return (
     <Section title={locales.ped.title} forcedOpen={forcedOpen}>
-      <Item>
-        <SelectInput
-          title={locales.ped.model}
-          items={settings.model.items}
-          defaultValue={data}
-          clientValue={storedData}
-          onChange={value => handleModelChange(value)}
+      <Item title={locales.ped.model}>
+        <ImageSelector
+          items={modelItems}
+          selectedValue={data}
+          onSelect={handleModelChange}
+          onAdd={() => console.log('Add custom model')}
         />
       </Item>
     </Section>
