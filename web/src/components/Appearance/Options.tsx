@@ -62,7 +62,7 @@ const RoundButton = styled.button<{ active?: boolean; variant?: 'primary' | 'dan
   /* Variant Backgrounds */
   ${({ variant, active }) => {
     if (variant === 'danger') return 'background: rgba(239, 68, 68, 0.9);'; // Red
-    if (variant === 'primary' || active) return 'background: rgb(139, 92, 246);'; // Purple
+    if (variant === 'primary' || active) return 'background: rgb(16, 185, 129);'; // Emerald
     return 'background: rgba(40, 40, 45, 0.8);'; // Default Dark
   }}
 
@@ -73,7 +73,7 @@ const RoundButton = styled.button<{ active?: boolean; variant?: 'primary' | 'dan
     transform: scale(1.1);
     ${({ variant, active }) => {
     if (variant === 'danger') return 'background: rgba(220, 38, 38, 1);';
-    if (variant === 'primary' || active) return 'background: rgb(124, 58, 237);';
+    if (variant === 'primary' || active) return 'background: rgb(5, 150, 105);';
     return 'background: rgba(60, 60, 65, 0.9);';
   }}
   }
@@ -87,7 +87,7 @@ const RoundButton = styled.button<{ active?: boolean; variant?: 'primary' | 'dan
 const TopLeftStrip = styled.div<{ layout: 'accordion' | 'tabs' }>`
   position: absolute;
   top: 30px;
-  left: ${({ layout }) => layout === 'tabs' ? '950px' : 'max(25vw + 40px, 460px)'};
+  left: min(75vw + 40px, 1060px);
   
   display: flex;
   flex-direction: column;
@@ -100,7 +100,7 @@ const TopLeftStrip = styled.div<{ layout: 'accordion' | 'tabs' }>`
 const BottomLeftStrip = styled.div<{ layout: 'accordion' | 'tabs' }>`
   position: absolute;
   bottom: 30px;
-  left: ${({ layout }) => layout === 'tabs' ? '950px' : 'max(25vw + 40px, 460px)'};
+  left: min(75vw + 40px, 1060px);
 
   display: flex;
   flex-direction: column;

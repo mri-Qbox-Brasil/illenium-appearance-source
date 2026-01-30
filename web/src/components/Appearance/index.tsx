@@ -43,47 +43,51 @@ import styled from 'styled-components';
 
 import { Wrapper, Container, ConfirmButton, HeaderContainer, TitleData, SwitchContainer, SwitchButton, TabbedContainer, ContentPanel, NavItem } from './styles';
 
-const StyledSidebar = styled(MriSidebar)`
-  width: 280px;
+const StyledSidebar = styled(MriSidebar) <{ collapsed?: boolean }>`
+  width: ${({ collapsed }) => (collapsed ? '80px' : '280px')};
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
   height: 100%;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
 
   /* Target direct button children of the scrollable list (Sidebar Items) */
   & > div:first-child > button {
-    height: 40px !important;
-    min-height: 40px !important;
-    max-height: 40px !important;
-    flex-grow: 0 !important;
-    padding: 0 12px !important;
-    font-size: 13px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    padding: ${({ collapsed }) => (collapsed ? '0' : '0 16px')} !important;
+    display: flex !important;
+    justify-content: ${({ collapsed }) => (collapsed ? 'center' : 'flex-start')} !important;
+    align-items: center !important;
+    transition: all 0.2s ease;
     margin-bottom: 4px !important;
-    width: 100%;
   }
   
   /* Icon adjustments for sidebar items */
   & > div:first-child > button svg {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
+    margin-right: ${({ collapsed }) => (collapsed ? '0' : '12px')} !important;
+  }
+
+  /* Label hiding for collapsed state */
+  & > div:first-child > button span {
+    display: ${({ collapsed }) => (collapsed ? 'none' : 'block')};
   }
 
   /* Footer area styles */
   & > div:last-child {
-     padding-top: 10px;
+     padding: ${({ collapsed }) => (collapsed ? '12px 8px' : '16px')};
      border-top: 1px solid rgba(255,255,255,0.05);
-  }
-
-  /* Footer Confirm Button */
-  & > div:last-child button {
-     min-height: 44px;
-     font-size: 14px !important;
-     font-weight: 600;
   }
 `;
 
-const FooterContainer = styled.div`
-  padding: 16px;
+const FooterContainer = styled.div<{ collapsed?: boolean }>`
+  padding: ${({ collapsed }) => (collapsed ? '12px 8px' : '16px')};
   margin-top: auto;
+  display: flex;
+  justify-content: center;
 `;
 
 const StyledConfirmButton = styled(MriButton)`
@@ -95,7 +99,7 @@ const StyledConfirmButton = styled(MriButton)`
 
 
 import { ThemeContext } from 'styled-components';
-import { FaCheck, FaThLarge, FaList, FaMale, FaUsers, FaSmile, FaPalette, FaTshirt, FaHatCowboy, FaSkull } from 'react-icons/fa';
+import { FaCheck, FaAngleLeft, FaAngleRight, FaMale, FaUsers, FaSmile, FaPalette, FaTshirt, FaHatCowboy, FaSkull } from 'react-icons/fa';
 import { ThemeToggleContext } from '../../App';
 import React, { useContext } from 'react';
 
@@ -792,72 +796,45 @@ const Appearance = () => {
           item && (
             <animated.div key={key} style={style}>
               <Wrapper>
-                {layout === 'accordion' ? (
-                  <Container>
-                    <HeaderContainer>
-                      <TitleData>
-                        <h1>mri_Qappearance</h1>
-                        <p>Customize o seu identidade</p>
-                      </TitleData>
-                      <SwitchContainer>
-                        <SwitchButton active={(layout as string) === 'accordion'} onClick={() => setLayout('accordion')}>
-                          <FaThLarge size={14} />
-                        </SwitchButton>
-                        <SwitchButton active={(layout as string) === 'tabs'} onClick={() => setLayout('tabs')}>
-                          <FaList size={14} />
-                        </SwitchButton>
-                      </SwitchContainer>
-                    </HeaderContainer>
-
-                    {/* Render all sections for Accordion */}
-                    {sections.map(section => (
-                      <React.Fragment key={section.id}>
-                        {renderSectionContent(section.id)}
-                      </React.Fragment>
-                    ))}
-
-                    <ConfirmButton onClick={handleSaveModal}>
-                      <FaCheck /> Confirm Character
-                    </ConfirmButton>
-                  </Container>
-                ) : (
-                  <TabbedContainer>
-                    <StyledSidebar
-                      items={sections.map(s => ({
-                        label: s.title,
-                        route: s.id,
-                        icon: s.icon,
-                      }))}
-                      activeRoute={activeTab}
-                      onNavigate={setActiveTab}
-                      footer={
-                        <FooterContainer>
-                          <StyledConfirmButton onClick={handleSaveModal}>
-                            <FaCheck style={{ marginRight: '8px' }} /> Confirm
-                          </StyledConfirmButton>
-                        </FooterContainer>
-                      }
-                    >
-                      <HeaderContainer style={{ order: -1, flexShrink: 0, marginBottom: '20px' }}>
+                <TabbedContainer>
+                  <StyledSidebar
+                    collapsed={layout === 'accordion'}
+                    items={sections.map(s => ({
+                      label: s.title,
+                      route: s.id,
+                      icon: s.icon,
+                    }))}
+                    activeRoute={activeTab}
+                    onNavigate={setActiveTab}
+                    footer={
+                      <FooterContainer collapsed={layout === 'accordion'}>
+                        <StyledConfirmButton onClick={handleSaveModal}>
+                          <FaCheck style={{ marginRight: layout === 'accordion' ? '0' : '8px' }} />
+                          {layout !== 'accordion' && 'Confirmar'}
+                        </StyledConfirmButton>
+                      </FooterContainer>
+                    }
+                  >
+                    <HeaderContainer style={{ order: -1, flexShrink: 0, marginBottom: '20px', padding: layout === 'accordion' ? '0' : '0 16px' }}>
+                      {layout !== 'accordion' && (
                         <TitleData>
                           <h1>mri_Qappearance</h1>
                           <p>Customização</p>
                         </TitleData>
-                        <SwitchContainer>
-                          <SwitchButton active={(layout as string) === 'accordion'} onClick={() => setLayout('accordion')}>
-                            <FaThLarge size={14} />
-                          </SwitchButton>
-                          <SwitchButton active={(layout as string) === 'tabs'} onClick={() => setLayout('tabs')}>
-                            <FaList size={14} />
-                          </SwitchButton>
-                        </SwitchContainer>
-                      </HeaderContainer>
-                    </StyledSidebar>
-                    <ContentPanel>
+                      )}
+                      <SwitchContainer style={{ width: layout === 'accordion' ? '100%' : 'auto', justifyContent: 'center' }}>
+                        <SwitchButton onClick={() => setLayout(layout === 'tabs' ? 'accordion' : 'tabs')}>
+                          {layout === 'tabs' ? <FaAngleLeft size={16} /> : <FaAngleRight size={16} />}
+                        </SwitchButton>
+                      </SwitchContainer>
+                    </HeaderContainer>
+                  </StyledSidebar>
+                  <ContentPanel>
+                    <div style={{ height: '100%', overflowY: 'auto', paddingRight: '12px' }}>
                       {renderSectionContent(activeTab)}
-                    </ContentPanel>
-                  </TabbedContainer>
-                )}
+                    </div>
+                  </ContentPanel>
+                </TabbedContainer>
 
                 <Options
                   camera={camera}

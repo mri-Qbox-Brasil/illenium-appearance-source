@@ -7,21 +7,25 @@ import React, { createContext, useState, useCallback, useMemo } from 'react';
 // Dark Theme (Default)
 const darkTheme = {
   id: 'dark',
-  borderRadius: '12px',
+  borderRadius: '16px',
   fontColor: '255, 255, 255',
   fontColorHover: '255, 255, 255',
   fontColorSelected: '255, 255, 255',
   fontFamily: 'Inter',
-  primaryBackground: '31, 41, 55', // gray-800
-  primaryBackgroundSelected: '139, 92, 246', // violet-500
-  secondaryBackground: '17, 24, 39', // gray-900
-  accent: '139, 92, 246', // violet-500
+  primaryBackground: '12, 12, 13', // Charcoal/Black
+  primaryBackgroundSelected: '10, 213, 140', // Vibrant Emerald
+  secondaryBackground: '19, 19, 21', // Dark Card Grey
+  accent: '10, 213, 140',
   scaleOnHover: true,
   sectionFontWeight: '600',
   smoothBackgroundTransition: true,
-  // Custom for header
-  headerBackground: 'rgba(255, 255, 255, 0.05)',
-  buttonBackground: 'rgba(255, 255, 255, 0.1)',
+  // Custom properties
+  cardBorder: 'rgba(255, 255, 255, 0.04)',
+  headerBackground: 'rgba(19, 19, 21, 0.9)',
+  // UI Kit Variables (HSL)
+  uiKitPrimary: '160 90% 44%', // Vibrant Emerald HSL
+  uiKitBackground: '240 4% 5%', // Almost black HSL
+  uiKitCard: '240 5% 8%',   // Lighter black HSL
 };
 
 // Light Theme
@@ -75,7 +79,7 @@ const App: React.FC = () => {
     }
   }, [themeMode]);
 
-  const [layout, setLayout] = useState<'accordion' | 'tabs'>('accordion');
+  const [layout, setLayout] = useState<'accordion' | 'tabs'>('tabs');
 
   const currentTheme = useMemo(() => {
     return themeMode === 'dark' ? darkTheme : lightTheme;
