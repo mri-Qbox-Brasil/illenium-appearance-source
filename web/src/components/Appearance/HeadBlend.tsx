@@ -2,13 +2,13 @@ import { useNuiState } from '../../hooks/nuiState';
 
 import Section from './components/Section';
 import Item from './components/Item';
-import Input from './components/Input';
 import RangeInput from './components/RangeInput';
 
-import { PedHeadBlend, HeadBlendSettings } from './interfaces';
+import { PedHeadBlend, AppearanceSettings } from './interfaces';
+import ImageSelector from './components/ImageSelector';
 
 interface HeadBlendProps {
-  settings: HeadBlendSettings;
+  settings: AppearanceSettings;
   storedData: PedHeadBlend;
   data: PedHeadBlend;
   handleHeadBlendChange: (key: keyof PedHeadBlend, value: number) => void;
@@ -22,87 +22,112 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
     return null;
   }
 
+  const isLocal = settings.imageLocal === 'pasta';
+  const host = isLocal ? '' : settings.imageUrl;
+  const categoryPath = settings.imageSources.heritage;
+  const finalBaseUrl = host
+    ? `${host.replace(/\/+$/, '')}/${categoryPath.replace(/^\/+|\/+$/g, '')}/`
+    : `${categoryPath.replace(/\/+$/, '')}/`;
+
+  const getItems = (min: number, max: number) => {
+    const items = [];
+    for (let i = min; i <= max; i++) {
+      items.push({
+        id: i.toString(),
+        image: `${finalBaseUrl}${i}.png`,
+      });
+    }
+    return items;
+  };
+
+  const shapeFirstItems = getItems(settings.headBlend.shapeFirst.min, settings.headBlend.shapeFirst.max);
+  const shapeSecondItems = getItems(settings.headBlend.shapeSecond.min, settings.headBlend.shapeSecond.max);
+  const shapeThirdItems = getItems(settings.headBlend.shapeThird.min, settings.headBlend.shapeThird.max);
+  const skinFirstItems = getItems(settings.headBlend.skinFirst.min, settings.headBlend.skinFirst.max);
+  const skinSecondItems = getItems(settings.headBlend.skinSecond.min, settings.headBlend.skinSecond.max);
+  const skinThirdItems = getItems(settings.headBlend.skinThird.min, settings.headBlend.skinThird.max);
+
   return (
     <Section title={locales.headBlend.title} forcedOpen={forcedOpen}>
       <Item title={locales.headBlend.shape.title}>
-        <Input
-          title={locales.headBlend.shape.firstOption}
-          min={settings.shapeFirst.min}
-          max={settings.shapeFirst.max}
-          defaultValue={data.shapeFirst}
-          clientValue={storedData.shapeFirst}
-          onChange={value => handleHeadBlendChange('shapeFirst', value)}
-        />
-        <Input
-          title={locales.headBlend.shape.secondOption}
-          min={settings.shapeSecond.min}
-          max={settings.shapeSecond.max}
-          defaultValue={data.shapeSecond}
-          clientValue={storedData.shapeSecond}
-          onChange={value => handleHeadBlendChange('shapeSecond', value)}
-        />
+        <div style={{ display: 'flex', gap: '20px' }}>
+          <ImageSelector
+            label={locales.headBlend.shape.firstOption}
+            items={shapeFirstItems}
+            selectedValue={data.shapeFirst.toString()}
+            onSelect={(id: string) => handleHeadBlendChange('shapeFirst', parseInt(id))}
+            onAdd={() => { }}
+          />
+          <ImageSelector
+            label={locales.headBlend.shape.secondOption}
+            items={shapeSecondItems}
+            selectedValue={data.shapeSecond.toString()}
+            onSelect={(id: string) => handleHeadBlendChange('shapeSecond', parseInt(id))}
+            onAdd={() => { }}
+          />
+        </div>
         <RangeInput
           title={locales.headBlend.shape.mix}
-          min={settings.shapeMix.min}
-          max={settings.shapeMix.max}
-          factor={settings.shapeMix.factor}
+          min={settings.headBlend.shapeMix.min}
+          max={settings.headBlend.shapeMix.max}
+          factor={settings.headBlend.shapeMix.factor}
           defaultValue={data.shapeMix}
           clientValue={storedData.shapeMix}
-          onChange={value => handleHeadBlendChange('shapeMix', value)}
+          onChange={(value: number) => handleHeadBlendChange('shapeMix', value)}
         />
       </Item>
       <Item title={locales.headBlend.skin.title}>
-        <Input
-          title={locales.headBlend.skin.firstOption}
-          min={settings.skinFirst.min}
-          max={settings.skinFirst.max}
-          defaultValue={data.skinFirst}
-          clientValue={storedData.skinFirst}
-          onChange={value => handleHeadBlendChange('skinFirst', value)}
-        />
-        <Input
-          title={locales.headBlend.skin.secondOption}
-          min={settings.skinSecond.min}
-          max={settings.skinSecond.max}
-          defaultValue={data.skinSecond}
-          clientValue={storedData.skinSecond}
-          onChange={value => handleHeadBlendChange('skinSecond', value)}
-        />
+        <div style={{ display: 'flex', gap: '20px' }}>
+          <ImageSelector
+            label={locales.headBlend.skin.firstOption}
+            items={skinFirstItems}
+            selectedValue={data.skinFirst.toString()}
+            onSelect={(id: string) => handleHeadBlendChange('skinFirst', parseInt(id))}
+            onAdd={() => { }}
+          />
+          <ImageSelector
+            label={locales.headBlend.skin.secondOption}
+            items={skinSecondItems}
+            selectedValue={data.skinSecond.toString()}
+            onSelect={(id: string) => handleHeadBlendChange('skinSecond', parseInt(id))}
+            onAdd={() => { }}
+          />
+        </div>
         <RangeInput
           title={locales.headBlend.skin.mix}
-          min={settings.skinMix.min}
-          max={settings.skinMix.max}
-          factor={settings.skinMix.factor}
+          min={settings.headBlend.skinMix.min}
+          max={settings.headBlend.skinMix.max}
+          factor={settings.headBlend.skinMix.factor}
           defaultValue={data.skinMix}
           clientValue={storedData.skinMix}
-          onChange={value => handleHeadBlendChange('skinMix', value)}
+          onChange={(value: number) => handleHeadBlendChange('skinMix', value)}
         />
       </Item>
       <Item title={locales.headBlend.race.title}>
-        <Input
-          title={locales.headBlend.race.shape}
-          min={settings.shapeThird.min}
-          max={settings.shapeThird.max}
-          defaultValue={data.shapeThird}
-          clientValue={storedData.shapeThird}
-          onChange={value => handleHeadBlendChange('shapeThird', value)}
-        />
-        <Input
-          title={locales.headBlend.race.skin}
-          min={settings.skinThird.min}
-          max={settings.skinThird.max}
-          defaultValue={data.skinThird}
-          clientValue={storedData.skinThird}
-          onChange={value => handleHeadBlendChange('skinThird', value)}
-        />
+        <div style={{ display: 'flex', gap: '20px' }}>
+          <ImageSelector
+            label={locales.headBlend.race.shape}
+            items={shapeThirdItems}
+            selectedValue={data.shapeThird.toString()}
+            onSelect={(id: string) => handleHeadBlendChange('shapeThird', parseInt(id))}
+            onAdd={() => { }}
+          />
+          <ImageSelector
+            label={locales.headBlend.race.skin}
+            items={skinThirdItems}
+            selectedValue={data.skinThird.toString()}
+            onSelect={(id: string) => handleHeadBlendChange('skinThird', parseInt(id))}
+            onAdd={() => { }}
+          />
+        </div>
         <RangeInput
           title={locales.headBlend.race.mix}
-          min={settings.thirdMix.min}
-          max={settings.thirdMix.max}
-          factor={settings.thirdMix.factor}
+          min={settings.headBlend.thirdMix.min}
+          max={settings.headBlend.thirdMix.max}
+          factor={settings.headBlend.thirdMix.factor}
           defaultValue={data.thirdMix}
           clientValue={storedData.thirdMix}
-          onChange={value => handleHeadBlendChange('thirdMix', value)}
+          onChange={(value: number) => handleHeadBlendChange('thirdMix', value)}
         />
       </Item>
     </Section>

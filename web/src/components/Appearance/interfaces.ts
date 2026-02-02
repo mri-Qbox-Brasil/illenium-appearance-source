@@ -223,6 +223,9 @@ export interface AppearanceSettings {
   hair: HairSettings;
   eyeColor: EyeColorSettings;
   tattoos: TattoosSettings;
+  imageLocal: string;
+  imageUrl: string;
+  fade: Tattoo[];
 }
 
 export interface CustomizationConfig {

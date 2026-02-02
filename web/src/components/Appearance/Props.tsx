@@ -5,10 +5,11 @@ import Item from './components/Item';
 import { FlexWrapper } from './styles';
 import Input from './components/Input';
 
-import { PropSettings, PedProp, PropConfig } from './interfaces';
+import { PropSettings, PedProp, PropConfig, AppearanceSettings } from './interfaces';
+import ImageSelector from './components/ImageSelector';
 
 interface PropsProps {
-  settings: PropSettings[];
+  settings: AppearanceSettings;
   data: PedProp[];
   storedData: PedProp[];
   handlePropDrawableChange: (prop_id: number, drawable: number) => void;
@@ -24,7 +25,34 @@ interface DataById<T> {
 const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePropTextureChange, propConfig, forcedOpen }: PropsProps) => {
   const { locales } = useNuiState();
 
-  const settingsById = settings.reduce((object, { prop_id, drawable, texture, blacklist }) => {
+  const imageLocal = settings.imageLocal;
+  const imageUrl = settings.imageUrl;
+  const isLocal = imageLocal === 'pasta';
+  const baseUrl = isLocal ? 'peds/' : imageUrl;
+
+  const getItems = (min: number, max: number, propId: number) => {
+    const items = [];
+    for (let i = min; i <= max; i++) {
+      items.push({
+        id: i.toString(),
+        image: `${baseUrl}props/${propId}/${i}.png`,
+      });
+    }
+    return items;
+  };
+
+  const getTextureItems = (min: number, max: number, propId: number, drawableId: number) => {
+    const items = [];
+    for (let i = min; i <= max; i++) {
+      items.push({
+        id: i.toString(),
+        image: `${baseUrl}props/${propId}/${drawableId}/${i}.png`,
+      });
+    }
+    return items;
+  };
+
+  const settingsById = settings.props.reduce((object, { prop_id, drawable, texture, blacklist }) => {
     return { ...object, [prop_id]: { drawable, texture, blacklist } };
   }, {} as DataById<Omit<PropSettings, 'prop_id'>>);
 
@@ -44,111 +72,91 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
     <Section title={locales.props.title} forcedOpen={forcedOpen}>
       {propConfig.hats && <Item title={locales.props.hats}>
         <FlexWrapper>
-          <Input
-            title={locales.props.drawable}
-            min={settingsById[0].drawable.min}
-            max={settingsById[0].drawable.max}
-            defaultValue={propsById[0].drawable}
-            clientValue={storedPropsById[0].drawable}
-            blacklisted={settingsById[0].blacklist.drawables}
-            onChange={value => handlePropDrawableChange(0, value)}
+          <ImageSelector
+            label={locales.props.drawable}
+            items={getItems(settingsById[0].drawable.min, settingsById[0].drawable.max, 0)}
+            selectedValue={propsById[0].drawable.toString()}
+            onSelect={id => handlePropDrawableChange(0, parseInt(id))}
+            onAdd={() => { }}
           />
-          <Input
-            title={locales.props.texture}
-            min={settingsById[0].texture.min}
-            max={settingsById[0].texture.max}
-            defaultValue={propsById[0].texture}
-            clientValue={storedPropsById[0].texture}
-            blacklisted={settingsById[0].blacklist.textures}
-            onChange={value => handlePropTextureChange(0, value)}
+          <ImageSelector
+            label={locales.props.texture}
+            items={getTextureItems(settingsById[0].texture.min, settingsById[0].texture.max, 0, propsById[0].drawable)}
+            selectedValue={propsById[0].texture.toString()}
+            onSelect={id => handlePropTextureChange(0, parseInt(id))}
+            onAdd={() => { }}
           />
         </FlexWrapper>
       </Item>}
       {propConfig.glasses && <Item title={locales.props.glasses}>
         <FlexWrapper>
-          <Input
-            title={locales.props.drawable}
-            min={settingsById[1].drawable.min}
-            max={settingsById[1].drawable.max}
-            defaultValue={propsById[1].drawable}
-            clientValue={storedPropsById[1].drawable}
-            blacklisted={settingsById[1].blacklist.drawables}
-            onChange={value => handlePropDrawableChange(1, value)}
+          <ImageSelector
+            label={locales.props.drawable}
+            items={getItems(settingsById[1].drawable.min, settingsById[1].drawable.max, 1)}
+            selectedValue={propsById[1].drawable.toString()}
+            onSelect={id => handlePropDrawableChange(1, parseInt(id))}
+            onAdd={() => { }}
           />
-          <Input
-            title={locales.props.texture}
-            min={settingsById[1].texture.min}
-            max={settingsById[1].texture.max}
-            defaultValue={propsById[1].texture}
-            clientValue={storedPropsById[1].texture}
-            blacklisted={settingsById[1].blacklist.textures}
-            onChange={value => handlePropTextureChange(1, value)}
+          <ImageSelector
+            label={locales.props.texture}
+            items={getTextureItems(settingsById[1].texture.min, settingsById[1].texture.max, 1, propsById[1].drawable)}
+            selectedValue={propsById[1].texture.toString()}
+            onSelect={id => handlePropTextureChange(1, parseInt(id))}
+            onAdd={() => { }}
           />
         </FlexWrapper>
       </Item>}
       {propConfig.ear && <Item title={locales.props.ear}>
         <FlexWrapper>
-          <Input
-            title={locales.props.drawable}
-            min={settingsById[2].drawable.min}
-            max={settingsById[2].drawable.max}
-            defaultValue={propsById[2].drawable}
-            clientValue={storedPropsById[2].drawable}
-            blacklisted={settingsById[2].blacklist.drawables}
-            onChange={value => handlePropDrawableChange(2, value)}
+          <ImageSelector
+            label={locales.props.drawable}
+            items={getItems(settingsById[2].drawable.min, settingsById[2].drawable.max, 2)}
+            selectedValue={propsById[2].drawable.toString()}
+            onSelect={id => handlePropDrawableChange(2, parseInt(id))}
+            onAdd={() => { }}
           />
-          <Input
-            title={locales.props.texture}
-            min={settingsById[2].texture.min}
-            max={settingsById[2].texture.max}
-            defaultValue={propsById[2].texture}
-            clientValue={storedPropsById[2].texture}
-            blacklisted={settingsById[2].blacklist.textures}
-            onChange={value => handlePropTextureChange(2, value)}
+          <ImageSelector
+            label={locales.props.texture}
+            items={getTextureItems(settingsById[2].texture.min, settingsById[2].texture.max, 2, propsById[2].drawable)}
+            selectedValue={propsById[2].texture.toString()}
+            onSelect={id => handlePropTextureChange(2, parseInt(id))}
+            onAdd={() => { }}
           />
         </FlexWrapper>
       </Item>}
       {propConfig.watches && <Item title={locales.props.watches}>
         <FlexWrapper>
-          <Input
-            title={locales.props.drawable}
-            min={settingsById[6].drawable.min}
-            max={settingsById[6].drawable.max}
-            defaultValue={propsById[6].drawable}
-            clientValue={storedPropsById[6].drawable}
-            blacklisted={settingsById[6].blacklist.drawables}
-            onChange={value => handlePropDrawableChange(6, value)}
+          <ImageSelector
+            label={locales.props.drawable}
+            items={getItems(settingsById[6].drawable.min, settingsById[6].drawable.max, 6)}
+            selectedValue={propsById[6].drawable.toString()}
+            onSelect={id => handlePropDrawableChange(6, parseInt(id))}
+            onAdd={() => { }}
           />
-          <Input
-            title={locales.props.texture}
-            min={settingsById[6].texture.min}
-            max={settingsById[6].texture.max}
-            defaultValue={propsById[6].texture}
-            clientValue={storedPropsById[6].texture}
-            blacklisted={settingsById[6].blacklist.textures}
-            onChange={value => handlePropTextureChange(6, value)}
+          <ImageSelector
+            label={locales.props.texture}
+            items={getTextureItems(settingsById[6].texture.min, settingsById[6].texture.max, 6, propsById[6].drawable)}
+            selectedValue={propsById[6].texture.toString()}
+            onSelect={id => handlePropTextureChange(6, parseInt(id))}
+            onAdd={() => { }}
           />
         </FlexWrapper>
       </Item>}
       {propConfig.bracelets && <Item title={locales.props.bracelets}>
         <FlexWrapper>
-          <Input
-            title={locales.props.drawable}
-            min={settingsById[7].drawable.min}
-            max={settingsById[7].drawable.max}
-            defaultValue={propsById[7].drawable}
-            clientValue={storedPropsById[7].drawable}
-            blacklisted={settingsById[7].blacklist.drawables}
-            onChange={value => handlePropDrawableChange(7, value)}
+          <ImageSelector
+            label={locales.props.drawable}
+            items={getItems(settingsById[7].drawable.min, settingsById[7].drawable.max, 7)}
+            selectedValue={propsById[7].drawable.toString()}
+            onSelect={id => handlePropDrawableChange(7, parseInt(id))}
+            onAdd={() => { }}
           />
-          <Input
-            title={locales.props.texture}
-            min={settingsById[7].texture.min}
-            max={settingsById[7].texture.max}
-            defaultValue={propsById[7].texture}
-            clientValue={storedPropsById[7].texture}
-            blacklisted={settingsById[7].blacklist.textures}
-            onChange={value => handlePropTextureChange(7, value)}
+          <ImageSelector
+            label={locales.props.texture}
+            items={getTextureItems(settingsById[7].texture.min, settingsById[7].texture.max, 7, propsById[7].drawable)}
+            selectedValue={propsById[7].texture.toString()}
+            onSelect={id => handlePropTextureChange(7, parseInt(id))}
+            onAdd={() => { }}
           />
         </FlexWrapper>
       </Item>}

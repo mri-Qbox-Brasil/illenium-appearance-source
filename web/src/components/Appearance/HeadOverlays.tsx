@@ -7,23 +7,19 @@ import ColorInput from './components/ColorInput';
 import RangeInput from './components/RangeInput';
 
 import {
-  HairSettings,
-  HeadOverlaysSettings,
-  EyeColorSettings,
+  AppearanceSettings,
   PedHair,
   PedHeadOverlays,
   PedHeadOverlayValue,
   Tattoo
 } from './interfaces';
 import { useCallback } from 'react';
+import ImageSelector from './components/ImageSelector';
+
+import { FlexWrapper } from './styles';
 
 interface HeadOverlaysProps {
-  settings: {
-    hair: HairSettings;
-    headOverlays: HeadOverlaysSettings;
-    eyeColor: EyeColorSettings;
-    fade: Tattoo[];
-  };
+  settings: AppearanceSettings;
   storedData: {
     hair: PedHair;
     headOverlays: PedHeadOverlays;
@@ -63,6 +59,24 @@ const HeadOverlays = ({
     return null;
   }
 
+  const isLocal = settings.imageLocal === 'pasta';
+  const host = isLocal ? '' : settings.imageUrl;
+  const categoryPath = settings.imageSources.appearance;
+  const finalBaseUrl = host
+    ? `${host.replace(/\/+$/, '')}/${categoryPath.replace(/^\/+|\/+$/g, '')}/`
+    : `${categoryPath.replace(/\/+$/, '')}/`;
+
+  const getItems = (min: number, max: number, category: string) => {
+    const items = [];
+    for (let i = min; i <= max; i++) {
+      items.push({
+        id: i.toString(),
+        image: `${finalBaseUrl}${category}/${i}.png`,
+      });
+    }
+    return items;
+  };
+
   const fadeValue = useCallback(() => {
     const indexFade = settings?.fade?.findIndex(tattoo => tattoo.name === data.fade?.name)
 
@@ -78,34 +92,33 @@ const HeadOverlays = ({
   return (
     <Section title={locales.headOverlays.title} deps={[settings]} forcedOpen={forcedOpen}>
       <Item title={locales.headOverlays.hair.title}>
-        <Input
-          title={locales.headOverlays.hair.style}
-          min={settings.hair.style.min}
-          max={settings.hair.style.max}
-          blacklisted={settings.hair.blacklist.drawables}
-          defaultValue={data.hair.style}
-          clientValue={storedData.hair.style}
-          onChange={value => handleHairChange('style', value)}
-        />
-        <Input
-          title={locales.headOverlays.hair.texture}
-          min={settings.hair.texture.min}
-          max={settings.hair.texture.max}
-          blacklisted={settings.hair.blacklist.textures}
-          defaultValue={data.hair.texture}
-          clientValue={storedData.hair.texture}
-          onChange={value => handleHairChange('texture', value)}
-        />
+        <FlexWrapper>
+          <ImageSelector
+            label={locales.headOverlays.hair.style}
+            items={getItems(settings.hair.style.min, settings.hair.style.max, 'hair')}
+            selectedValue={data.hair.style.toString()}
+            onSelect={id => handleHairChange('style', parseInt(id))}
+            onAdd={() => { }}
+          />
+          <ImageSelector
+            label={locales.headOverlays.hair.texture}
+            items={getItems(settings.hair.texture.min, settings.hair.texture.max, 'hair_texture')}
+            selectedValue={data.hair.texture.toString()}
+            onSelect={id => handleHairChange('texture', parseInt(id))}
+            onAdd={() => { }}
+          />
+        </FlexWrapper>
         {isPedFreemodeModel && (
           <>
-            {!automaticFade && <Input
-              title={locales.headOverlays.hair.fade}
-              min={0}
-              max={settings?.fade?.length - 1 ?? 0}
-              defaultValue={fadeValue}
-              clientValue={storedFadeValue}
-              onChange={value => handleChangeFade(value)}
-            />}
+            {!automaticFade && (
+              <ImageSelector
+                label={locales.headOverlays.hair.fade}
+                items={getItems(0, settings.fade.length - 1, 'hair_fade')}
+                selectedValue={fadeValue.toString()}
+                onSelect={id => handleChangeFade(parseInt(id))}
+                onAdd={() => { }}
+              />
+            )}
             <ColorInput
               title={locales.headOverlays.hair.color}
               colors={settings.hair.color.items}
@@ -133,13 +146,12 @@ const HeadOverlays = ({
               clientValue={storedData.headOverlays.eyebrows.opacity}
               onChange={value => handleHeadOverlayChange('eyebrows', 'opacity', value)}
             />
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.headOverlays.eyebrows.style.min}
-              max={settings.headOverlays.eyebrows.style.max}
-              defaultValue={data.headOverlays.eyebrows.style}
-              clientValue={storedData.headOverlays.eyebrows.style}
-              onChange={value => handleHeadOverlayChange('eyebrows', 'style', value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.headOverlays.eyebrows.style.min, settings.headOverlays.eyebrows.style.max, 'eyebrows')}
+              selectedValue={data.headOverlays.eyebrows.style.toString()}
+              onSelect={id => handleHeadOverlayChange('eyebrows', 'style', parseInt(id))}
+              onAdd={() => { }}
             />
             <ColorInput
               title={locales.headOverlays.color}
@@ -150,13 +162,12 @@ const HeadOverlays = ({
             />
           </Item>
           <Item title={locales.headOverlays.eyeColor}>
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.eyeColor.min}
-              max={settings.eyeColor.max}
-              defaultValue={data.eyeColor}
-              clientValue={storedData.eyeColor}
-              onChange={value => handleEyeColorChange(value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.eyeColor.min, settings.eyeColor.max, 'eyes')}
+              selectedValue={data.eyeColor.toString()}
+              onSelect={id => handleEyeColorChange(parseInt(id))}
+              onAdd={() => { }}
             />
           </Item>
           <Item title={locales.headOverlays.makeUp}>
@@ -169,13 +180,12 @@ const HeadOverlays = ({
               clientValue={storedData.headOverlays.makeUp.opacity}
               onChange={value => handleHeadOverlayChange('makeUp', 'opacity', value)}
             />
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.headOverlays.makeUp.style.min}
-              max={settings.headOverlays.makeUp.style.max}
-              defaultValue={data.headOverlays.makeUp.style}
-              clientValue={storedData.headOverlays.makeUp.style}
-              onChange={value => handleHeadOverlayChange('makeUp', 'style', value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.headOverlays.makeUp.style.min, settings.headOverlays.makeUp.style.max, 'makeup')}
+              selectedValue={data.headOverlays.makeUp.style.toString()}
+              onSelect={id => handleHeadOverlayChange('makeUp', 'style', parseInt(id))}
+              onAdd={() => { }}
             />
             <ColorInput
               title={locales.headOverlays.color}
@@ -202,13 +212,12 @@ const HeadOverlays = ({
               clientValue={storedData.headOverlays.blush.opacity}
               onChange={value => handleHeadOverlayChange('blush', 'opacity', value)}
             />
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.headOverlays.blush.style.min}
-              max={settings.headOverlays.blush.style.max}
-              defaultValue={data.headOverlays.blush.style}
-              clientValue={storedData.headOverlays.blush.style}
-              onChange={value => handleHeadOverlayChange('blush', 'style', value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.headOverlays.blush.style.min, settings.headOverlays.blush.style.max, 'blush')}
+              selectedValue={data.headOverlays.blush.style.toString()}
+              onSelect={id => handleHeadOverlayChange('blush', 'style', parseInt(id))}
+              onAdd={() => { }}
             />
             <ColorInput
               title={locales.headOverlays.color}
@@ -228,13 +237,12 @@ const HeadOverlays = ({
               clientValue={storedData.headOverlays.lipstick.opacity}
               onChange={value => handleHeadOverlayChange('lipstick', 'opacity', value)}
             />
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.headOverlays.lipstick.style.min}
-              max={settings.headOverlays.lipstick.style.max}
-              defaultValue={data.headOverlays.lipstick.style}
-              clientValue={storedData.headOverlays.lipstick.style}
-              onChange={value => handleHeadOverlayChange('lipstick', 'style', value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.headOverlays.lipstick.style.min, settings.headOverlays.lipstick.style.max, 'lipstick')}
+              selectedValue={data.headOverlays.lipstick.style.toString()}
+              onSelect={id => handleHeadOverlayChange('lipstick', 'style', parseInt(id))}
+              onAdd={() => { }}
             />
             <ColorInput
               title={locales.headOverlays.color}
@@ -254,13 +262,12 @@ const HeadOverlays = ({
               clientValue={storedData.headOverlays.beard.opacity}
               onChange={value => handleHeadOverlayChange('beard', 'opacity', value)}
             />
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.headOverlays.beard.style.min}
-              max={settings.headOverlays.beard.style.max}
-              defaultValue={data.headOverlays.beard.style}
-              clientValue={storedData.headOverlays.beard.style}
-              onChange={value => handleHeadOverlayChange('beard', 'style', value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.headOverlays.beard.style.min, settings.headOverlays.beard.style.max, 'beard')}
+              selectedValue={data.headOverlays.beard.style.toString()}
+              onSelect={id => handleHeadOverlayChange('beard', 'style', parseInt(id))}
+              onAdd={() => { }}
             />
             <ColorInput
               title={locales.headOverlays.color}
@@ -280,13 +287,12 @@ const HeadOverlays = ({
               clientValue={storedData.headOverlays.blemishes.opacity}
               onChange={value => handleHeadOverlayChange('blemishes', 'opacity', value)}
             />
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.headOverlays.blemishes.style.min}
-              max={settings.headOverlays.blemishes.style.max}
-              defaultValue={data.headOverlays.blemishes.style}
-              clientValue={storedData.headOverlays.blemishes.style}
-              onChange={value => handleHeadOverlayChange('blemishes', 'style', value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.headOverlays.blemishes.style.min, settings.headOverlays.blemishes.style.max, 'blemishes')}
+              selectedValue={data.headOverlays.blemishes.style.toString()}
+              onSelect={id => handleHeadOverlayChange('blemishes', 'style', parseInt(id))}
+              onAdd={() => { }}
             />
           </Item>
           <Item title={locales.headOverlays.ageing}>
@@ -299,13 +305,12 @@ const HeadOverlays = ({
               clientValue={storedData.headOverlays.ageing.opacity}
               onChange={value => handleHeadOverlayChange('ageing', 'opacity', value)}
             />
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.headOverlays.ageing.style.min}
-              max={settings.headOverlays.ageing.style.max}
-              defaultValue={data.headOverlays.ageing.style}
-              clientValue={storedData.headOverlays.ageing.style}
-              onChange={value => handleHeadOverlayChange('ageing', 'style', value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.headOverlays.ageing.style.min, settings.headOverlays.ageing.style.max, 'ageing')}
+              selectedValue={data.headOverlays.ageing.style.toString()}
+              onSelect={id => handleHeadOverlayChange('ageing', 'style', parseInt(id))}
+              onAdd={() => { }}
             />
           </Item>
           <Item title={locales.headOverlays.complexion}>
@@ -318,13 +323,12 @@ const HeadOverlays = ({
               clientValue={storedData.headOverlays.complexion.opacity}
               onChange={value => handleHeadOverlayChange('complexion', 'opacity', value)}
             />
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.headOverlays.complexion.style.min}
-              max={settings.headOverlays.complexion.style.max}
-              defaultValue={data.headOverlays.complexion.style}
-              clientValue={storedData.headOverlays.complexion.style}
-              onChange={value => handleHeadOverlayChange('complexion', 'style', value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.headOverlays.complexion.style.min, settings.headOverlays.complexion.style.max, 'complexion')}
+              selectedValue={data.headOverlays.complexion.style.toString()}
+              onSelect={id => handleHeadOverlayChange('complexion', 'style', parseInt(id))}
+              onAdd={() => { }}
             />
           </Item>
           <Item title={locales.headOverlays.sunDamage}>
@@ -337,13 +341,12 @@ const HeadOverlays = ({
               clientValue={storedData.headOverlays.sunDamage.opacity}
               onChange={value => handleHeadOverlayChange('sunDamage', 'opacity', value)}
             />
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.headOverlays.sunDamage.style.min}
-              max={settings.headOverlays.sunDamage.style.max}
-              defaultValue={data.headOverlays.sunDamage.style}
-              clientValue={storedData.headOverlays.sunDamage.style}
-              onChange={value => handleHeadOverlayChange('sunDamage', 'style', value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.headOverlays.sunDamage.style.min, settings.headOverlays.sunDamage.style.max, 'sundamage')}
+              selectedValue={data.headOverlays.sunDamage.style.toString()}
+              onSelect={id => handleHeadOverlayChange('sunDamage', 'style', parseInt(id))}
+              onAdd={() => { }}
             />
           </Item>
           <Item title={locales.headOverlays.moleAndFreckles}>
@@ -356,13 +359,12 @@ const HeadOverlays = ({
               clientValue={storedData.headOverlays.moleAndFreckles.opacity}
               onChange={value => handleHeadOverlayChange('moleAndFreckles', 'opacity', value)}
             />
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.headOverlays.moleAndFreckles.style.min}
-              max={settings.headOverlays.moleAndFreckles.style.max}
-              defaultValue={data.headOverlays.moleAndFreckles.style}
-              clientValue={storedData.headOverlays.moleAndFreckles.style}
-              onChange={value => handleHeadOverlayChange('moleAndFreckles', 'style', value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.headOverlays.moleAndFreckles.style.min, settings.headOverlays.moleAndFreckles.style.max, 'moles')}
+              selectedValue={data.headOverlays.moleAndFreckles.style.toString()}
+              onSelect={id => handleHeadOverlayChange('moleAndFreckles', 'style', parseInt(id))}
+              onAdd={() => { }}
             />
           </Item>
           <Item title={locales.headOverlays.chestHair}>
@@ -375,13 +377,12 @@ const HeadOverlays = ({
               clientValue={storedData.headOverlays.chestHair.opacity}
               onChange={value => handleHeadOverlayChange('chestHair', 'opacity', value)}
             />
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.headOverlays.chestHair.style.min}
-              max={settings.headOverlays.chestHair.style.max}
-              defaultValue={data.headOverlays.chestHair.style}
-              clientValue={storedData.headOverlays.chestHair.style}
-              onChange={value => handleHeadOverlayChange('chestHair', 'style', value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.headOverlays.chestHair.style.min, settings.headOverlays.chestHair.style.max, 'chesthair')}
+              selectedValue={data.headOverlays.chestHair.style.toString()}
+              onSelect={id => handleHeadOverlayChange('chestHair', 'style', parseInt(id))}
+              onAdd={() => { }}
             />
             <ColorInput
               title={locales.headOverlays.color}
@@ -401,13 +402,12 @@ const HeadOverlays = ({
               clientValue={storedData.headOverlays.bodyBlemishes.opacity}
               onChange={value => handleHeadOverlayChange('bodyBlemishes', 'opacity', value)}
             />
-            <Input
-              title={locales.headOverlays.style}
-              min={settings.headOverlays.bodyBlemishes.style.min}
-              max={settings.headOverlays.bodyBlemishes.style.max}
-              defaultValue={data.headOverlays.bodyBlemishes.style}
-              clientValue={storedData.headOverlays.bodyBlemishes.style}
-              onChange={value => handleHeadOverlayChange('bodyBlemishes', 'style', value)}
+            <ImageSelector
+              label={locales.headOverlays.style}
+              items={getItems(settings.headOverlays.bodyBlemishes.style.min, settings.headOverlays.bodyBlemishes.style.max, 'bodyblemishes')}
+              selectedValue={data.headOverlays.bodyBlemishes.style.toString()}
+              onSelect={id => handleHeadOverlayChange('bodyBlemishes', 'style', parseInt(id))}
+              onAdd={() => { }}
             />
           </Item>
         </>

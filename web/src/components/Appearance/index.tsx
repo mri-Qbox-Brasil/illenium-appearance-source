@@ -5,6 +5,7 @@ import Nui from '../../Nui';
 import mock from '../../mock';
 import mockConfig from '../../../mock-data/configs.json';
 import mockLocales from '../../../mock-data/locales.json';
+import { isEnvBrowser } from '../../utils/misc';
 
 import {
   CustomizationConfig,
@@ -41,7 +42,7 @@ import Tattoos from './Tattoos';
 import { MriSidebar, MriButton } from '@mriqbox/ui-kit';
 import styled from 'styled-components';
 
-import { Wrapper, Container, ConfirmButton, HeaderContainer, TitleData, SwitchContainer, SwitchButton, TabbedContainer, ContentPanel, NavItem, SidebarNav } from './styles';
+import { Wrapper, Container, ConfirmButton, HeaderContainer, TitleData, SwitchContainer, SwitchButton, TabbedContainer, ContentPanel, NavItem, SidebarNav, NavList } from './styles';
 
 const StyledSidebar = styled(MriSidebar)`
   width: 280px;
@@ -99,7 +100,7 @@ import { FaCheck, FaThLarge, FaList, FaMale, FaUsers, FaSmile, FaPalette, FaTshi
 import { ThemeToggleContext } from '../../App';
 import React, { useContext } from 'react';
 
-if (!import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE == 'true') {
+if (isEnvBrowser() || !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE == 'true') {
   mock('appearance_get_settings', () => ({
     appearanceSettings: {
       ...SETTINGS_INITIAL_STATE,
@@ -127,6 +128,15 @@ if (!import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE == 'true') {
   mock('appearance_change_component', () => SETTINGS_INITIAL_STATE.components);
 
   mock('appearance_change_prop', () => SETTINGS_INITIAL_STATE.props);
+  mock('appearance_save', () => true);
+  mock('appearance_exit', () => true);
+  mock('appearance_change_head_blend', () => true);
+  mock('appearance_change_face_feature', () => true);
+  mock('appearance_change_head_overlay', () => true);
+  mock('appearance_change_eye_color', () => true);
+  mock('appearance_apply_tattoo', () => true);
+  mock('appearance_delete_tattoo', () => true);
+  mock('appearance_get_locales', () => mockLocales);
 }
 
 const Appearance = () => {
@@ -150,8 +160,8 @@ const Appearance = () => {
 
   const wrapperTransition = useTransitionAnimation(display.appearance, null, {
     from: {
-      transform: `translateX(${import.meta.env.VITE_SHOW_APPEARANCE == 'true' ? '0px' : '-50px'})`,
-      opacity: import.meta.env.VITE_SHOW_APPEARANCE == 'true' ? 1 : 0
+      transform: `translateX(${isEnvBrowser() || import.meta.env.VITE_SHOW_APPEARANCE == 'true' ? '0px' : '-50px'})`,
+      opacity: isEnvBrowser() || import.meta.env.VITE_SHOW_APPEARANCE == 'true' ? 1 : 0
     },
     enter: {
       transform: 'translateY(0)',
@@ -236,25 +246,46 @@ const Appearance = () => {
   const handleSave = useCallback(
     async (accept: boolean) => {
       if (accept) {
-        await Nui.post('appearance_save', data);
-        setSaveModal(false);
+        try {
+          await Nui.post('appearance_save', data);
+          setSaveModal(false);
+          setDisplay({ appearance: false, asynchronous: false });
+        } catch (e) {
+          console.error('[Appearance] Save error:', e);
+        }
       } else {
         setSaveModal(false);
       }
     },
-    [setSaveModal, data],
+    [setSaveModal, data, setDisplay],
   );
+
+  const handleConfirmDirect = useCallback(async () => {
+    setDisplay({ appearance: false, asynchronous: false });
+    try {
+      await Nui.post('appearance_save', data);
+    } catch (e) {
+      console.error('[Appearance] Direct confirm error:', e);
+    }
+  }, [data, setDisplay]);
 
   const handleExit = useCallback(
     async (accept: boolean) => {
       if (accept) {
-        await Nui.post('appearance_exit');
-        setExitModal(false);
+        try {
+          await Nui.post('appearance_exit');
+          setExitModal(false);
+          setDisplay({ appearance: false, asynchronous: false });
+        } catch (e) {
+          console.error('[Appearance] Error during exit post:', e);
+          setExitModal(false);
+          setDisplay({ appearance: false, asynchronous: false });
+        }
       } else {
         setExitModal(false);
       }
     },
-    [setExitModal],
+    [setExitModal, setDisplay],
   );
 
   const handleModelChange = useCallback(
@@ -488,6 +519,33 @@ const Appearance = () => {
     return data.model === 'mp_m_freemode_01' || data.model === 'mp_f_freemode_01';
   }, [data]);
 
+  const [isDragging, setIsDragging] = useState(false);
+  const [lastMouseX, setLastMouseX] = useState(0);
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    // Only drag if clicking exactly on the wrapper (background)
+    if (e.target !== e.currentTarget) return;
+    setIsDragging(true);
+    setLastMouseX(e.clientX);
+  }, []);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isDragging) return;
+
+    const deltaX = e.clientX - lastMouseX;
+    setLastMouseX(e.clientX);
+
+    // Sensitivity factor
+    const sensitivity = 0.5;
+    const headingDelta = -deltaX * sensitivity;
+
+    Nui.post('appearance_rotate_ped', headingDelta);
+  }, [isDragging, lastMouseX]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
   const isPedMale = useMemo(() => {
     if (!data) return;
 
@@ -678,6 +736,9 @@ const Appearance = () => {
     return null;
   }
 
+  // Debug overlay
+  const debugMode = true;
+
 
 
   const renderSectionContent = (id: string) => {
@@ -685,7 +746,7 @@ const Appearance = () => {
       case 'ped':
         return config.ped && (
           <Ped
-            settings={appearanceSettings.ped}
+            settings={appearanceSettings}
             storedData={storedData.model}
             data={data.model}
             handleModelChange={handleModelChange}
@@ -695,7 +756,7 @@ const Appearance = () => {
       case 'headBlend':
         return isPedFreemodeModel && config.headBlend && (
           <HeadBlend
-            settings={appearanceSettings.headBlend}
+            settings={appearanceSettings}
             storedData={storedData.headBlend}
             data={data.headBlend}
             handleHeadBlendChange={handleHeadBlendChange}
@@ -715,12 +776,7 @@ const Appearance = () => {
       case 'headOverlays':
         return config.headOverlays && (
           <HeadOverlays
-            settings={{
-              hair: appearanceSettings.hair,
-              headOverlays: appearanceSettings.headOverlays,
-              eyeColor: appearanceSettings.eyeColor,
-              fade: appearanceSettings.tattoos.items['ZONE_HAIR']
-            }}
+            settings={appearanceSettings}
             storedData={{
               hair: storedData.hair,
               headOverlays: storedData.headOverlays,
@@ -745,7 +801,7 @@ const Appearance = () => {
       case 'components':
         return config.components && (
           <Components
-            settings={appearanceSettings.components}
+            settings={appearanceSettings}
             data={data.components}
             storedData={storedData.components}
             handleComponentDrawableChange={handleComponentDrawableChange}
@@ -759,7 +815,7 @@ const Appearance = () => {
       case 'props':
         return config.props && (
           <Props
-            settings={appearanceSettings.props}
+            settings={appearanceSettings}
             data={data.props}
             storedData={storedData.props}
             handlePropDrawableChange={handlePropDrawableChange}
@@ -781,6 +837,14 @@ const Appearance = () => {
             forcedOpen={layout === 'tabs'}
           />
         );
+      case 'options':
+        return (
+          <div style={{ color: 'white', padding: '20px' }}>
+            <h2 style={{ marginBottom: '20px' }}>Configurações do Menu</h2>
+            {/* You could add Theme/Layout toggles here in the future if needed */}
+            <p style={{ opacity: 0.6 }}>Esta seção permite configurar as preferências da interface.</p>
+          </div>
+        );
       default:
         return null;
     }
@@ -792,7 +856,12 @@ const Appearance = () => {
         ({ item, key, props: style }) =>
           item && (
             <animated.div key={key} style={style}>
-              <Wrapper>
+              <Wrapper
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+              >
                 <TabbedContainer style={{ width: '75vw', minWidth: '700px' }}>
                   <SidebarNav style={{ width: collapsed ? '64px' : '280px', transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
                     {!collapsed && (
@@ -820,7 +889,7 @@ const Appearance = () => {
                       </div>
                     )}
 
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', overflowY: 'auto', overflowX: 'hidden' }}>
+                    <NavList>
                       {sections.map(s => (
                         <NavItem
                           key={s.id}
@@ -832,21 +901,25 @@ const Appearance = () => {
                           {!collapsed && <span>{s.title}</span>}
                         </NavItem>
                       ))}
-                    </div>
+                    </NavList>
 
                     <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                      <NavItem onClick={() => console.log('Settings clicked')} style={{ background: 'rgba(255,255,255,0.03)', justifyContent: collapsed ? 'center' : 'flex-start' }}>
+                      <NavItem
+                        active={activeTab === 'options'}
+                        onClick={() => setActiveTab('options')}
+                        style={{ background: activeTab === 'options' ? `rgb(${theme === 'dark' ? '10, 213, 140' : '139, 92, 246'})` : 'rgba(255,255,255,0.03)', justifyContent: collapsed ? 'center' : 'flex-start' }}
+                      >
                         <FaCog />
                         {!collapsed && <span>Configuração</span>}
                       </NavItem>
 
                       {!collapsed && (
-                        <ConfirmButton onClick={handleSaveModal} style={{ marginBottom: 0 }}>
+                        <ConfirmButton onClick={handleConfirmDirect} style={{ marginBottom: 0 }}>
                           <FaCheck /> Confirmar
                         </ConfirmButton>
                       )}
                       {collapsed && (
-                        <NavItem onClick={handleSaveModal} active title="Confirmar" style={{ background: `rgb(${theme === 'dark' ? '10, 213, 140' : '139, 92, 246'})`, justifyContent: 'center' }}>
+                        <NavItem onClick={handleConfirmDirect} active title="Confirmar" style={{ background: `rgb(${theme === 'dark' ? '10, 213, 140' : '139, 92, 246'})`, justifyContent: 'center' }}>
                           <FaCheck />
                         </NavItem>
                       )}
@@ -855,23 +928,23 @@ const Appearance = () => {
                   <ContentPanel>
                     {renderSectionContent(activeTab)}
                   </ContentPanel>
-
-                  <Options
-                    camera={camera}
-                    rotate={rotate}
-                    clothes={clothes}
-                    handleSetClothes={handleSetClothes}
-                    handleSetCamera={handleSetCamera}
-                    handleTurnAround={handleTurnAround}
-                    handleRotateLeft={handleRotateLeft}
-                    handleRotateRight={handleRotateRight}
-                    handleSave={handleSaveModal}
-                    handleExit={handleExitModal}
-                    enableExit={config.enableExit}
-                    layout={layout}
-                    collapsed={collapsed}
-                  />
                 </TabbedContainer>
+
+                <Options
+                  camera={camera}
+                  rotate={rotate}
+                  clothes={clothes}
+                  handleSetClothes={handleSetClothes}
+                  handleSetCamera={handleSetCamera}
+                  handleTurnAround={handleTurnAround}
+                  handleRotateLeft={handleRotateLeft}
+                  handleRotateRight={handleRotateRight}
+                  handleSave={handleSaveModal}
+                  handleExit={handleExitModal}
+                  enableExit={config.enableExit}
+                  layout={layout}
+                  collapsed={collapsed}
+                />
               </Wrapper>
             </animated.div>
           ),
@@ -879,7 +952,7 @@ const Appearance = () => {
       {saveModalTransition.map(
         ({ item, key, props: style }) =>
           item && (
-            <animated.div key={key} style={style}>
+            <animated.div key={key} style={{ ...style, zIndex: 9999 }}>
               <Modal
                 title={locales.modal.save.title}
                 description={locales.modal.save.description}
@@ -894,7 +967,7 @@ const Appearance = () => {
       {exitModalTransition.map(
         ({ item, key, props: style }) =>
           item && (
-            <animated.div key={key} style={style}>
+            <animated.div key={key} style={{ ...style, zIndex: 10000 }}>
               <Modal
                 title={locales.modal.exit.title}
                 description={locales.modal.exit.description}

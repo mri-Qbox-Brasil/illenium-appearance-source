@@ -23,14 +23,6 @@ export const Container = styled.div`
   border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-  }
 `;
 
 export const FlexWrapper = styled.div`
@@ -168,11 +160,18 @@ export const SidebarNav = styled.div`
   flex-direction: column;
   gap: 10px;
   
+  overflow: visible;
+  position: relative;
+  z-index: 101; /* Above Options and other overlays */
+`;
+
+export const NavList = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   overflow-y: auto;
-  
-  ::-webkit-scrollbar {
-    width: 0px;
-  }
+  overflow-x: hidden;
 `;
 
 export const ContentPanel = styled.div`
@@ -185,10 +184,8 @@ export const ContentPanel = styled.div`
   
   display: flex;
   flex-direction: column;
-
-  ::-webkit-scrollbar {
-    width: 0px;
-  }
+  position: relative;
+  z-index: 101;
 `;
 
 export const NavItem = styled.button<{ active?: boolean }>`

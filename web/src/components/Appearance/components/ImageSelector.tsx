@@ -140,14 +140,6 @@ const GalleryGrid = styled.div`
   overflow-y: auto;
   padding-right: 4px;
   max-height: 400px;
-
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-  }
 `;
 
 const GalleryItem = styled.div`
@@ -215,7 +207,6 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({ label, items, selectedVal
 
   const handleItemSelect = (id: string) => {
     onSelect(id);
-    setIsDialogOpen(false);
   };
 
   const selectedItem = items.find(item => item.id === selectedValue);

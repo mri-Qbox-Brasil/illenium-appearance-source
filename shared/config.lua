@@ -6,7 +6,16 @@ Config.ClothingCost = 100
 Config.BarberCost = 100
 Config.TattooCost = 100
 Config.SurgeonCost = 100
-
+Config.ImageLocal = "url" -- definir pasta: para usar pasta local ou url .
+Config.ImageUrl = "https://assets.mriqbox.com.br/" -- Use this if Config.ImageLocal is NOT "pasta"
+Config.ImageSources = {
+    peds = "peds/",
+    heritage = "peds/",
+    appearance = "peds/",
+    clothes = "clothing/",
+    accessories = "clothing/",
+    tattoos = "peds/tattoos/"
+}
 Config.ChargePerTattoo = true -- Charge players per tattoo. Config.TattooCost will become the cost of 1 tattoo. The cost can be overridden by adding `cost` key in shared/tattoos.lua for specific tattoos
 
 -- Only set this to true if you're using rcore_tattoos

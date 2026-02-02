@@ -35,17 +35,29 @@ interface OptionsProps {
   collapsed?: boolean;
 }
 
-const OverlayContainer = styled.div`
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 100;
+const OptionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 90vh;
+  padding: 40px 0;
+  margin-left: 10px;
+  pointer-events: auto; /* Changed from none to auto to ensure clickability in CEF */
+  z-index: 1000;
+  flex-shrink: 0;
 `;
 
-// --- General Button Styles ---
+const Strip = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: auto; /* Changed from none to auto */
+  
+  & > * {
+    pointer-events: auto;
+  }
+`;
+
 const RoundButton = styled.button<{ active?: boolean; variant?: 'primary' | 'danger' | 'default' }>`
   pointer-events: auto;
   height: 40px;
@@ -54,7 +66,7 @@ const RoundButton = styled.button<{ active?: boolean; variant?: 'primary' | 'dan
   display: flex;
   align-items: center;
   justify-content: center;
-
+ 
   border: 0;
   border-radius: 50%;
 
@@ -82,36 +94,6 @@ const RoundButton = styled.button<{ active?: boolean; variant?: 'primary' | 'dan
   svg {
     filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
   }
-`;
-
-// --- Top Left Strip ---
-const TopLeftStrip = styled.div<{ layout: 'accordion' | 'tabs'; collapsed?: boolean }>`
-  position: absolute;
-  top: 40px;
-  left: 100%;
-  margin-left: 8px;
-  max-width: fit-content;
-  
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  
-  transition: left 0.3s ease;
-`;
-
-// --- Bottom Left Strip ---
-const BottomLeftStrip = styled.div<{ layout: 'accordion' | 'tabs'; collapsed?: boolean }>`
-  position: absolute;
-  bottom: 40px;
-  left: 100%;
-  margin-left: 8px;
-  max-width: fit-content;
-
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  
-  transition: left 0.3s ease;
 `;
 
 // --- Sub Menu (Flyout) ---
@@ -149,9 +131,9 @@ const Options: React.FC<OptionsProps> = ({
   const [showCamera, setShowCamera] = useState(false);
 
   return (
-    <OverlayContainer>
-      {/* --- Top Left: Mode Toggles --- */}
-      <TopLeftStrip layout={layout} collapsed={collapsed}>
+    <OptionsContainer>
+      {/* --- Top: Mode Toggles --- */}
+      <Strip>
         <div
           style={{ position: 'relative' }}
           onMouseEnter={() => setShowCamera(true)}
@@ -193,10 +175,10 @@ const Options: React.FC<OptionsProps> = ({
             </RoundButton>
           </Flyout>
         </div>
-      </TopLeftStrip>
+      </Strip>
 
-      {/* --- Bottom Left: Actions --- */}
-      <BottomLeftStrip layout={layout} collapsed={collapsed}>
+      {/* --- Bottom: Actions --- */}
+      <Strip>
         <RoundButton onClick={handleRotateLeft}>
           <FaUndo size={14} />
         </RoundButton>
@@ -207,14 +189,15 @@ const Options: React.FC<OptionsProps> = ({
           <FaSyncAlt size={14} />
         </RoundButton>
         {enableExit && (
-          <RoundButton onClick={handleExit} style={{ background: '#4b5563' }}>
+          <RoundButton
+            onClick={handleExit}
+            style={{ background: '#0067f8ff' }}
+          >
             <FaTimes size={16} />
           </RoundButton>
         )}
-      </BottomLeftStrip>
-
-      {/* --- Bottom Right: Tools Removed --- */}
-    </OverlayContainer>
+      </Strip>
+    </OptionsContainer>
   );
 };
 

@@ -5,10 +5,10 @@ import Item from './components/Item';
 import { FaMale, FaFemale, FaUser } from 'react-icons/fa';
 import ImageSelector from './components/ImageSelector';
 
-import { PedSettings } from './interfaces';
+import { AppearanceSettings } from './interfaces';
 
 interface PedProps {
-  settings: PedSettings;
+  settings: AppearanceSettings;
   storedData: string;
   data: string;
   handleModelChange: (value: string) => void;
@@ -22,7 +22,7 @@ const Ped = ({ settings, storedData, data, handleModelChange, forcedOpen }: PedP
     return null;
   }
 
-  const modelItems = settings.model.items.map(model => {
+  const modelItems = settings.ped.model.items.map((model: string) => {
     let icon = <FaUser />;
     if (model.includes('_m_') || model.toLowerCase().includes('male')) {
       icon = <FaMale />;
@@ -30,9 +30,15 @@ const Ped = ({ settings, storedData, data, handleModelChange, forcedOpen }: PedP
       icon = <FaFemale />;
     }
 
+    const imageLocal = settings.imageLocal;
+    const imageUrl = settings.imageUrl;
+    const isLocal = imageLocal === 'pasta';
+    const baseUrl = isLocal ? 'peds/' : imageUrl;
+
     return {
       id: model,
-      icon: icon
+      icon: icon,
+      image: `${baseUrl}${model}.png`
     };
   });
 

@@ -591,6 +591,17 @@ export const SETTINGS_INITIAL_STATE: AppearanceSettings = {
     min: 0,
     max: 30,
   },
+  imageLocal: '',
+  imageUrl: '',
+  imageSources: {
+    peds: 'peds/',
+    heritage: 'peds/',
+    appearance: 'peds/',
+    clothes: 'peds/',
+    accessories: 'peds/',
+    tattoos: 'peds/tattoos/'
+  },
+  fade: [],
 };
 
 export const CAMERA_INITIAL_STATE = { head: false, body: false, bottom: false };

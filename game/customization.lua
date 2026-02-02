@@ -373,7 +373,9 @@ local function getAppearanceSettings()
         headOverlays = headOverlays,
         hair = getHairSettings(cache.ped),
         eyeColor = eyeColor,
-        tattoos = tattoos
+        tattoos = tattoos,
+        imageLocal = Config.ImageLocal,
+        imageUrl = Config.ImageUrl
     }
 end
 client.getAppearanceSettings = getAppearanceSettings
@@ -488,6 +490,24 @@ local function pedTurn(ped, angle)
     end
 end
 client.pedTurn = pedTurn
+
+function client.rotatePed(headingDelta)
+    local ped = cache.ped
+    local currentHeading = GetEntityHeading(ped)
+    SetEntityHeading(ped, currentHeading + headingDelta)
+end
+
+function client.rotatePed(headingDelta)
+    local ped = cache.ped
+    local currentHeading = GetEntityHeading(ped)
+    SetEntityHeading(ped, currentHeading + headingDelta)
+end
+
+function client.rotatePed(headingDelta)
+    local ped = cache.ped
+    local currentHeading = GetEntityHeading(ped)
+    SetEntityHeading(ped, currentHeading + headingDelta)
+end
 
 local function wearClothes(data, typeClothes)
     local dataClothes = constants.DATA_CLOTHES[typeClothes]

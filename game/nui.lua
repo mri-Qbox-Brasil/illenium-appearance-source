@@ -131,6 +131,21 @@ RegisterNUICallback("rotate_right", function(_, cb)
     client.pedTurn(cache.ped, -10.0)
 end)
 
+RegisterNUICallback("appearance_rotate_ped", function(headingDelta, cb)
+    cb(1)
+    client.rotatePed(headingDelta)
+end)
+
+RegisterNUICallback("appearance_rotate_ped", function(headingDelta, cb)
+    cb(1)
+    client.rotatePed(headingDelta)
+end)
+
+RegisterNUICallback("appearance_rotate_ped", function(headingDelta, cb)
+    cb(1)
+    client.rotatePed(headingDelta)
+end)
+
 RegisterNUICallback("get_theme_configuration", function(_, cb)
     cb(Config.Theme)
 end)

@@ -13,7 +13,18 @@ export default createGlobalStyle<{ theme: any }>`
     background: transparent !important;
     -webkit-font-smoothing: antialiased;
     overflow: hidden;
-    /* background: url('https://cdn.discordapp.com/attachments/694641187901931601/786575235734437938/unknown.png'); */
+  }
+
+  /* Global Scrollbar Hiding */
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+    height: 0px;
+  }
+
+  * {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 
   button {

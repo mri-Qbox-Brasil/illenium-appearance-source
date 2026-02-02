@@ -6,18 +6,18 @@ Locales["pt-BR"] = {
                 description = "Você continuará assim!"
             },
             exit = {
-                title = "Sair da customização",
-                description = "Nenhuma mudança será salva"
+                title = "Cancelar Alterações?",
+                description = "Você tem certeza que deseja cancelar? Todas as alterações feitas serão perdidas e você sairá do menu."
             },
             accept = "Sim",
             decline = "Não"
         },
         ped = {
-            title = "🚶‍♂️ Ped",
+            title = "Ped",
             model = "Modelo"
         },
         headBlend = {
-            title = "🧬 Herança",
+            title = "Herança",
             shape = {
                 title = "Face",
                 firstOption = "Pai",
@@ -38,7 +38,7 @@ Locales["pt-BR"] = {
             }
         },
         faceFeatures = {
-            title = "😶 Características faciais",
+            title = "Características faciais",
             nose = {
                 title = "Nariz",
                 width = "Largura",
@@ -110,7 +110,7 @@ Locales["pt-BR"] = {
             eyeColor = "Cor dos olhos"
         },
         components = {
-            title = "👚 Roupas",
+            title = "Roupas",
             drawable = "Modelo",
             texture = "Textura",
             mask = "Máscaras",
@@ -126,7 +126,7 @@ Locales["pt-BR"] = {
             head = "Cabeça"
         },
         props = {
-            title = "👒 Acessórios",
+            title = "Acessórios",
             drawable = "Modelo",
             texture = "Textura",
             hats = "Chapéus e capacetes",
@@ -136,7 +136,7 @@ Locales["pt-BR"] = {
             bracelets = "Braceletes"
         },
         tattoos = {
-            title = "🦋 Tatuagens",
+            title = "Tatuagens",
             items = {
                 ZONE_TORSO = "Tronco",
                 ZONE_HEAD = "Cabeça",

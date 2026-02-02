@@ -44,7 +44,10 @@ async function fetchWithRetries(resource: string, options: any = {}, retries: nu
 
 async function post(event: string, data = {}): Promise<any> {
   if (!import.meta.env.PROD) {
-    if (!mocks[event]) return;
+    if (!mocks[event]) {
+      console.warn(`[NUI Mock] Missing mock for event: ${event}`);
+      return Promise.resolve({});
+    }
 
     return mocks[event](data);
   }

@@ -1,11 +1,11 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import styled, { ThemeContext } from 'styled-components';
-import Select from 'react-select';
+import { useCallback, useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { useNuiState } from '../../../hooks/nuiState';
+import { FaCheck, FaTrash } from 'react-icons/fa';
 import Button from './Button';
-import { Tattoo } from '../interfaces';
+import { Tattoo, TattoosSettings } from '../interfaces';
 import RangeInput from './RangeInput';
-import { TattoosSettings } from '../interfaces';
+import ImageSelector from './ImageSelector';
 
 interface SelectTattooProps {
   items: Tattoo[];
@@ -18,93 +18,56 @@ interface SelectTattooProps {
 
 const Container = styled.div`
   min-width: 0;
-
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  gap: 10px;
+  gap: 15px;
 
   > section {
     width: 100%;
     display: flex;
     justify-content: flex-end;
+    margin-top: 5px;
   }
 `;
 
-const customStyles: any = {
-  control: (styles: any) => ({
-    ...styles,
-    marginTop: '10px',
-    background: 'rgba(23, 23, 23, 0.8)',
-    fontSize: '14px',
-    color: '#fff',
-    border: 'none',
-    outline: 'none',
-    boxShadow: 'none',
-  }),
-  placeholder: (styles: any) => ({
-    ...styles,
-    fontSize: '14px',
-    color: '#fff',
-  }),
-  input: (styles: any) => ({
-    ...styles,
-    fontSize: '14px',
-    color: '#fff',
-  }),
-  singleValue: (styles: any) => ({
-    ...styles,
-    fontSize: '14px',
-    color: '#fff',
-    border: 'none',
-    outline: 'none',
-  }),
-  indicatorContainer: (styles: any) => ({
-    ...styles,
-    borderColor: '#fff',
-    color: '#fff',
-  }),
-  dropdownIndicator: (styles: any) => ({
-    ...styles,
-    borderColor: '#fff',
-    color: '#fff',
-  }),
-  menuPortal: (styles: any) => ({
-    ...styles,
-    color: '#fff',
-    zIndex: 9999,
-  }),
-  menu: (styles: any) => ({
-    ...styles,
-    background: 'rgba(23, 23, 23, 0.8)',
-    position: 'absolute',
-    marginBottom: '10px',
-    borderRadius: '4px',
-  }),
-  menuList: (styles: any) => ({
-    ...styles,
-    background: 'rgba(23, 23, 23, 0.8)',
-    borderRadius: '4px',
-    '&::-webkit-scrollbar': {
-      width: '10px',
-    },
-    '&::-webkit-scrollbar-track': {
-      background: 'none',
-    },
-    '&::-webkit-scrollbar-thumb': {
-      borderRadius: '4px',
-      background: '#fff',
-    },
-  }),
-  option: (styles: any, { isFocused }: any) => ({
-    ...styles,
-    borderRadius: '4px',
-    width: '97%',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    background: isFocused ? 'rgba(255, 255, 255, 0.1)' : 'none',
-  }),
-};
+const ActionButton = styled.button<{ variant?: 'apply' | 'delete' }>`
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+  background: ${({ theme, variant }) =>
+    variant === 'apply'
+      ? `rgb(${theme.accent || '10, 213, 140'})`
+      : '#ff4d4d'
+  };
+  color: white;
+
+  &:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 6px 20px ${({ theme, variant }) =>
+    variant === 'apply'
+      ? `rgba(${theme.accent || '10, 213, 140'}, 0.4)`
+      : 'rgba(255, 77, 77, 0.4)'
+  };
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
 
 const SelectTattoo = ({
   items,
@@ -115,23 +78,19 @@ const SelectTattoo = ({
   settings
 }: SelectTattooProps) => {
   const defaultOpacity = 0.1;
-  const selectRef = useRef<any>(null);
   const [currentTattoo, setCurrentTattoo] = useState<Tattoo>(items[0]);
   const [opacity, setOpacity] = useState<number>(defaultOpacity);
-  const { label } = currentTattoo;
   const { locales } = useNuiState();
 
   const clientOpacity = useCallback(() => {
     if (!tattoosApplied) return defaultOpacity;
     const { name } = currentTattoo;
-    // eslint-disable-next-line no-plusplus
     for (let i = 0; i < tattoosApplied.length; i++) {
       const { name: nameApplied } = tattoosApplied[i];
-      if (nameApplied === name) { 
+      if (nameApplied === name) {
         return tattoosApplied[i].opacity ?? defaultOpacity;
       }
     }
-
     return defaultOpacity;
   }, [currentTattoo, tattoosApplied])();
 
@@ -139,36 +98,26 @@ const SelectTattoo = ({
     setOpacity(clientOpacity);
   }, [clientOpacity]);
 
-  const handleChange = (event: any, { action }: any): void => {
-    if (action === 'select-option') {
-      handlePreviewTattoo(event.value, opacity);
-      setCurrentTattoo(event.value);
+  const handleChange = (id: string): void => {
+    const selectedTattoo = items.find(item => item.name === id);
+    if (selectedTattoo) {
+      handlePreviewTattoo(selectedTattoo, opacity);
+      setCurrentTattoo(selectedTattoo);
     }
   };
 
-  const handleChangeOpacity = useCallback((value : number) => {    
+  const handleChangeOpacity = useCallback((value: number) => {
     setOpacity(value);
     handlePreviewTattoo(currentTattoo, value);
-  }, [currentTattoo]);
-
-  const onMenuOpen = () => {
-    setTimeout(() => {
-      const selectedEl = document.getElementsByClassName("TattooDropdown" + items[0].zone + "__option--is-selected")[0];
-      if (selectedEl) {
-        selectedEl.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
-      }
-    }, 100);
-  };
+  }, [currentTattoo, handlePreviewTattoo]);
 
   const isTattooApplied = useCallback(() => {
     if (!tattoosApplied) return false;
     const { name } = currentTattoo;
-    // eslint-disable-next-line no-plusplus
     for (let i = 0; i < tattoosApplied.length; i++) {
       const { name: nameApplied } = tattoosApplied[i];
       if (nameApplied === name) return true;
     }
-
     return false;
   }, [tattoosApplied, currentTattoo])();
 
@@ -176,38 +125,39 @@ const SelectTattoo = ({
     return null;
   }
 
-  const themeContext = useContext(ThemeContext);
-  customStyles.control.background = `rgba(${themeContext.secondaryBackground || '0, 0, 0'}, 0.8)`;
-  customStyles.menu.background = `rgba(${themeContext.secondaryBackground || '0, 0, 0'}, 0.8)`;
-  customStyles.menuList.background = `rgba(${themeContext.secondaryBackground || '0, 0, 0'}, 0.8)`;
+  // Map tattoos to ImageSelector items
+  const selectorItems = items.map(item => ({
+    id: item.name,
+    label: item.label,
+    // Note: Assuming there aren't specific preview images for tattoos in the default structure, 
+    // but ImageSelector handles this gracefully.
+  }));
 
   return (
     <Container>
-      <Select
-        ref={selectRef}
-        styles={customStyles}
-        options={items.map(item => ({ value: item, label: item.label }))}
-        value={{ value: currentTattoo, label }}
-        onChange={handleChange}
-        onMenuOpen={onMenuOpen}
-        className={"TattooDropdown" + items[0].zone}
-        classNamePrefix={"TattooDropdown" + items[0].zone}
-        menuPortalTarget={document.body}
-        menuShouldScrollIntoView={true}
+      <ImageSelector
+        items={selectorItems}
+        selectedValue={currentTattoo.name}
+        onSelect={handleChange}
+        onAdd={() => { }}
       />
       <RangeInput
-              title={locales.tattoos.opacity}
-              min={settings.opacity.min}
-              max={settings.opacity.max}
-              factor={settings.opacity.factor}
-              defaultValue={opacity}
-              clientValue={clientOpacity}
-              onChange={value => handleChangeOpacity(value)} />
+        title={locales.tattoos.opacity}
+        min={settings.opacity.min}
+        max={settings.opacity.max}
+        factor={settings.opacity.factor}
+        defaultValue={opacity}
+        clientValue={clientOpacity}
+        onChange={value => handleChangeOpacity(value)} />
       <section>
         {isTattooApplied ? (
-          <Button onClick={() => handleDeleteTattoo(currentTattoo)}>{locales.tattoos.delete}</Button>
+          <ActionButton variant="delete" onClick={() => handleDeleteTattoo(currentTattoo)}>
+            <FaTrash size={14} /> {locales.tattoos.delete}
+          </ActionButton>
         ) : (
-          <Button onClick={() => handleApplyTattoo(currentTattoo, opacity)}>{locales.tattoos.apply}</Button>
+          <ActionButton variant="apply" onClick={() => handleApplyTattoo(currentTattoo, opacity)}>
+            <FaCheck size={14} /> {locales.tattoos.apply}
+          </ActionButton>
         )}
       </section>
     </Container>

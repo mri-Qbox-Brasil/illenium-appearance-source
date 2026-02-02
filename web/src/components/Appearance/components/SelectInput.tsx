@@ -80,16 +80,6 @@ const customStyles: any = {
     ...styles,
     background: 'rgba(23, 23, 23, 0.8)',
     borderRadius: '4px',
-    '&::-webkit-scrollbar': {
-      width: '10px',
-    },
-    '&::-webkit-scrollbar-track': {
-      background: 'none',
-    },
-    '&::-webkit-scrollbar-thumb': {
-      borderRadius: '4px',
-      background: '#fff',
-    },
   }),
   option: (styles: any, { isFocused }: any) => ({
     ...styles,

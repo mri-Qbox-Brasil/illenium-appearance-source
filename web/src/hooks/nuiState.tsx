@@ -21,8 +21,8 @@ interface NuiContextData {
 
 const INITIAL_STATE: NuiState = {
   display: {
-    appearance: !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE === 'true',
-    asynchronous: !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE === 'true',
+    appearance: isEnvBrowser() || !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE === 'true',
+    asynchronous: isEnvBrowser() || !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE === 'true',
   },
 };
 
