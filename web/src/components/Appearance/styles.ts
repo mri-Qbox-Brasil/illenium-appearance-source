@@ -188,23 +188,25 @@ export const ContentPanel = styled.div`
   z-index: 101;
 `;
 
-export const NavItem = styled.button<{ active?: boolean }>`
+export const NavItem = styled.button<{ active?: boolean; collapsed?: boolean }>`
   width: 100%;
-  padding: 12px 15px;
+  padding: ${({ collapsed }) => (collapsed ? '12px 0' : '12px 15px')};
   display: flex;
   align-items: center;
+  justify-content: ${({ collapsed }) => (collapsed ? 'center' : 'flex-start')};
   gap: 12px;
   
-  /* Styling similar to Section Header but for sidebar */
   background: ${({ active, theme }) =>
     active
-      ? `rgb(${theme.accent || '10, 213, 140'})`
-      : theme.id === 'dark' ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.02)'
+      ? `rgba(${theme.accent || '10, 213, 140'}, 0.15)`
+      : 'transparent'
   };
   color: ${({ active, theme }) =>
-    active ? `rgb(${theme.fontColorSelected || '255, 255, 255'})` : `rgba(${theme.fontColor}, 0.6)`
+    active ? `rgb(${theme.fontColor || '255, 255, 255'})` : `rgba(${theme.fontColor || '255, 255, 255'}, 0.5)`
   };
-  border: 1px solid ${({ active, theme }) => active ? 'transparent' : theme.id === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.05)'};
+  border: 1px solid ${({ active, theme }) =>
+    active ? `rgb(${theme.accent || '10, 213, 140'})` : 'transparent'
+  };
   border-radius: 12px;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
@@ -217,15 +219,16 @@ export const NavItem = styled.button<{ active?: boolean }>`
   &:hover {
     background: ${({ active, theme }) =>
     active
-      ? `rgb(${theme.accent || '10, 213, 140'})`
-      : theme.id === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)'
+      ? `rgba(${theme.accent || '10, 213, 140'}, 0.2)`
+      : 'rgba(255, 255, 255, 0.05)'
   };
-    color: ${({ active, theme }) => active ? `rgb(${theme.fontColorSelected || '255, 255, 255'})` : theme.id === 'dark' ? `rgb(${theme.fontColorSelected})` : `rgb(${theme.fontColorHover})`};
-    filter: ${({ active }) => active ? 'brightness(1.1)' : 'none'};
+    color: rgb(${({ theme }) => theme.fontColor || '255, 255, 255'});
   }
   
   svg {
     font-size: 18px;
-    opacity: ${({ active }) => active ? 1 : 0.7};
+    margin: ${({ collapsed }) => (collapsed ? '0' : '0')};
+    color: ${({ active, theme }) => active ? `rgb(${theme.accent || '10, 213, 140'})` : 'inherit'};
+    transition: all 0.2s ease;
   }
 `;

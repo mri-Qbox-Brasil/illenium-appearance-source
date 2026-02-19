@@ -115,8 +115,9 @@ const Dialog = styled.div`
   border: 1px solid ${({ theme }) => theme.cardBorder || 'rgba(255, 255, 255, 0.04)'};
   border-radius: 24px;
   padding: 24px;
-  width: 400px;
-  max-height: 80vh;
+  width: 550px; /* Increased width for better grid display */
+  max-width: 90vw;
+  max-height: 85vh;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
@@ -172,15 +173,24 @@ const SearchIcon = styled(FaSearch)`
 const GalleryGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 16px;
   overflow-y: auto;
-  padding-right: 4px;
-  max-height: 400px;
+  padding: 6px;
+  max-height: 500px;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
 `;
 
 const GalleryItem = styled.div`
   aspect-ratio: 1 / 1;
-  background: ${({ theme }) => theme.id === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)'};
+  width: 100%;
+  background: ${({ theme }) => theme.id === 'dark' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)'};
   border: 1px solid ${({ theme }) => theme.id === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.08)'};
   border-radius: 12px;
   display: flex;
@@ -190,15 +200,24 @@ const GalleryItem = styled.div`
   position: relative;
   transition: all 0.2s ease;
   overflow: hidden;
-  color: ${({ theme }) => `rgba(${theme.fontColor}, 0.4)`};
+  color: ${({ theme }) => `rgba(${theme.fontColor || '255, 255, 255'}, 0.4)`};
 
   &:hover {
-    color: ${({ theme }) => `rgb(${theme.fontColor})`};
-    border-color: ${({ theme }) => `rgb(${theme.accent})`};
+    background: ${({ theme }) => theme.id === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.05)'};
+    color: ${({ theme }) => `rgb(${theme.fontColor || '255, 255, 255'})`};
+    transform: translateY(-2px);
   }
 
   svg {
-    font-size: 20px;
+    font-size: 24px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: 5px;
   }
 `;
 
@@ -207,8 +226,8 @@ const ReferenceLabel = styled.span`
   bottom: 0;
   left: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
+  background: rgba(0, 0, 0, 0.7);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 10px;
   font-weight: 700;
   padding: 4px 0;
@@ -216,6 +235,7 @@ const ReferenceLabel = styled.span`
   border-bottom-left-radius: 11px;
   border-bottom-right-radius: 11px;
   pointer-events: none;
+  backdrop-filter: blur(4px);
 `;
 
 const DialogActions = styled.div`
@@ -227,8 +247,8 @@ const DialogActions = styled.div`
 `;
 
 const ActionButton = styled.button<{ variant?: 'primary' | 'ghost' }>`
-  padding: 10px 20px;
-  border-radius: 10px;
+  padding: 10px 24px;
+  border-radius: 12px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -244,9 +264,9 @@ const ActionButton = styled.button<{ variant?: 'primary' | 'ghost' }>`
       `
       : `
         background: ${theme.id === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'};
-        color: rgba(${theme.fontColor}, 0.7);
+        color: rgba(${theme.fontColor || '255, 255, 255'}, 0.7);
         border-color: ${theme.id === 'dark' ? 'transparent' : 'rgba(0, 0, 0, 0.1)'};
-        &:hover { background: ${theme.id === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)'}; color: rgb(${theme.fontColor}); }
+        &:hover { background: ${theme.id === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)'}; color: rgb(${theme.fontColor || '255, 255, 255'}); }
       `
   }
 `;
@@ -314,24 +334,17 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({ label, items, selectedVal
                   key={item.id}
                   onClick={() => handleItemSelect(item.id)}
                   style={{
-                    border: selectedValue === item.id ? `2px solid rgb(${theme.accent})` : theme.id === 'dark' ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.1)',
-                    background: selectedValue === item.id ? `rgba(${theme.accent}, 0.1)` : theme.id === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)'
+                    border: selectedValue === item.id ? `2px solid rgb(${theme.accent})` : '1px solid rgba(255, 255, 255, 0.05)',
+                    background: selectedValue === item.id ? `rgba(${theme.accent}, 0.1)` : undefined
                   }}
                 >
                   {item.image ? (
                     <img
                       src={item.image}
                       alt={item.id}
-                      style={{
-                        maxWidth: '90%',
-                        maxHeight: '90%',
-                        width: 'auto',
-                        height: 'auto',
-                        objectFit: 'contain'
-                      }}
                     />
                   ) : (
-                    item.icon || <FaImage />
+                    item.icon || <span style={{ fontSize: '18px', fontWeight: 700, opacity: 0.8 }}>{item.id}</span>
                   )}
                   <ReferenceLabel>{item.id}</ReferenceLabel>
                 </GalleryItem>

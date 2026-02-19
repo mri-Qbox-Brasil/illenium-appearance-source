@@ -939,8 +939,18 @@ const Appearance = () => {
               </div>
 
               <div style={{ background: 'rgba(0, 0, 0, 0.2)', borderRadius: '12px', padding: '20px', border: `1px solid rgba(${contentColor}, 0.05)` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 600 }}>Interface Scale</span>
+                    <span style={{ fontSize: '12px', opacity: 0.5 }}>Alturas e proporções internas.</span>
+                  </div>
+                  <div style={{ background: 'rgba(0, 0, 0, 0.4)', padding: '4px 10px', borderRadius: '4px', fontSize: '13px', fontWeight: 700, color: `rgb(${accentColor})` }}>
+                    {interfaceScale}%
+                  </div>
+                </div>
+
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
-                  <span style={{ fontSize: '12px', opacity: 0.4 }}>A-</span>
+                  <span style={{ fontSize: '11px', opacity: 0.4 }}>80%</span>
                   <div style={{ flex: 1 }}>
                     <RangeInput
                       min={80}
@@ -949,7 +959,7 @@ const Appearance = () => {
                       onChange={setInterfaceScale}
                     />
                   </div>
-                  <span style={{ fontSize: '12px', opacity: 0.4 }}>A+</span>
+                  <span style={{ fontSize: '11px', opacity: 0.4 }}>120%</span>
                 </div>
               </div>
             </div>
@@ -986,10 +996,10 @@ const Appearance = () => {
                         </TitleData>
                       )}
                       <SwitchContainer title="Expandir/Recolher Menu">
-                        <SwitchButton active={!collapsed} onClick={() => setCollapsed(false)}>
+                        <SwitchButton active={collapsed} onClick={() => setCollapsed(true)}>
                           <FaThLarge size={14} />
                         </SwitchButton>
-                        <SwitchButton active={collapsed} onClick={() => setCollapsed(true)}>
+                        <SwitchButton active={!collapsed} onClick={() => setCollapsed(false)}>
                           <FaList size={14} />
                         </SwitchButton>
                       </SwitchContainer>
@@ -1001,6 +1011,7 @@ const Appearance = () => {
                           <NavItem
                             key={s.id}
                             active={activeTab === s.id}
+                            collapsed={collapsed}
                             onClick={() => {
                               setPrevTab(s.id);
                               setActiveTab(s.id);
@@ -1018,6 +1029,7 @@ const Appearance = () => {
                           <NavItem
                             key={s.id}
                             active={activeOptionsTab === s.id}
+                            collapsed={collapsed}
                             onClick={() => setActiveOptionsTab(s.id)}
                             title={collapsed ? s.title : ''}
                           >
@@ -1031,13 +1043,13 @@ const Appearance = () => {
                     <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                       <NavItem
                         active={activeTab === 'options'}
+                        collapsed={collapsed}
                         onClick={() => {
                           if (activeTab !== 'options') {
                             setPrevTab(activeTab);
                           }
                           setActiveTab('options');
                         }}
-                        style={{ background: activeTab === 'options' ? `rgb(${accentColor})` : 'rgba(255,255,255,0.03)', justifyContent: collapsed ? 'center' : 'flex-start' }}
                       >
                         <FaCog />
                         {!collapsed && <span>Configuração</span>}
@@ -1046,7 +1058,7 @@ const Appearance = () => {
                       {activeTab === 'options' && (
                         <NavItem
                           onClick={() => setActiveTab(prevTab)}
-                          style={{ background: 'rgba(255,255,255,0.03)', justifyContent: collapsed ? 'center' : 'flex-start' }}
+                          collapsed={collapsed}
                           title={collapsed ? "Voltar" : ""}
                         >
                           <FaAngleLeft />
