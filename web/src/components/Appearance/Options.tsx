@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, useTheme } from 'styled-components';
 import {
   FaUndo,
   FaRedo,
@@ -70,7 +70,7 @@ const RoundButton = styled.button<{ active?: boolean; variant?: 'primary' | 'dan
   border: 0;
   border-radius: 50%;
 
-  color: rgba(255, 255, 255, 0.9);
+  color: ${({ theme }) => `rgb(${theme.fontColor || '255, 255, 255'})`};
   
   /* Variant Backgrounds */
   ${({ variant, active, theme }) => {
@@ -129,6 +129,7 @@ const Options: React.FC<OptionsProps> = ({
 }) => {
   const [showClothes, setShowClothes] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const theme = useTheme() as any;
 
   return (
     <OptionsContainer>
@@ -185,13 +186,13 @@ const Options: React.FC<OptionsProps> = ({
         <RoundButton onClick={handleRotateRight}>
           <FaRedo size={14} />
         </RoundButton>
-        <RoundButton onClick={handleTurnAround} variant="danger" style={{ background: '#ff5f5f' }}>
+        <RoundButton onClick={handleTurnAround} variant="primary">
           <FaSyncAlt size={14} />
         </RoundButton>
         {enableExit && (
           <RoundButton
             onClick={handleExit}
-            style={{ background: '#0067f8ff' }}
+            variant="primary"
           >
             <FaTimes size={16} />
           </RoundButton>

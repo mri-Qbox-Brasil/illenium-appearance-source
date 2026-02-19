@@ -8,7 +8,7 @@ export const Wrapper = styled.div`
   justify-content: flex-start;
   overflow: hidden;
   font-family: 'Inter', sans-serif;
-  color: #eeeeee;
+  color: ${({ theme }) => `rgb(${theme.fontColor || '238, 238, 238'})`};
 `;
 
 export const Container = styled.div`
@@ -49,7 +49,7 @@ export const ConfirmButton = styled.button`
   gap: 10px;
 
   background: ${({ theme }) => `rgb(${theme.accent || '10, 213, 140'})`};
-  color: white;
+  color: ${({ theme }) => `rgb(${theme.fontColorSelected || '255, 255, 255'})`};
   
   border: none;
   border-radius: 12px;
@@ -80,7 +80,7 @@ export const HeaderContainer = styled.div`
   width: 100%;
   padding-bottom: 20px;
   margin-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid ${({ theme }) => theme.cardBorder || 'rgba(255, 255, 255, 0.1)'};
 `;
 
 export const TitleData = styled.div`
@@ -90,7 +90,7 @@ export const TitleData = styled.div`
   h1 {
     font-size: 20px;
     font-weight: 700;
-    color: ${({ theme }) => theme.fontColorSelected};
+    color: ${({ theme }) => `rgb(${theme.titleColor || '255, 255, 255'})`};
     margin: 0;
   }
 
@@ -104,7 +104,7 @@ export const TitleData = styled.div`
 
 export const SwitchContainer = styled.div`
   display: flex;
-  background: rgba(0, 0, 0, 0.4);
+  background: ${({ theme }) => theme.id === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0.05)'};
   padding: 4px;
   border-radius: 14px;
   gap: 4px;
@@ -124,13 +124,13 @@ export const SwitchButton = styled.button<{ active?: boolean }>`
   
   /* Active: Green, Inactive: Transparent */
   background: ${({ active, theme }) => active ? `rgb(${theme.accent || '10, 213, 140'})` : 'transparent'}; 
-  color: ${({ active }) => active ? 'white' : 'rgba(255, 255, 255, 0.4)'};
+  color: ${({ active, theme }) => active ? `rgb(${theme.fontColorSelected || '255, 255, 255'})` : `rgba(${theme.fontColor}, 0.4)`};
   
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${({ active, theme }) => active ? `rgb(${theme.accent || '10, 213, 140'})` : 'rgba(255, 255, 255, 0.1)'};
-    color: white;
+    background: ${({ active, theme }) => active ? `rgb(${theme.accent || '10, 213, 140'})` : theme.id === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'};
+    color: ${({ active, theme }) => active ? `rgb(${theme.fontColorSelected || '255, 255, 255'})` : `rgb(${theme.fontColor})`};
     filter: ${({ active }) => active ? 'brightness(1.1)' : 'none'};
   }
 `;
@@ -177,7 +177,7 @@ export const NavList = styled.div`
 export const ContentPanel = styled.div`
   flex: 1;
   height: 100%;
-  background: rgba(0, 0, 0, 0.2);
+  background: ${({ theme }) => theme.id === 'dark' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)'};
   border-radius: 12px;
   padding: 15px;
   overflow-y: auto;
@@ -199,12 +199,12 @@ export const NavItem = styled.button<{ active?: boolean }>`
   background: ${({ active, theme }) =>
     active
       ? `rgb(${theme.accent || '10, 213, 140'})`
-      : 'rgba(255, 255, 255, 0.02)'
+      : theme.id === 'dark' ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.02)'
   };
   color: ${({ active, theme }) =>
-    active ? 'white' : 'rgba(255, 255, 255, 0.45)'
+    active ? `rgb(${theme.fontColorSelected || '255, 255, 255'})` : `rgba(${theme.fontColor}, 0.6)`
   };
-  border: 1px solid ${({ active }) => active ? 'transparent' : 'rgba(255, 255, 255, 0.03)'};
+  border: 1px solid ${({ active, theme }) => active ? 'transparent' : theme.id === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.05)'};
   border-radius: 12px;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
@@ -218,9 +218,9 @@ export const NavItem = styled.button<{ active?: boolean }>`
     background: ${({ active, theme }) =>
     active
       ? `rgb(${theme.accent || '10, 213, 140'})`
-      : 'rgba(255, 255, 255, 0.06)'
+      : theme.id === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)'
   };
-    color: white;
+    color: ${({ active, theme }) => active ? `rgb(${theme.fontColorSelected || '255, 255, 255'})` : theme.id === 'dark' ? `rgb(${theme.fontColorSelected})` : `rgb(${theme.fontColorHover})`};
     filter: ${({ active }) => active ? 'brightness(1.1)' : 'none'};
   }
   

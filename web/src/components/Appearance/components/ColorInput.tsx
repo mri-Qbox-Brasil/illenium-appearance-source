@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
+import { useNuiState } from '../../../hooks/nuiState';
 import styled, { css, keyframes } from 'styled-components';
 import { FaPlus } from 'react-icons/fa';
 
@@ -7,7 +8,9 @@ interface ColorInputProps {
   colors?: number[][];
   defaultValue?: number;
   clientValue?: number;
-  onChange: (value: number) => void;
+  colorValue?: string;
+  onChange?: (value: number) => void;
+  onColorChange?: (color: string) => void;
 }
 
 // --- Utilities ---
@@ -87,7 +90,8 @@ const Container = styled.div`
     display: flex;
     justify-content: space-between;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.6);
+    color: ${({ theme }) => `rgb(${theme.fontColor})`};
+    opacity: 0.6;
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -106,7 +110,7 @@ const Swatch = styled.button<{ selected: boolean; colorValue: string }>`
   height: 32px;
   width: 32px;
   border-radius: 50%;
-  border: 2px solid ${({ selected }) => (selected ? 'white' : 'transparent')};
+  border: 2px solid ${({ selected, theme }) => (selected ? `rgb(${theme.fontColorSelected || '255, 255, 255'})` : 'transparent')};
   background-color: ${({ colorValue }) => colorValue};
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -114,7 +118,7 @@ const Swatch = styled.button<{ selected: boolean; colorValue: string }>`
 
   &:hover {
     transform: scale(1.1);
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: ${({ theme }) => `rgba(${theme.fontColor}, 0.5)`};
   }
 `;
 
@@ -122,9 +126,9 @@ const PickerButton = styled.button<{ selected: boolean; colorValue?: string }>`
   height: 32px;
   width: 32px;
   border-radius: 50%;
-  border: 2px solid ${({ selected }) => (selected ? 'white' : 'rgba(255, 255, 255, 0.1)')};
-  background: ${({ colorValue }) => colorValue || 'rgba(255, 255, 255, 0.05)'};
-  color: ${({ colorValue }) => (colorValue ? 'white' : 'rgba(255, 255, 255, 0.4)')};
+  border: 2px solid ${({ selected, theme }) => (selected ? `rgb(${theme.fontColorSelected || '255, 255, 255'})` : `rgba(${theme.fontColor}, 0.1)`)};
+  background: ${({ colorValue }) => colorValue || 'rgba(0, 0, 0, 0.2)'};
+  color: ${({ theme }) => `rgb(${theme.fontColor})`};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -134,7 +138,7 @@ const PickerButton = styled.button<{ selected: boolean; colorValue?: string }>`
 
   &:hover {
     filter: brightness(1.2);
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: ${({ theme }) => `rgba(${theme.fontColor}, 0.5)`};
   }
 `;
 
@@ -245,15 +249,22 @@ const ValueInput = styled.input`
   }
 `;
 
-const ColorInput: React.FC<ColorInputProps> = ({ title, colors = [], defaultValue = 0, clientValue, onChange }) => {
+const ColorInput: React.FC<ColorInputProps> = ({ title, colors = [], defaultValue = 0, clientValue, colorValue, onChange, onColorChange }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [format, setFormat] = useState<'HEX' | 'RGB' | 'HSL'>('HEX');
   const isDragging = useRef(false);
 
   // HSV state for the picker
-  const initialColor = colors[defaultValue] || [255, 0, 0];
-  const initialHsv = rgbToHsv(initialColor[0], initialColor[1], initialColor[2]);
-  const [hsv, setHsv] = useState(initialHsv);
+  const getInitialHsv = () => {
+    if (colorValue) {
+      const rgb = colorValue.split(',').map(v => parseInt(v.trim()));
+      if (rgb.length === 3) return rgbToHsv(rgb[0], rgb[1], rgb[2]);
+    }
+    const color = colors[defaultValue] || [255, 0, 0];
+    return rgbToHsv(color[0], color[1], color[2]);
+  };
+
+  const [hsv, setHsv] = useState(getInitialHsv());
 
   const satMapRef = useRef<HTMLDivElement>(null);
   const hueSliderRef = useRef<HTMLDivElement>(null);
@@ -302,8 +313,13 @@ const ColorInput: React.FC<ColorInputProps> = ({ title, colors = [], defaultValu
 
   const updateGameColor = (currentHsv: { h: number; s: number; v: number }) => {
     const rgb = hsvToRgb(currentHsv.h, currentHsv.s, currentHsv.v);
-    const closestIndex = getClosestColorIndex(rgb, colors);
-    onChange(closestIndex);
+    if (onColorChange) {
+      onColorChange(`${rgb.r}, ${rgb.g}, ${rgb.b}`);
+    }
+    if (onChange && colors.length > 0) {
+      const closestIndex = getClosestColorIndex(rgb, colors);
+      onChange(closestIndex);
+    }
   };
 
   const currentRgb = hsvToRgb(hsv.h, hsv.s, hsv.v);
@@ -314,34 +330,45 @@ const ColorInput: React.FC<ColorInputProps> = ({ title, colors = [], defaultValu
   // Brand Presets mapped to closest indices
   const presets = [
     { r: 10, g: 213, b: 140 }, // Green
-    { r: 59, g: 130, b: 246 }, // Blue
-    { r: 168, g: 85, b: 247 }, // Purple
+    { r: 37, g: 99, b: 235 }, // Blue
+    { r: 139, g: 92, b: 246 }, // Purple
+    { r: 239, g: 68, b: 68 }, // Red
+    { r: 249, g: 115, b: 22 }, // Orange
   ];
 
-  const presetIndices = presets.map(p => getClosestColorIndex(p, colors));
-  const isPickerSelected = !presetIndices.includes(defaultValue);
-
-  const pickedColor = colors[defaultValue] || [255, 0, 0];
+  const pickedColor = colorValue
+    ? colorValue.split(',').map(v => parseInt(v.trim()))
+    : (colors[defaultValue] || [255, 0, 0]);
   const pickedColorValue = `rgb(${pickedColor[0]}, ${pickedColor[1]}, ${pickedColor[2]})`;
+
+  const { locales } = useNuiState();
+
+  const isSelected = (r: number, g: number, b: number) => {
+    if (colorValue) return colorValue === `${r}, ${g}, ${b}`;
+    if (colors.length > 0) return defaultValue === getClosestColorIndex({ r, g, b }, colors);
+    return false;
+  };
+
+  const isPickerSelected = !presets.some(p => isSelected(p.r, p.g, p.b));
 
   return (
     <Container>
       <span>
-        <small>{`${title}: ${defaultValue}`}</small>
-        <small>{clientValue}</small>
+        <small>{title || locales?.headOverlays?.color || 'Cor'}</small>
+        {clientValue !== undefined && <small>{clientValue}</small>}
       </span>
       <div>
-        {presets.map((color, index) => {
-          const targetIndex = presetIndices[index];
-          return (
-            <Swatch
-              key={index}
-              colorValue={`rgb(${color.r}, ${color.g}, ${color.b})`}
-              selected={defaultValue === targetIndex}
-              onClick={() => onChange(targetIndex)}
-            />
-          );
-        })}
+        {presets.map((color, index) => (
+          <Swatch
+            key={index}
+            colorValue={`rgb(${color.r}, ${color.g}, ${color.b})`}
+            selected={isSelected(color.r, color.g, color.b)}
+            onClick={() => {
+              if (onColorChange) onColorChange(`${color.r}, ${color.g}, ${color.b}`);
+              if (onChange && colors.length > 0) onChange(getClosestColorIndex(color, colors));
+            }}
+          />
+        ))}
         <PickerButton
           selected={isPickerSelected}
           colorValue={pickedColorValue}

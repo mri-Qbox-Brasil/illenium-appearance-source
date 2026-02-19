@@ -32,8 +32,8 @@ const darkTheme = {
 const lightTheme = {
   id: 'light',
   borderRadius: '12px',
-  fontColor: '31, 41, 55', // gray-800
-  fontColorHover: '17, 24, 39', // gray-900
+  fontColor: '17, 24, 39', // gray-900 (stronger)
+  fontColorHover: '0, 0, 0', // black
   fontColorSelected: '255, 255, 255',
   fontFamily: 'Inter',
   primaryBackground: '243, 244, 246', // gray-100
@@ -44,7 +44,8 @@ const lightTheme = {
   sectionFontWeight: '600',
   smoothBackgroundTransition: true,
   // Custom for header
-  headerBackground: 'rgba(0, 0, 0, 0.05)',
+  cardBorder: 'rgba(0, 0, 0, 0.08)',
+  headerBackground: 'rgba(0, 0, 0, 0.03)',
   buttonBackground: 'rgba(0, 0, 0, 0.05)',
 };
 
@@ -52,6 +53,16 @@ interface ThemeContextInterface {
   theme: 'light' | 'dark';
   toggleTheme: () => void;
   setTheme: (theme: 'light' | 'dark') => void;
+  accentColor: string;
+  setAccentColor: (color: string) => void;
+  contentColor: string;
+  setContentColor: (color: string) => void;
+  titleColor: string;
+  setTitleColor: (color: string) => void;
+  interfaceScale: number;
+  setInterfaceScale: (scale: number) => void;
+  language: string;
+  setLanguage: (lang: string) => void;
   layout: 'accordion' | 'tabs';
   setLayout: (layout: 'accordion' | 'tabs') => void;
 }
@@ -60,12 +71,28 @@ export const ThemeToggleContext = createContext<ThemeContextInterface>({
   theme: 'dark',
   toggleTheme: () => { },
   setTheme: () => { },
+  accentColor: '10, 213, 140',
+  setAccentColor: () => { },
+  contentColor: '255, 255, 255',
+  setContentColor: () => { },
+  titleColor: '255, 255, 255',
+  setTitleColor: () => { },
+  interfaceScale: 100,
+  setInterfaceScale: () => { },
+  language: 'Português (BR)',
+  setLanguage: () => { },
   layout: 'accordion',
   setLayout: () => { },
 });
 
 const App: React.FC = () => {
   const [themeMode, setThemeMode] = useState<'light' | 'dark'>('dark');
+  const [accentColor, setAccentColor] = useState('10, 213, 140'); // Default emerald
+  const [contentColor, setContentColor] = useState('255, 255, 255'); // Default white
+  const [titleColor, setTitleColor] = useState('255, 255, 255'); // Default white
+  const [interfaceScale, setInterfaceScale] = useState(98); // Matches image
+  const [language, setLanguage] = useState('Português (BR)');
+  const [layout, setLayout] = useState<'accordion' | 'tabs'>('tabs');
 
   const toggleTheme = useCallback(() => {
     setThemeMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -79,11 +106,18 @@ const App: React.FC = () => {
     }
   }, [themeMode]);
 
-  const [layout, setLayout] = useState<'accordion' | 'tabs'>('tabs');
-
   const currentTheme = useMemo(() => {
-    return themeMode === 'dark' ? darkTheme : lightTheme;
-  }, [themeMode]);
+    const base = themeMode === 'dark' ? darkTheme : lightTheme;
+    return {
+      ...base,
+      accent: accentColor,
+      primaryBackgroundSelected: accentColor,
+      fontColor: contentColor,
+      fontColorHover: contentColor,
+      fontColorSelected: contentColor,
+      titleColor: titleColor,
+    };
+  }, [themeMode, accentColor, contentColor, titleColor]);
 
   return (
     <NuiStateProvider>
@@ -91,6 +125,16 @@ const App: React.FC = () => {
         theme: themeMode,
         toggleTheme,
         setTheme: setThemeMode,
+        accentColor,
+        setAccentColor,
+        contentColor,
+        setContentColor,
+        titleColor,
+        setTitleColor,
+        interfaceScale,
+        setInterfaceScale,
+        language,
+        setLanguage,
         layout,
         setLayout
       }}>

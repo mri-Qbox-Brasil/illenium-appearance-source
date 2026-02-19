@@ -35,14 +35,21 @@ import HeadBlend from './HeadBlend';
 import FaceFeatures from './FaceFeatures';
 import HeadOverlays from './HeadOverlays';
 import Components from './Components';
+import ColorInput from './components/ColorInput';
+import RangeInput from './components/RangeInput';
 import Props from './Props';
 import Options from './Options';
 import Modal from '../Modal';
 import Tattoos from './Tattoos';
+import SelectInput from './components/SelectInput';
 import { MriSidebar, MriButton } from '@mriqbox/ui-kit';
 import styled from 'styled-components';
 
 import { Wrapper, Container, ConfirmButton, HeaderContainer, TitleData, SwitchContainer, SwitchButton, TabbedContainer, ContentPanel, NavItem, SidebarNav, NavList } from './styles';
+import { ThemeContext } from 'styled-components';
+import { FaCheck, FaThLarge, FaList, FaMale, FaUsers, FaSmile, FaPalette, FaTshirt, FaHatCowboy, FaSkull, FaAngleLeft, FaAngleRight, FaCog, FaGlobe, FaUniversalAccess } from 'react-icons/fa';
+import { ThemeToggleContext } from '../../App';
+import React, { useContext } from 'react';
 
 const StyledSidebar = styled(MriSidebar)`
   width: 280px;
@@ -80,6 +87,15 @@ const StyledSidebar = styled(MriSidebar)`
      font-size: 14px !important;
      font-weight: 600;
   }
+
+  /* Universal text/icon color enforcement */
+  * {
+    color: ${({ theme }) => `rgb(${theme.fontColor})`};
+  }
+  
+  button[data-active="true"], button[active="true"] {
+    color: ${({ theme }) => `rgb(${theme.fontColorSelected})`} !important;
+  }
 `;
 
 const FooterContainer = styled.div`
@@ -95,10 +111,7 @@ const StyledConfirmButton = styled(MriButton)`
 `;
 
 
-import { ThemeContext } from 'styled-components';
-import { FaCheck, FaThLarge, FaList, FaMale, FaUsers, FaSmile, FaPalette, FaTshirt, FaHatCowboy, FaSkull, FaAngleLeft, FaAngleRight, FaCog } from 'react-icons/fa';
-import { ThemeToggleContext } from '../../App';
-import React, { useContext } from 'react';
+
 
 if (isEnvBrowser() || !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARANCE == 'true') {
   mock('appearance_get_settings', () => ({
@@ -164,8 +177,10 @@ const Appearance = () => {
   const [exitModal, setExitModal] = useState(false);
 
   const { display, setDisplay, locales, setLocales } = useNuiState();
-  const { theme, setTheme, layout, setLayout } = useContext(ThemeToggleContext);
+  const { theme, setTheme, layout, setLayout, accentColor, setAccentColor, contentColor, setContentColor, titleColor, setTitleColor, interfaceScale, setInterfaceScale, language, setLanguage } = useContext(ThemeToggleContext);
   const [activeTab, setActiveTab] = useState('ped');
+  const [prevTab, setPrevTab] = useState('ped');
+  const [activeOptionsTab, setActiveOptionsTab] = useState('interface');
   const [collapsed, setCollapsed] = useState(false);
 
   const wrapperTransition = useTransitionAnimation(display.appearance, null, {
@@ -735,9 +750,16 @@ const Appearance = () => {
     return list.filter(item => item.visible);
   }, [config, appearanceSettings, isPedFreemodeModel]);
 
-  // Ensure active tab is valid
+  const optionsSections = useMemo(() => [
+    {
+      id: 'interface',
+      title: 'Interface',
+      icon: FaPalette,
+    }
+  ], []);
+
   useEffect(() => {
-    if (sections.length > 0 && !sections.find(s => s.id === activeTab)) {
+    if (sections.length > 0 && activeTab !== 'options' && !sections.find(s => s.id === activeTab)) {
       setActiveTab(sections[0].id);
     }
   }, [sections, activeTab]);
@@ -852,11 +874,85 @@ const Appearance = () => {
           />
         );
       case 'options':
+        return renderOptionsContent();
+      default:
+        return null;
+    }
+  };
+
+  const renderOptionsContent = () => {
+    switch (activeOptionsTab) {
+      case 'interface':
         return (
-          <div style={{ color: 'white', padding: '20px' }}>
-            <h2 style={{ marginBottom: '20px' }}>Configurações do Menu</h2>
-            {/* You could add Theme/Layout toggles here in the future if needed */}
-            <p style={{ opacity: 0.6 }}>Esta seção permite configurar as preferências da interface.</p>
+          <div style={{ color: `rgb(${contentColor})`, padding: '0 20px 20px 20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', borderBottom: `1px solid rgba(${contentColor}, 0.1)`, paddingBottom: '16px' }}>
+              <FaCog size={22} style={{ color: `rgb(${titleColor})` }} />
+              <h2 style={{ fontSize: '22px', fontWeight: 700, margin: 0, color: `rgb(${titleColor})` }}>Settings</h2>
+            </div>
+
+            {/* Appearance Section */}
+            <div style={{ marginBottom: '32px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', opacity: 0.8 }}>
+                <FaPalette size={16} style={{ color: `rgb(${titleColor})` }} />
+                <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0, color: `rgb(${titleColor})` }}>Appearance</h3>
+              </div>
+
+              <div style={{ background: 'rgba(0, 0, 0, 0.2)', borderRadius: '12px', padding: '20px', border: `1px solid rgba(${contentColor}, 0.05)` }}>
+                <h4 style={{ fontSize: '12px', fontWeight: 700, opacity: 0.5, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Accent Color</h4>
+                <div style={{ marginBottom: '24px' }}>
+                  <ColorInput
+                    colorValue={accentColor}
+                    onColorChange={setAccentColor}
+                  />
+                </div>
+
+                <h4 style={{ fontSize: '12px', fontWeight: 700, opacity: 0.5, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Cor dos Títulos</h4>
+                <div style={{ marginBottom: '24px' }}>
+                  <ColorInput
+                    colorValue={titleColor}
+                    onColorChange={setTitleColor}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', opacity: 0.8, marginTop: '16px' }}>
+                  <FaGlobe size={14} />
+                  <h4 style={{ fontSize: '12px', fontWeight: 700, margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Language / Idioma</h4>
+                </div>
+
+                <div style={{ background: 'rgba(0, 0, 0, 0.2)', borderRadius: '8px', padding: '12px', border: `1px solid rgba(${contentColor}, 0.05)` }}>
+                  <SelectInput
+                    title="Select Language"
+                    items={['Português (BR)', 'English', 'Español']}
+                    defaultValue={language}
+                    clientValue=""
+                    onChange={setLanguage}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Accessibility Section */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', opacity: 0.8 }}>
+                <FaUniversalAccess size={16} style={{ color: `rgb(${titleColor})` }} />
+                <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0, color: `rgb(${titleColor})` }}>Accessibility</h3>
+              </div>
+
+              <div style={{ background: 'rgba(0, 0, 0, 0.2)', borderRadius: '12px', padding: '20px', border: `1px solid rgba(${contentColor}, 0.05)` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
+                  <span style={{ fontSize: '12px', opacity: 0.4 }}>A-</span>
+                  <div style={{ flex: 1 }}>
+                    <RangeInput
+                      min={80}
+                      max={120}
+                      defaultValue={interfaceScale}
+                      onChange={setInterfaceScale}
+                    />
+                  </div>
+                  <span style={{ fontSize: '12px', opacity: 0.4 }}>A+</span>
+                </div>
+              </div>
+            </div>
           </div>
         );
       default:
@@ -871,61 +967,92 @@ const Appearance = () => {
           item && (
             <animated.div key={key} style={style}>
               <Wrapper
+                style={{ transform: `scale(${interfaceScale / 100})`, transformOrigin: 'left center' }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
               >
-                <TabbedContainer style={{ width: '75vw', minWidth: '700px' }}>
-                  <SidebarNav style={{ width: collapsed ? '64px' : '280px', transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-                    {!collapsed && (
-                      <HeaderContainer style={{ flexShrink: 0, marginBottom: '20px' }}>
+                <TabbedContainer style={{
+                  width: '75vw',
+                  minWidth: '700px'
+                }}>
+                  <SidebarNav style={{ width: collapsed ? '82px' : '280px', transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+                    <HeaderContainer style={{ flexShrink: 0, marginBottom: '20px', justifyContent: collapsed ? 'center' : 'space-between', borderBottom: collapsed ? 'none' : undefined }}>
+                      {!collapsed && (
                         <TitleData>
                           <h1>mri_Qappearance</h1>
                           <p>Customização</p>
                         </TitleData>
-                        <SwitchContainer title="Expandir/Recolher Menu">
-                          <SwitchButton active={!collapsed} onClick={() => setCollapsed(false)}>
-                            <FaThLarge size={14} />
-                          </SwitchButton>
-                          <SwitchButton active={collapsed} onClick={() => setCollapsed(true)}>
-                            <FaList size={14} />
-                          </SwitchButton>
-                        </SwitchContainer>
-                      </HeaderContainer>
-                    )}
-
-                    {collapsed && (
-                      <div style={{ paddingBottom: '20px', marginBottom: '10px', display: 'flex', justifyContent: 'center' }}>
-                        <SwitchButton active onClick={() => setCollapsed(false)}>
+                      )}
+                      <SwitchContainer title="Expandir/Recolher Menu">
+                        <SwitchButton active={!collapsed} onClick={() => setCollapsed(false)}>
                           <FaThLarge size={14} />
                         </SwitchButton>
-                      </div>
-                    )}
+                        <SwitchButton active={collapsed} onClick={() => setCollapsed(true)}>
+                          <FaList size={14} />
+                        </SwitchButton>
+                      </SwitchContainer>
+                    </HeaderContainer>
 
-                    <NavList>
-                      {sections.map(s => (
-                        <NavItem
-                          key={s.id}
-                          active={activeTab === s.id}
-                          onClick={() => setActiveTab(s.id)}
-                          title={collapsed ? s.title : ''}
-                        >
-                          <s.icon />
-                          {!collapsed && <span>{s.title}</span>}
-                        </NavItem>
-                      ))}
-                    </NavList>
+                    {activeTab !== 'options' ? (
+                      <NavList>
+                        {sections.map(s => (
+                          <NavItem
+                            key={s.id}
+                            active={activeTab === s.id}
+                            onClick={() => {
+                              setPrevTab(s.id);
+                              setActiveTab(s.id);
+                            }}
+                            title={collapsed ? s.title : ''}
+                          >
+                            <s.icon />
+                            {!collapsed && <span>{s.title}</span>}
+                          </NavItem>
+                        ))}
+                      </NavList>
+                    ) : (
+                      <NavList>
+                        {optionsSections.map(s => (
+                          <NavItem
+                            key={s.id}
+                            active={activeOptionsTab === s.id}
+                            onClick={() => setActiveOptionsTab(s.id)}
+                            title={collapsed ? s.title : ''}
+                          >
+                            <s.icon />
+                            {!collapsed && <span>{s.title}</span>}
+                          </NavItem>
+                        ))}
+                      </NavList>
+                    )}
 
                     <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                       <NavItem
                         active={activeTab === 'options'}
-                        onClick={() => setActiveTab('options')}
-                        style={{ background: activeTab === 'options' ? `rgb(${theme === 'dark' ? '10, 213, 140' : '139, 92, 246'})` : 'rgba(255,255,255,0.03)', justifyContent: collapsed ? 'center' : 'flex-start' }}
+                        onClick={() => {
+                          if (activeTab !== 'options') {
+                            setPrevTab(activeTab);
+                          }
+                          setActiveTab('options');
+                        }}
+                        style={{ background: activeTab === 'options' ? `rgb(${accentColor})` : 'rgba(255,255,255,0.03)', justifyContent: collapsed ? 'center' : 'flex-start' }}
                       >
                         <FaCog />
                         {!collapsed && <span>Configuração</span>}
                       </NavItem>
+
+                      {activeTab === 'options' && (
+                        <NavItem
+                          onClick={() => setActiveTab(prevTab)}
+                          style={{ background: 'rgba(255,255,255,0.03)', justifyContent: collapsed ? 'center' : 'flex-start' }}
+                          title={collapsed ? "Voltar" : ""}
+                        >
+                          <FaAngleLeft />
+                          {!collapsed && <span>Voltar a página</span>}
+                        </NavItem>
+                      )}
 
                       {!collapsed && (
                         <ConfirmButton onClick={handleConfirmDirect} style={{ marginBottom: 0 }}>
@@ -933,9 +1060,9 @@ const Appearance = () => {
                         </ConfirmButton>
                       )}
                       {collapsed && (
-                        <NavItem onClick={handleConfirmDirect} active title="Confirmar" style={{ background: `rgb(${theme === 'dark' ? '10, 213, 140' : '139, 92, 246'})`, justifyContent: 'center' }}>
+                        <ConfirmButton onClick={handleConfirmDirect} title="Confirmar" style={{ background: `rgb(${accentColor})`, justifyContent: 'center' }}>
                           <FaCheck />
-                        </NavItem>
+                        </ConfirmButton>
                       )}
                     </div>
                   </SidebarNav>
@@ -961,38 +1088,42 @@ const Appearance = () => {
                 />
               </Wrapper>
             </animated.div>
-          ),
+          )
       )}
-      {saveModalTransition.map(
-        ({ item, key, props: style }) =>
-          item && (
-            <animated.div key={key} style={{ ...style, zIndex: 9999 }}>
-              <Modal
-                title={locales.modal.save.title}
-                description={locales.modal.save.description}
-                accept={locales.modal.accept}
-                decline={locales.modal.decline}
-                handleAccept={() => handleSave(true)}
-                handleDecline={() => handleSave(false)}
-              />
-            </animated.div>
-          ),
-      )}
-      {exitModalTransition.map(
-        ({ item, key, props: style }) =>
-          item && (
-            <animated.div key={key} style={{ ...style, zIndex: 10000 }}>
-              <Modal
-                title={locales.modal.exit.title}
-                description={locales.modal.exit.description}
-                accept={locales.modal.accept}
-                decline={locales.modal.decline}
-                handleAccept={() => handleExit(true)}
-                handleDecline={() => handleExit(false)}
-              />
-            </animated.div>
-          ),
-      )}
+      {
+        saveModalTransition.map(
+          ({ item, key, props: style }) =>
+            item && (
+              <animated.div key={key} style={{ ...style, zIndex: 9999 }}>
+                <Modal
+                  title={locales.modal.save.title}
+                  description={locales.modal.save.description}
+                  accept={locales.modal.accept}
+                  decline={locales.modal.decline}
+                  handleAccept={() => handleSave(true)}
+                  handleDecline={() => handleSave(false)}
+                />
+              </animated.div>
+            ),
+        )
+      }
+      {
+        exitModalTransition.map(
+          ({ item, key, props: style }) =>
+            item && (
+              <animated.div key={key} style={{ ...style, zIndex: 10000 }}>
+                <Modal
+                  title={locales.modal.exit.title}
+                  description={locales.modal.exit.description}
+                  accept={locales.modal.accept}
+                  decline={locales.modal.decline}
+                  handleAccept={() => handleExit(true)}
+                  handleDecline={() => handleExit(false)}
+                />
+              </animated.div>
+            ),
+        )
+      }
     </>
   );
 };

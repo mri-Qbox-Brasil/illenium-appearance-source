@@ -14,13 +14,7 @@ interface RangeInputProps {
 const Container = styled.div`
   width: 100%;
 
-  > span {
-    width: 100%;
-
-    display: flex;
-    justify-content: space-between;
-    font-weight: 200;
-  }
+    color: ${({ theme }) => `rgb(${theme.fontColor || '255, 255, 255'})`};
 
   > div {
     display: flex;
@@ -41,7 +35,7 @@ const Container = styled.div`
     appearance: none;
     width: 100%;
     height: 15px;
-    background: rgba(${props => props.theme.secondayBackground || '0, 0, 0'}, 0.8);
+    background: ${({ theme }) => theme.id === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.1)'};
     outline: none;
     opacity: 1;
     border-radius: 2px;
@@ -53,9 +47,10 @@ const Container = styled.div`
     appearance: none;
     width: 17px;
     height: 17px;
-    background: #eeeeee;
+    background: ${({ theme }) => `rgb(${theme.fontColorSelected || '255, 255, 255'})`};
+    border: 2px solid ${({ theme }) => `rgb(${theme.accent})`};
     cursor: pointer;
-    border-radius: 2px;
+    border-radius: 50%;
   }
 `;
 

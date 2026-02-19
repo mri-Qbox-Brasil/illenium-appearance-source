@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import styled, { keyframes } from 'styled-components';
-import { FaPlus, FaImage, FaTshirt } from 'react-icons/fa';
+import styled, { keyframes, useTheme } from 'styled-components';
+import { FaPlus, FaImage, FaTshirt, FaSearch } from 'react-icons/fa';
 
 interface ImageSelectorProps {
   label?: string;
@@ -24,7 +24,7 @@ const Container = styled.div`
 `;
 
 const Label = styled.span`
-  color: rgba(255, 255, 255, 0.6);
+  color: ${({ theme }) => `rgba(${theme.fontColor}, 0.6)`};
   font-size: 13px;
   font-weight: 500;
   text-transform: uppercase;
@@ -43,12 +43,12 @@ const ItemBox = styled.div<{ active?: boolean; isAdd?: boolean }>`
   background: ${({ active, theme }) =>
     active
       ? `rgba(${theme.accent || '10, 213, 140'}, 0.15)`
-      : 'rgba(255, 255, 255, 0.03)'
+      : theme.id === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)'
   };
   border: 1px solid ${({ active, theme }) =>
     active
       ? `rgb(${theme.accent || '10, 213, 140'})`
-      : 'rgba(255, 255, 255, 0.03)'
+      : theme.id === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.08)'
   };
   border-radius: 12px;
   display: flex;
@@ -58,7 +58,7 @@ const ItemBox = styled.div<{ active?: boolean; isAdd?: boolean }>`
   position: relative;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   color: ${({ active, theme }) =>
-    active ? `rgb(${theme.accent || '10, 213, 140'})` : 'rgba(255, 255, 255, 0.3)'
+    active ? `rgb(${theme.accent || '10, 213, 140'})` : `rgba(${theme.fontColor}, 0.3)`
   };
 
   &:hover {
@@ -78,9 +78,10 @@ const ItemBox = styled.div<{ active?: boolean; isAdd?: boolean }>`
   }
 
   img {
-    width: 80%;
-    height: 80%;
+    width: 90%;
+    height: 90%;
     object-fit: contain;
+    display: block;
   }
 `;
 
@@ -133,6 +134,41 @@ const DialogTitle = styled.h3`
   align-items: center;
 `;
 
+const SearchContainer = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 12px 16px 12px 40px;
+  background: ${({ theme }) => theme.id === 'dark' ? 'rgba(0, 0, 0, 0.4)' : 'rgba(0, 0, 0, 0.05)'};
+  border: 1px solid ${({ theme }) => theme.cardBorder || 'rgba(255, 255, 255, 0.1)'};
+  border-radius: 12px;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &:focus {
+    border-color: ${({ theme }) => `rgb(${theme.accent})`};
+    background: ${({ theme }) => theme.id === 'dark' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(0, 0, 0, 0.08)'};
+  }
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+`;
+
+const SearchIcon = styled(FaSearch)`
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 14px;
+`;
+
 const GalleryGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -144,21 +180,21 @@ const GalleryGrid = styled.div`
 
 const GalleryItem = styled.div`
   aspect-ratio: 1 / 1;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: ${({ theme }) => theme.id === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.03)'};
+  border: 1px solid ${({ theme }) => theme.id === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.08)'};
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  position: relative;
   transition: all 0.2s ease;
-  color: rgba(255, 255, 255, 0.4);
+  overflow: hidden;
+  color: ${({ theme }) => `rgba(${theme.fontColor}, 0.4)`};
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: scale(1.05);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: white;
+    color: ${({ theme }) => `rgb(${theme.fontColor})`};
+    border-color: ${({ theme }) => `rgb(${theme.accent})`};
   }
 
   svg {
@@ -166,12 +202,28 @@ const GalleryItem = styled.div`
   }
 `;
 
+const ReferenceLabel = styled.span`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 0;
+  text-align: center;
+  border-bottom-left-radius: 11px;
+  border-bottom-right-radius: 11px;
+  pointer-events: none;
+`;
+
 const DialogActions = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid ${({ theme }) => theme.cardBorder || 'rgba(255, 255, 255, 0.05)'};
 `;
 
 const ActionButton = styled.button<{ variant?: 'primary' | 'ghost' }>`
@@ -191,23 +243,36 @@ const ActionButton = styled.button<{ variant?: 'primary' | 'ghost' }>`
         &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(${theme.accent || '10, 213, 140'}, 0.3); }
       `
       : `
-        background: rgba(255, 255, 255, 0.05);
-        color: rgba(255, 255, 255, 0.7);
-        &:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+        background: ${theme.id === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'};
+        color: rgba(${theme.fontColor}, 0.7);
+        border-color: ${theme.id === 'dark' ? 'transparent' : 'rgba(0, 0, 0, 0.1)'};
+        &:hover { background: ${theme.id === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)'}; color: rgb(${theme.fontColor}); }
       `
   }
 `;
 
 const ImageSelector: React.FC<ImageSelectorProps> = ({ label, items, selectedValue, onSelect, onAdd }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const theme = useTheme() as any;
 
   const handleBoxClick = () => {
     setIsDialogOpen(true);
   };
 
+  const handleClose = () => {
+    setIsDialogOpen(false);
+    setSearchTerm('');
+  };
+
   const handleItemSelect = (id: string) => {
     onSelect(id);
+    handleClose();
   };
+
+  const filteredItems = items.filter(item =>
+    item.id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const selectedItem = items.find(item => item.id === selectedValue);
 
@@ -228,32 +293,52 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({ label, items, selectedVal
       </ItemBox>
 
       {isDialogOpen && (
-        <DialogOverlay onClick={() => setIsDialogOpen(false)}>
+        <DialogOverlay onClick={handleClose}>
           <Dialog onClick={(e) => e.stopPropagation()}>
             <DialogTitle>
               Selecionar Modelo
-              <small style={{ fontSize: '12px', fontWeight: 400, opacity: 0.5 }}>{items.length} opções disponíveis</small>
+              <small style={{ fontSize: '12px', fontWeight: 400, opacity: 0.5 }}>{filteredItems.length} opções disponíveis</small>
             </DialogTitle>
+            <SearchContainer>
+              <SearchIcon />
+              <SearchInput
+                autoFocus
+                placeholder="Pesquisar por nome ou ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </SearchContainer>
             <GalleryGrid>
-              {items.map((item) => (
+              {filteredItems.map((item) => (
                 <GalleryItem
                   key={item.id}
                   onClick={() => handleItemSelect(item.id)}
                   style={{
-                    border: selectedValue === item.id ? '2px solid rgb(10, 213, 140)' : '1px solid rgba(255, 255, 255, 0.05)',
-                    background: selectedValue === item.id ? 'rgba(10, 213, 140, 0.1)' : 'rgba(255, 255, 255, 0.03)'
+                    border: selectedValue === item.id ? `2px solid rgb(${theme.accent})` : theme.id === 'dark' ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.1)',
+                    background: selectedValue === item.id ? `rgba(${theme.accent}, 0.1)` : theme.id === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)'
                   }}
                 >
                   {item.image ? (
-                    <img src={item.image} alt={item.id} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    <img
+                      src={item.image}
+                      alt={item.id}
+                      style={{
+                        maxWidth: '90%',
+                        maxHeight: '90%',
+                        width: 'auto',
+                        height: 'auto',
+                        objectFit: 'contain'
+                      }}
+                    />
                   ) : (
                     item.icon || <FaImage />
                   )}
+                  <ReferenceLabel>{item.id}</ReferenceLabel>
                 </GalleryItem>
               ))}
             </GalleryGrid>
             <DialogActions>
-              <ActionButton onClick={() => setIsDialogOpen(false)}>Fechar</ActionButton>
+              <ActionButton onClick={handleClose}>Fechar</ActionButton>
             </DialogActions>
           </Dialog>
         </DialogOverlay>
