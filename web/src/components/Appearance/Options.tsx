@@ -43,7 +43,7 @@ const OptionsContainer = styled.div`
   padding: 40px 0;
   margin-left: 10px;
   pointer-events: auto; /* Changed from none to auto to ensure clickability in CEF */
-  z-index: 1000;
+  z-index: 100;
   flex-shrink: 0;
 `;
 

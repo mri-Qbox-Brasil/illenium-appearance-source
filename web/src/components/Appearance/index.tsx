@@ -104,6 +104,16 @@ if (isEnvBrowser() || !import.meta.env.PROD || import.meta.env.VITE_SHOW_APPEARA
   mock('appearance_get_settings', () => ({
     appearanceSettings: {
       ...SETTINGS_INITIAL_STATE,
+      imageUrl: 'https://assets.mriqbox.com.br/',
+      imageLocal: 'url',
+      imageSources: {
+        peds: 'peds/',
+        heritage: 'peds/',
+        appearance: 'peds/',
+        clothes: 'clothing/',
+        accessories: 'clothing/',
+        tattoos: 'peds/tattoos/'
+      },
       eyeColor: { min: 0, max: 24 },
       hair: {
         ...SETTINGS_INITIAL_STATE.hair,
@@ -790,6 +800,7 @@ const Appearance = () => {
               fade: data.tattoos?.ZONE_HAIR?.length > 0 ? data.tattoos.ZONE_HAIR[0] : null
             }}
             isPedFreemodeModel={isPedFreemodeModel}
+            isPedMale={isPedMale}
             handleHairChange={handleHairChange}
             handleHeadOverlayChange={handleHeadOverlayChange}
             handleEyeColorChange={handleEyeColorChange}
@@ -809,6 +820,7 @@ const Appearance = () => {
             componentConfig={config.componentConfig}
             hasTracker={config.hasTracker}
             isPedFreemodeModel={isPedFreemodeModel}
+            isPedMale={isPedMale}
             forcedOpen={layout === 'tabs'}
           />
         );
@@ -821,6 +833,7 @@ const Appearance = () => {
             handlePropDrawableChange={handlePropDrawableChange}
             handlePropTextureChange={handlePropTextureChange}
             propConfig={config.propConfig}
+            isPedMale={isPedMale}
             forcedOpen={layout === 'tabs'}
           />
         );
@@ -828,6 +841,7 @@ const Appearance = () => {
         return isPedFreemodeModel && config.tattoos && (
           <Tattoos
             settings={filterTattoos(appearanceSettings.tattoos)}
+            fullSettings={appearanceSettings}
             data={data.tattoos}
             storedData={storedData.tattoos}
             handleApplyTattoo={handleApplyTattoo}

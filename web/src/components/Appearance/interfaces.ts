@@ -225,6 +225,7 @@ export interface AppearanceSettings {
   tattoos: TattoosSettings;
   imageLocal: string;
   imageUrl: string;
+  imageSources: Record<string, string>;
   fade: Tattoo[];
 }
 

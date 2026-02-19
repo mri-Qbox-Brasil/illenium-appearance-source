@@ -31,10 +31,14 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
 
   const getItems = (min: number, max: number) => {
     const items = [];
+    const heritageFolder = settings.imageSources?.heritage || 'peds/';
     for (let i = min; i <= max; i++) {
+      const image = isLocal
+        ? `${finalBaseUrl}${i}.png`
+        : `${host}${heritageFolder}${i}.webp`;
       items.push({
         id: i.toString(),
-        image: `${finalBaseUrl}${i}.png`,
+        image: image,
       });
     }
     return items;

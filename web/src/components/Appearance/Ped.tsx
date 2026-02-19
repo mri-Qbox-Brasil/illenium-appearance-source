@@ -34,11 +34,16 @@ const Ped = ({ settings, storedData, data, handleModelChange, forcedOpen }: PedP
     const imageUrl = settings.imageUrl;
     const isLocal = imageLocal === 'pasta';
     const baseUrl = isLocal ? 'peds/' : imageUrl;
+    const pedsFolder = settings.imageSources?.peds || 'peds/';
+
+    const image = isLocal
+      ? `${baseUrl}${model}.png`
+      : `${baseUrl}${pedsFolder}${model}.webp`;
 
     return {
       id: model,
       icon: icon,
-      image: `${baseUrl}${model}.png`
+      image: image
     };
   });
 

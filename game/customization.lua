@@ -200,11 +200,11 @@ local function getPropSettings(ped, propId)
     local settings = {
         prop_id = propId,
         drawable = {
-            min = -1,
+            min = 0,
             max = GetNumberOfPedPropDrawableVariations(ped, propId) - 1
         },
         texture = {
-            min = -1,
+            min = 0,
             max = GetNumberOfPedPropTextureVariations(ped, propId, drawableId) - 1
         },
         blacklist = blacklistSettings
@@ -375,7 +375,8 @@ local function getAppearanceSettings()
         eyeColor = eyeColor,
         tattoos = tattoos,
         imageLocal = Config.ImageLocal,
-        imageUrl = Config.ImageUrl
+        imageUrl = Config.ImageUrl,
+        imageSources = Config.ImageSources
     }
 end
 client.getAppearanceSettings = getAppearanceSettings

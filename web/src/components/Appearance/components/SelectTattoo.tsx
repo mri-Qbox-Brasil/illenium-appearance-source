@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useNuiState } from '../../../hooks/nuiState';
 import { FaCheck, FaTrash } from 'react-icons/fa';
 import Button from './Button';
-import { Tattoo, TattoosSettings } from '../interfaces';
+import { Tattoo, TattoosSettings, AppearanceSettings } from '../interfaces';
 import RangeInput from './RangeInput';
 import ImageSelector from './ImageSelector';
 
@@ -14,6 +14,7 @@ interface SelectTattooProps {
   handlePreviewTattoo: (value: Tattoo, opacity: number) => void;
   handleDeleteTattoo: (value: Tattoo) => void;
   settings: TattoosSettings;
+  fullSettings: AppearanceSettings;
 }
 
 const Container = styled.div`
@@ -75,7 +76,8 @@ const SelectTattoo = ({
   handleApplyTattoo,
   handlePreviewTattoo,
   handleDeleteTattoo,
-  settings
+  settings,
+  fullSettings
 }: SelectTattooProps) => {
   const defaultOpacity = 0.1;
   const [currentTattoo, setCurrentTattoo] = useState<Tattoo>(items[0]);
@@ -126,12 +128,23 @@ const SelectTattoo = ({
   }
 
   // Map tattoos to ImageSelector items
-  const selectorItems = items.map(item => ({
-    id: item.name,
-    label: item.label,
-    // Note: Assuming there aren't specific preview images for tattoos in the default structure, 
-    // but ImageSelector handles this gracefully.
-  }));
+  const selectorItems = items.map(item => {
+    const imageLocal = fullSettings.imageLocal;
+    const imageUrl = fullSettings.imageUrl;
+    const isLocal = imageLocal === 'pasta';
+    const baseUrl = isLocal ? 'peds/tattoos/' : imageUrl;
+    const tattoosFolder = fullSettings.imageSources?.tattoos || 'peds/tattoos/';
+
+    const image = isLocal
+      ? `${baseUrl}${item.name}.png`
+      : `${baseUrl}${tattoosFolder}${item.name}.webp`;
+
+    return {
+      id: item.name,
+      label: item.label,
+      image: image
+    };
+  });
 
   return (
     <Container>

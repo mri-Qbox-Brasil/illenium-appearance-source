@@ -4,11 +4,12 @@ import Item from './components/Item';
 import { Container, FlexWrapper } from './styles';
 import SelectTattoo from './components/SelectTattoo';
 
-import { TattoosSettings, TattooList, Tattoo } from './interfaces';
+import { TattoosSettings, TattooList, Tattoo, AppearanceSettings } from './interfaces';
 import Button from './components/Button';
 
 interface TattoosProps {
   settings: TattoosSettings;
+  fullSettings: AppearanceSettings;
   data: TattooList;
   storedData: TattooList;
   handleApplyTattoo: (value: Tattoo, opacity: number) => void;
@@ -18,7 +19,7 @@ interface TattoosProps {
   forcedOpen?: boolean;
 }
 
-const Tattoos = ({ settings, data, storedData, handleApplyTattoo, handlePreviewTattoo, handleDeleteTattoo, handleClearTattoos, forcedOpen }: TattoosProps) => {
+const Tattoos = ({ settings, fullSettings, data, storedData, handleApplyTattoo, handlePreviewTattoo, handleDeleteTattoo, handleClearTattoos, forcedOpen }: TattoosProps) => {
   const { locales } = useNuiState();
 
   const { items } = settings;
@@ -42,6 +43,7 @@ const Tattoos = ({ settings, data, storedData, handleApplyTattoo, handlePreviewT
               items={items[key]}
               tattoosApplied={data[key] ?? null}
               settings={settings}
+              fullSettings={fullSettings}
             />
           </FlexWrapper>
         </Item>

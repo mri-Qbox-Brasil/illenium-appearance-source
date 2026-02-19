@@ -15,6 +15,7 @@ interface PropsProps {
   handlePropDrawableChange: (prop_id: number, drawable: number) => void;
   handlePropTextureChange: (prop_id: number, texture: number) => void;
   propConfig: PropConfig;
+  isPedMale: boolean | undefined;
   forcedOpen?: boolean;
 }
 
@@ -22,20 +23,26 @@ interface DataById<T> {
   [key: number]: T;
 }
 
-const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePropTextureChange, propConfig, forcedOpen }: PropsProps) => {
+const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePropTextureChange, propConfig, isPedMale, forcedOpen }: PropsProps) => {
   const { locales } = useNuiState();
 
   const imageLocal = settings.imageLocal;
   const imageUrl = settings.imageUrl;
+  const imageSources = settings.imageSources;
   const isLocal = imageLocal === 'pasta';
   const baseUrl = isLocal ? 'peds/' : imageUrl;
+  const accessoriesFolder = imageSources?.accessories || 'clothing/';
+  const genderPrefix = isPedMale ? 'male' : 'female';
 
   const getItems = (min: number, max: number, propId: number) => {
     const items = [];
-    for (let i = min; i <= max; i++) {
+    for (let i = Math.max(0, min); i <= max; i++) {
+      const image = isLocal
+        ? `${baseUrl}props/${propId}/${i}.png`
+        : `${baseUrl}${accessoriesFolder}${genderPrefix}_prop_${propId}_${i}.webp`;
       items.push({
         id: i.toString(),
-        image: `${baseUrl}props/${propId}/${i}.png`,
+        image: image,
       });
     }
     return items;
@@ -43,10 +50,13 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
 
   const getTextureItems = (min: number, max: number, propId: number, drawableId: number) => {
     const items = [];
-    for (let i = min; i <= max; i++) {
+    for (let i = Math.max(0, min); i <= max; i++) {
+      const image = isLocal
+        ? `${baseUrl}props/${propId}/${drawableId}/${i}.png`
+        : `${baseUrl}${accessoriesFolder}${genderPrefix}_prop_${propId}_${drawableId}_${i}.webp`;
       items.push({
         id: i.toString(),
-        image: `${baseUrl}props/${propId}/${drawableId}/${i}.png`,
+        image: image,
       });
     }
     return items;

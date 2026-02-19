@@ -33,6 +33,7 @@ interface HeadOverlaysProps {
     fade: Tattoo | null;
   };
   isPedFreemodeModel: boolean | undefined;
+  isPedMale: boolean | undefined;
   handleHairChange: (key: keyof PedHair, value: number) => void;
   handleHeadOverlayChange: (key: keyof PedHeadOverlays, option: keyof PedHeadOverlayValue, value: number) => void;
   handleEyeColorChange: (value: number) => void;
@@ -46,6 +47,7 @@ const HeadOverlays = ({
   storedData,
   data,
   isPedFreemodeModel,
+  isPedMale,
   handleHairChange,
   handleHeadOverlayChange,
   handleEyeColorChange,
@@ -68,10 +70,14 @@ const HeadOverlays = ({
 
   const getItems = (min: number, max: number, category: string) => {
     const items = [];
+    const genderPrefix = isPedMale ? 'male' : 'female';
     for (let i = min; i <= max; i++) {
+      const image = isLocal
+        ? `${finalBaseUrl}${category}/${i}.png`
+        : `${host}${categoryPath}${genderPrefix}_${category}_${i}.webp`;
       items.push({
         id: i.toString(),
-        image: `${finalBaseUrl}${category}/${i}.png`,
+        image: image,
       });
     }
     return items;

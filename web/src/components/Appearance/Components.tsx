@@ -17,6 +17,7 @@ interface ComponentsProps {
   componentConfig: ComponentConfig;
   hasTracker: boolean;
   isPedFreemodeModel: boolean | undefined;
+  isPedMale: boolean | undefined;
   forcedOpen?: boolean;
 }
 
@@ -33,21 +34,28 @@ const Components = ({
   componentConfig,
   hasTracker,
   isPedFreemodeModel,
+  isPedMale,
   forcedOpen
 }: ComponentsProps) => {
   const { locales } = useNuiState();
 
   const imageLocal = settings.imageLocal;
   const imageUrl = settings.imageUrl;
+  const imageSources = settings.imageSources;
   const isLocal = imageLocal === 'pasta';
   const baseUrl = isLocal ? 'peds/' : imageUrl;
+  const clothesFolder = imageSources?.clothes || 'clothing/';
+  const genderPrefix = isPedMale ? 'male' : 'female';
 
   const getItems = (min: number, max: number, componentId: number) => {
     const items = [];
     for (let i = min; i <= max; i++) {
+      const image = isLocal
+        ? `${baseUrl}components/${componentId}/${i}.png`
+        : `${baseUrl}${clothesFolder}${genderPrefix}_${componentId}_${i}.webp`;
       items.push({
         id: i.toString(),
-        image: `${baseUrl}components/${componentId}/${i}.png`,
+        image: image,
       });
     }
     return items;
@@ -56,9 +64,12 @@ const Components = ({
   const getTextureItems = (min: number, max: number, componentId: number, drawableId: number) => {
     const items = [];
     for (let i = min; i <= max; i++) {
+      const image = isLocal
+        ? `${baseUrl}components/${componentId}/${drawableId}/${i}.png`
+        : `${baseUrl}${clothesFolder}${genderPrefix}_${componentId}_${drawableId}_${i}.webp`;
       items.push({
         id: i.toString(),
-        image: `${baseUrl}components/${componentId}/${drawableId}/${i}.png`,
+        image: image,
       });
     }
     return items;
