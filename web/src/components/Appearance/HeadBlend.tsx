@@ -3,6 +3,7 @@ import { useNuiState } from '../../hooks/nuiState';
 import Section from './components/Section';
 import Item from './components/Item';
 import RangeInput from './components/RangeInput';
+import { FaUsers } from 'react-icons/fa';
 
 import { PedHeadBlend, AppearanceSettings } from './interfaces';
 import ImageSelector from './components/ImageSelector';
@@ -52,10 +53,11 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
   const skinThirdItems = getItems(settings.headBlend.skinThird.min, settings.headBlend.skinThird.max);
 
   return (
-    <Section title={locales.headBlend.title} forcedOpen={forcedOpen}>
-      <Item title={locales.headBlend.shape.title}>
-        <div style={{ display: 'flex', gap: '20px' }}>
+    <Section title={locales.headBlend.title} forcedOpen={forcedOpen} className="head-blend-section" icon={FaUsers}>
+      <Item title={locales.headBlend.shape.title} className="head-blend-item">
+        <div className="head-blend-flex-container" style={{ display: 'flex', gap: '20px' }}>
           <ImageSelector
+            className="head-blend-image-selector"
             label={locales.headBlend.shape.firstOption}
             items={shapeFirstItems}
             selectedValue={data.shapeFirst.toString()}
@@ -63,6 +65,7 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
             onAdd={() => { }}
           />
           <ImageSelector
+            className="head-blend-image-selector"
             label={locales.headBlend.shape.secondOption}
             items={shapeSecondItems}
             selectedValue={data.shapeSecond.toString()}
@@ -71,6 +74,7 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
           />
         </div>
         <RangeInput
+          className="head-blend-range-input"
           title={locales.headBlend.shape.mix}
           min={settings.headBlend.shapeMix.min}
           max={settings.headBlend.shapeMix.max}
@@ -80,9 +84,10 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
           onChange={(value: number) => handleHeadBlendChange('shapeMix', value)}
         />
       </Item>
-      <Item title={locales.headBlend.skin.title}>
-        <div style={{ display: 'flex', gap: '20px' }}>
+      <Item title={locales.headBlend.skin.title} className="head-blend-item">
+        <div className="head-blend-flex-container" style={{ display: 'flex', gap: '20px' }}>
           <ImageSelector
+            className="head-blend-image-selector"
             label={locales.headBlend.skin.firstOption}
             items={skinFirstItems}
             selectedValue={data.skinFirst.toString()}
@@ -90,6 +95,7 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
             onAdd={() => { }}
           />
           <ImageSelector
+            className="head-blend-image-selector"
             label={locales.headBlend.skin.secondOption}
             items={skinSecondItems}
             selectedValue={data.skinSecond.toString()}
@@ -98,6 +104,7 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
           />
         </div>
         <RangeInput
+          className="head-blend-range-input"
           title={locales.headBlend.skin.mix}
           min={settings.headBlend.skinMix.min}
           max={settings.headBlend.skinMix.max}
@@ -107,9 +114,10 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
           onChange={(value: number) => handleHeadBlendChange('skinMix', value)}
         />
       </Item>
-      <Item title={locales.headBlend.race.title}>
-        <div style={{ display: 'flex', gap: '20px' }}>
+      <Item title={locales.headBlend.race.title} className="head-blend-item">
+        <div className="head-blend-flex-container" style={{ display: 'flex', gap: '20px' }}>
           <ImageSelector
+            className="head-blend-image-selector"
             label={locales.headBlend.race.shape}
             items={shapeThirdItems}
             selectedValue={data.shapeThird.toString()}
@@ -117,6 +125,7 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
             onAdd={() => { }}
           />
           <ImageSelector
+            className="head-blend-image-selector"
             label={locales.headBlend.race.skin}
             items={skinThirdItems}
             selectedValue={data.skinThird.toString()}
@@ -125,6 +134,7 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
           />
         </div>
         <RangeInput
+          className="head-blend-range-input"
           title={locales.headBlend.race.mix}
           min={settings.headBlend.thirdMix.min}
           max={settings.headBlend.thirdMix.max}

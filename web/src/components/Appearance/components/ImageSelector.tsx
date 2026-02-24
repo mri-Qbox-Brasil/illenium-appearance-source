@@ -8,6 +8,7 @@ interface ImageSelectorProps {
   selectedValue?: string;
   onSelect: (id: string) => void;
   onAdd: () => void;
+  className?: string;
 }
 
 const fadeIn = keyframes`
@@ -105,7 +106,8 @@ const DialogOverlay = styled.div`
   background: transparent;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-left: 320px;
   z-index: 1000;
   animation: ${fadeIn} 0.2s ease;
 `;
@@ -171,8 +173,8 @@ const SearchIcon = styled(FaSearch)`
 `;
 
 const GalleryGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 16px;
   overflow-y: auto;
   padding: 6px;
@@ -188,8 +190,8 @@ const GalleryGrid = styled.div`
 `;
 
 const GalleryItem = styled.div`
+  width: calc(33.333% - 11px);
   aspect-ratio: 1 / 1;
-  width: 100%;
   background: ${({ theme }) => theme.id === 'dark' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)'};
   border: 1px solid ${({ theme }) => theme.id === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.08)'};
   border-radius: 12px;
@@ -213,11 +215,13 @@ const GalleryItem = styled.div`
   }
 
   img {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
     object-fit: contain;
     display: block;
-    padding: 5px;
   }
 `;
 
@@ -271,7 +275,7 @@ const ActionButton = styled.button<{ variant?: 'primary' | 'ghost' }>`
   }
 `;
 
-const ImageSelector: React.FC<ImageSelectorProps> = ({ label, items, selectedValue, onSelect, onAdd }) => {
+const ImageSelector: React.FC<ImageSelectorProps> = ({ label, items, selectedValue, onSelect, onAdd, className }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const theme = useTheme() as any;
@@ -297,8 +301,8 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({ label, items, selectedVal
   const selectedItem = items.find(item => item.id === selectedValue);
 
   return (
-    <Container>
-      {label && <Label>{label}</Label>}
+    <Container className={`image-selector-container ${className || ''}`}>
+      {label && <Label className="image-selector-label">{label}</Label>}
       <ItemBox
         active
         onClick={handleBoxClick}

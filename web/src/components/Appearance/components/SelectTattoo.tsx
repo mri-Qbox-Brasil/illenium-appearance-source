@@ -15,6 +15,7 @@ interface SelectTattooProps {
   handleDeleteTattoo: (value: Tattoo) => void;
   settings: TattoosSettings;
   fullSettings: AppearanceSettings;
+  className?: string;
 }
 
 const Container = styled.div`
@@ -77,7 +78,8 @@ const SelectTattoo = ({
   handlePreviewTattoo,
   handleDeleteTattoo,
   settings,
-  fullSettings
+  fullSettings,
+  className
 }: SelectTattooProps) => {
   const defaultOpacity = 0.1;
   const [currentTattoo, setCurrentTattoo] = useState<Tattoo>(items[0]);
@@ -147,14 +149,16 @@ const SelectTattoo = ({
   });
 
   return (
-    <Container>
+    <Container className={`select-tattoo-container ${className || ''}`}>
       <ImageSelector
+        className="select-tattoo-image-selector"
         items={selectorItems}
         selectedValue={currentTattoo.name}
         onSelect={handleChange}
         onAdd={() => { }}
       />
       <RangeInput
+        className="select-tattoo-range-input"
         title={locales.tattoos.opacity}
         min={settings.opacity.min}
         max={settings.opacity.max}
@@ -162,13 +166,13 @@ const SelectTattoo = ({
         defaultValue={opacity}
         clientValue={clientOpacity}
         onChange={value => handleChangeOpacity(value)} />
-      <section>
+      <section className="select-tattoo-actions">
         {isTattooApplied ? (
-          <ActionButton variant="delete" onClick={() => handleDeleteTattoo(currentTattoo)}>
+          <ActionButton variant="delete" onClick={() => handleDeleteTattoo(currentTattoo)} className="select-tattoo-button select-tattoo-button-delete">
             <FaTrash size={14} /> {locales.tattoos.delete}
           </ActionButton>
         ) : (
-          <ActionButton variant="apply" onClick={() => handleApplyTattoo(currentTattoo, opacity)}>
+          <ActionButton variant="apply" onClick={() => handleApplyTattoo(currentTattoo, opacity)} className="select-tattoo-button select-tattoo-button-apply">
             <FaCheck size={14} /> {locales.tattoos.apply}
           </ActionButton>
         )}

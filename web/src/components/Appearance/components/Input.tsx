@@ -11,6 +11,7 @@ interface InputProps {
   defaultValue: number;
   clientValue: number;
   onChange: (value: number) => void;
+  className?: string;
 }
 
 const Container = styled.div`
@@ -35,7 +36,7 @@ const Container = styled.div`
   }
 `;
 
-const Input: React.FC<InputProps> = ({ title, min = 0, max = 255, blacklisted = [], defaultValue, clientValue, onChange }) => {
+const Input: React.FC<InputProps> = ({ title, min = 0, max = 255, blacklisted = [], defaultValue, clientValue, onChange, className }) => {
   const isBlacklisted = function (_value: number, blacklisted: number[]) {
     for (var i = 0; i < blacklisted.length; i++) {
       if (blacklisted[i] == _value) {
@@ -100,12 +101,12 @@ const Input: React.FC<InputProps> = ({ title, min = 0, max = 255, blacklisted = 
   );
 
   return (
-    <Container>
-      <span>
+    <Container className={`input-container ${className || ''}`}>
+      <span className="input-labels">
         <small>{title}</small>
         <small>{clientValue} / {max}</small>
       </span>
-      <div>
+      <div className="input-controls">
         <MriButton size="icon" variant="secondary" onClick={() => handleChange(defaultValue, -1)}>
           <FiChevronLeft />
         </MriButton>

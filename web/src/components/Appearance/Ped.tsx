@@ -48,9 +48,10 @@ const Ped = ({ settings, storedData, data, handleModelChange, forcedOpen }: PedP
   });
 
   return (
-    <Section title={locales.ped.title} forcedOpen={forcedOpen}>
-      <Item title={locales.ped.model}>
+    <Section title={locales.ped.title} forcedOpen={forcedOpen} className="ped-section" icon={FaMale}>
+      <Item title={locales.ped.model} className="ped-item">
         <ImageSelector
+          className="ped-image-selector"
           items={modelItems}
           selectedValue={data}
           onSelect={handleModelChange}

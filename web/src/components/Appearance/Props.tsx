@@ -4,6 +4,7 @@ import Section from './components/Section';
 import Item from './components/Item';
 import { FlexWrapper } from './styles';
 import Input from './components/Input';
+import { FaHatCowboy } from 'react-icons/fa';
 
 import { PropSettings, PedProp, PropConfig, AppearanceSettings } from './interfaces';
 import ImageSelector from './components/ImageSelector';
@@ -79,10 +80,11 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
   }
 
   return (
-    <Section title={locales.props.title} forcedOpen={forcedOpen}>
-      {propConfig.hats && <Item title={locales.props.hats}>
-        <FlexWrapper>
+    <Section title={locales.props.title} forcedOpen={forcedOpen} className="props-section" icon={FaHatCowboy}>
+      {propConfig.hats && <Item title={locales.props.hats} className="props-item">
+        <FlexWrapper className="props-flex-wrapper">
           <ImageSelector
+            className="props-image-selector"
             label={locales.props.drawable}
             items={getItems(settingsById[0].drawable.min, settingsById[0].drawable.max, 0)}
             selectedValue={propsById[0].drawable.toString()}
@@ -90,6 +92,7 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
             onAdd={() => { }}
           />
           <ImageSelector
+            className="props-image-selector"
             label={locales.props.texture}
             items={getTextureItems(settingsById[0].texture.min, settingsById[0].texture.max, 0, propsById[0].drawable)}
             selectedValue={propsById[0].texture.toString()}
@@ -98,9 +101,10 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
           />
         </FlexWrapper>
       </Item>}
-      {propConfig.glasses && <Item title={locales.props.glasses}>
-        <FlexWrapper>
+      {propConfig.glasses && <Item title={locales.props.glasses} className="props-item">
+        <FlexWrapper className="props-flex-wrapper">
           <ImageSelector
+            className="props-image-selector"
             label={locales.props.drawable}
             items={getItems(settingsById[1].drawable.min, settingsById[1].drawable.max, 1)}
             selectedValue={propsById[1].drawable.toString()}
@@ -108,6 +112,7 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
             onAdd={() => { }}
           />
           <ImageSelector
+            className="props-image-selector"
             label={locales.props.texture}
             items={getTextureItems(settingsById[1].texture.min, settingsById[1].texture.max, 1, propsById[1].drawable)}
             selectedValue={propsById[1].texture.toString()}
@@ -116,9 +121,10 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
           />
         </FlexWrapper>
       </Item>}
-      {propConfig.ear && <Item title={locales.props.ear}>
-        <FlexWrapper>
+      {propConfig.ear && <Item title={locales.props.ear} className="props-item">
+        <FlexWrapper className="props-flex-wrapper">
           <ImageSelector
+            className="props-image-selector"
             label={locales.props.drawable}
             items={getItems(settingsById[2].drawable.min, settingsById[2].drawable.max, 2)}
             selectedValue={propsById[2].drawable.toString()}
@@ -126,6 +132,7 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
             onAdd={() => { }}
           />
           <ImageSelector
+            className="props-image-selector"
             label={locales.props.texture}
             items={getTextureItems(settingsById[2].texture.min, settingsById[2].texture.max, 2, propsById[2].drawable)}
             selectedValue={propsById[2].texture.toString()}
@@ -134,9 +141,10 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
           />
         </FlexWrapper>
       </Item>}
-      {propConfig.watches && <Item title={locales.props.watches}>
-        <FlexWrapper>
+      {propConfig.watches && <Item title={locales.props.watches} className="props-item">
+        <FlexWrapper className="props-flex-wrapper">
           <ImageSelector
+            className="props-image-selector"
             label={locales.props.drawable}
             items={getItems(settingsById[6].drawable.min, settingsById[6].drawable.max, 6)}
             selectedValue={propsById[6].drawable.toString()}
@@ -144,6 +152,7 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
             onAdd={() => { }}
           />
           <ImageSelector
+            className="props-image-selector"
             label={locales.props.texture}
             items={getTextureItems(settingsById[6].texture.min, settingsById[6].texture.max, 6, propsById[6].drawable)}
             selectedValue={propsById[6].texture.toString()}
@@ -152,9 +161,10 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
           />
         </FlexWrapper>
       </Item>}
-      {propConfig.bracelets && <Item title={locales.props.bracelets}>
-        <FlexWrapper>
+      {propConfig.bracelets && <Item title={locales.props.bracelets} className="props-item">
+        <FlexWrapper className="props-flex-wrapper">
           <ImageSelector
+            className="props-image-selector"
             label={locales.props.drawable}
             items={getItems(settingsById[7].drawable.min, settingsById[7].drawable.max, 7)}
             selectedValue={propsById[7].drawable.toString()}
@@ -162,6 +172,7 @@ const Props = ({ settings, data, storedData, handlePropDrawableChange, handlePro
             onAdd={() => { }}
           />
           <ImageSelector
+            className="props-image-selector"
             label={locales.props.texture}
             items={getTextureItems(settingsById[7].texture.min, settingsById[7].texture.max, 7, propsById[7].drawable)}
             selectedValue={propsById[7].texture.toString()}

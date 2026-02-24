@@ -47,7 +47,7 @@ import styled from 'styled-components';
 
 import { Wrapper, Container, ConfirmButton, HeaderContainer, TitleData, SwitchContainer, SwitchButton, TabbedContainer, ContentPanel, NavItem, SidebarNav, NavList } from './styles';
 import { ThemeContext } from 'styled-components';
-import { FaCheck, FaThLarge, FaList, FaMale, FaUsers, FaSmile, FaPalette, FaTshirt, FaHatCowboy, FaSkull, FaAngleLeft, FaAngleRight, FaCog, FaGlobe, FaUniversalAccess } from 'react-icons/fa';
+import { FaCheck, FaThLarge, FaList, FaAngleLeft, FaAngleRight, FaMale, FaUsers, FaSmile, FaPalette, FaTshirt, FaHatCowboy, FaSkull, FaCog, FaGlobe, FaUniversalAccess } from 'react-icons/fa';
 import { ThemeToggleContext } from '../../App';
 import React, { useContext } from 'react';
 

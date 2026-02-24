@@ -7,6 +7,8 @@ interface SectionProps {
   title: string;
   deps?: any[];
   children?: ReactNode;
+  className?: string;
+  icon?: React.ElementType;
 }
 
 interface HeaderProps {
@@ -37,40 +39,51 @@ const Header = styled.div<HeaderProps>`
   justify-content: space-between;
 
   padding: 0 16px;
-  border-radius: ${props => props.theme.borderRadius || '12px'};
-  margin-bottom: ${({ active }) => (active ? '10px' : '0')};
+  border-radius: ${props => props.theme.borderRadius || '16px'};
+  margin-bottom: ${({ active }) => (active ? '12px' : '0')};
 
   z-index: 2;
 
   background: ${({ active, theme }) =>
     active
-      ? `rgb(${theme.accent || '139, 92, 246'})`
+      ? `rgb(${theme.accent || '10, 213, 140'})`
       : `rgba(${theme.fontColor || '255, 255, 255'}, 0.05)`
   };
 
-  color: ${({ active, theme }) => active ? 'white' : `rgba(${theme.fontColor || '255, 255, 255'}, 0.8)`};
-  
-  border: 1px solid ${({ active, theme }) => active ? 'transparent' : `rgba(${theme.fontColor || '255, 255, 255'}, 0.1)`};
-  box-shadow: ${({ active }) => active ? '0 4px 15px rgba(139, 92, 246, 0.3)' : 'none'};
+  backdrop-filter: blur(8px);
 
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: ${({ active }) => active ? '#ffffff' : 'rgba(255, 255, 255, 0.8)'};
+  
+  border: 1px solid ${({ active }) => active ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)'};
+  box-shadow: ${({ active, theme }) => active ? `0 8px 24px rgba(${theme.accent || '10, 213, 140'}, 0.3)` : '0 2px 8px rgba(0, 0, 0, 0.2)'};
+
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
     background: ${({ active, theme }) =>
     active
-      ? `rgb(${theme.accent || '139, 92, 246'})`
-      : `rgba(${theme.fontColor || '255, 255, 255'}, 0.1)`
+      ? `rgb(${theme.accent || '10, 213, 140'})`
+      : 'rgba(255, 255, 255, 0.08)'
   };
+    transform: translateY(-2px);
     cursor: pointer;
   }
 
   span {
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    letter-spacing: 0.5px;
   }
+`;
+
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
 `;
 
 const Items = styled.div`
@@ -79,7 +92,7 @@ const Items = styled.div`
   overflow: hidden;
 `;
 
-const Section: React.FC<SectionProps & { forcedOpen?: boolean }> = ({ children, title, deps = [], forcedOpen = false }) => {
+const Section: React.FC<SectionProps & { forcedOpen?: boolean }> = ({ children, title, deps = [], forcedOpen = false, className, icon: Icon }) => {
   const [active, setActive] = useState(false);
 
   const [height, setHeight] = useState(0);
@@ -104,21 +117,28 @@ const Section: React.FC<SectionProps & { forcedOpen?: boolean }> = ({ children, 
 
   if (forcedOpen) {
     return (
-      <Container>
-        <Items>{children}</Items>
+      <Container className={`section-container ${className || ''}`}>
+        <Items className="section-items">{children}</Items>
       </Container>
     );
   }
 
   return (
-    <Container>
-      <Header active={active} onClick={() => setActive(state => !state)}>
-        <span>{title}</span>
-        {active ? <FiChevronUp size={30} /> : <FiChevronDown size={30} />}
+    <Container className={`section-container ${className || ''}`}>
+      <Header className="section-header" active={active} onClick={() => setActive(state => !state)}>
+        <span className="section-title">
+          {Icon && (
+            <IconWrapper className="section-icon-wrapper">
+              <Icon size={18} />
+            </IconWrapper>
+          )}
+          {title}
+        </span>
+        {active ? <FiChevronUp className="section-chevron active" size={24} /> : <FiChevronDown className="section-chevron" size={24} />}
       </Header>
 
-      <animated.div style={{ ...props, overflow: 'hidden' }}>
-        <Items ref={ref}>{children}</Items>
+      <animated.div style={{ ...props, overflow: 'hidden' }} className="section-animated-wrapper">
+        <Items ref={ref} className="section-items">{children}</Items>
       </animated.div>
     </Container>
   );

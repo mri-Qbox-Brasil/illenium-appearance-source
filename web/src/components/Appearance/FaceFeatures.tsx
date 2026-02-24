@@ -3,6 +3,7 @@ import { useNuiState } from '../../hooks/nuiState';
 import Section from './components/Section';
 import Item from './components/Item';
 import RangeInput from './components/RangeInput';
+import { FaSmile } from 'react-icons/fa';
 
 import { PedFaceFeatures, FaceFeaturesSettings } from './interfaces';
 
@@ -22,9 +23,10 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
   }
 
   return (
-    <Section title={locales.faceFeatures.title} forcedOpen={forcedOpen}>
-      <Item title={locales.faceFeatures.nose.title}>
+    <Section title={locales.faceFeatures.title} forcedOpen={forcedOpen} className="face-features-section" icon={FaSmile}>
+      <Item title={locales.faceFeatures.nose.title} className="face-features-item">
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.nose.width}
           min={settings.noseWidth.min}
           max={settings.noseWidth.max}
@@ -34,6 +36,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('noseWidth', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.nose.height}
           min={settings.nosePeakHigh.min}
           max={settings.nosePeakHigh.max}
@@ -43,6 +46,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('nosePeakHigh', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.nose.size}
           min={settings.nosePeakSize.min}
           max={settings.nosePeakSize.max}
@@ -52,6 +56,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('nosePeakSize', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.nose.boneHeight}
           min={settings.noseBoneHigh.min}
           max={settings.noseBoneHigh.max}
@@ -61,6 +66,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('noseBoneHigh', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.nose.peakHeight}
           min={settings.nosePeakLowering.min}
           max={settings.nosePeakLowering.max}
@@ -70,6 +76,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('nosePeakLowering', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.nose.boneTwist}
           min={settings.noseBoneTwist.min}
           max={settings.noseBoneTwist.max}
@@ -79,8 +86,9 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('noseBoneTwist', value)}
         />
       </Item>
-      <Item title={locales.faceFeatures.eyebrows.title}>
+      <Item title={locales.faceFeatures.eyebrows.title} className="face-features-item">
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.eyebrows.height}
           min={settings.eyeBrownHigh.min}
           max={settings.eyeBrownHigh.max}
@@ -90,6 +98,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('eyeBrownHigh', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.eyebrows.depth}
           min={settings.eyeBrownForward.min}
           max={settings.eyeBrownForward.max}
@@ -99,8 +108,9 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('eyeBrownForward', value)}
         />
       </Item>
-      <Item title={locales.faceFeatures.cheeks.title}>
+      <Item title={locales.faceFeatures.cheeks.title} className="face-features-item">
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.cheeks.boneHeight}
           min={settings.cheeksBoneHigh.min}
           max={settings.cheeksBoneHigh.max}
@@ -110,6 +120,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('cheeksBoneHigh', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.cheeks.boneWidth}
           min={settings.cheeksBoneWidth.min}
           max={settings.cheeksBoneWidth.max}
@@ -119,6 +130,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('cheeksBoneWidth', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.cheeks.width}
           min={settings.cheeksWidth.min}
           max={settings.cheeksWidth.max}
@@ -128,8 +140,9 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('cheeksWidth', value)}
         />
       </Item>
-      <Item title={locales.faceFeatures.eyesAndMouth.title}>
+      <Item title={locales.faceFeatures.eyesAndMouth.title} className="face-features-item">
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.eyesAndMouth.eyesOpening}
           min={settings.eyesOpening.min}
           max={settings.eyesOpening.max}
@@ -139,6 +152,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('eyesOpening', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.eyesAndMouth.lipsThickness}
           min={settings.lipsThickness.min}
           max={settings.lipsThickness.max}
@@ -148,8 +162,9 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('lipsThickness', value)}
         />
       </Item>
-      <Item title={locales.faceFeatures.jaw.title}>
+      <Item title={locales.faceFeatures.jaw.title} className="face-features-item">
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.jaw.width}
           min={settings.jawBoneWidth.min}
           max={settings.jawBoneWidth.max}
@@ -159,6 +174,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('jawBoneWidth', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.jaw.size}
           min={settings.jawBoneBackSize.min}
           max={settings.jawBoneBackSize.max}
@@ -168,8 +184,9 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('jawBoneBackSize', value)}
         />
       </Item>
-      <Item title={locales.faceFeatures.chin.title}>
+      <Item title={locales.faceFeatures.chin.title} className="face-features-item">
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.chin.lowering}
           min={settings.chinBoneLowering.min}
           max={settings.chinBoneLowering.max}
@@ -179,6 +196,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('chinBoneLowering', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.chin.length}
           min={settings.chinBoneLenght.min}
           max={settings.chinBoneLenght.max}
@@ -188,6 +206,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('chinBoneLenght', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.chin.size}
           min={settings.chinBoneSize.min}
           max={settings.chinBoneSize.max}
@@ -197,6 +216,7 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('chinBoneSize', value)}
         />
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.chin.hole}
           min={settings.chinHole.min}
           max={settings.chinHole.max}
@@ -206,8 +226,9 @@ const FaceFeatures = ({ settings, storedData, data, handleFaceFeatureChange, for
           onChange={value => handleFaceFeatureChange('chinHole', value)}
         />
       </Item>
-      <Item title={locales.faceFeatures.neck.title}>
+      <Item title={locales.faceFeatures.neck.title} className="face-features-item">
         <RangeInput
+          className="face-features-range-input"
           title={locales.faceFeatures.neck.thickness}
           min={settings.neckThickness.min}
           max={settings.neckThickness.max}

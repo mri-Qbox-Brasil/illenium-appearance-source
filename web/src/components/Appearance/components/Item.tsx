@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 interface ItemProps {
   title?: string;
   children?: ReactNode;
+  className?: string;
 }
 
 const Container = styled.div`
@@ -42,11 +43,11 @@ const Inputs = styled.div`
   }
 `;
 
-const Item: React.FC<ItemProps> = ({ children, title }) => {
+const Item: React.FC<ItemProps> = ({ children, title, className }) => {
   return (
-    <Container>
-      {title && <span>{title}</span>}
-      <Inputs>{children}</Inputs>
+    <Container className={`item-container ${className || ''}`}>
+      {title && <span className="item-title">{title}</span>}
+      <Inputs className="item-inputs">{children}</Inputs>
     </Container>
   );
 };

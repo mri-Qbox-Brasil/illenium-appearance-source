@@ -9,6 +9,7 @@ interface RangeInputProps {
   defaultValue?: number;
   clientValue?: number;
   onChange: (value: number) => void;
+  className?: string;
 }
 
 const Container = styled.div`
@@ -62,6 +63,7 @@ const RangeInput: React.FC<RangeInputProps> = ({
   defaultValue = 1,
   clientValue,
   onChange,
+  className,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -80,14 +82,14 @@ const RangeInput: React.FC<RangeInputProps> = ({
   );
 
   return (
-    <Container onClick={handleContainerClick}>
-      <span>
+    <Container className={`range-input-container ${className || ''}`} onClick={handleContainerClick}>
+      <span className="range-input-labels">
         <small>
           {title}: {defaultValue}
         </small>
         <small>{clientValue}</small>
       </span>
-      <div>
+      <div className="range-input-slider-wrapper">
         <small>{min}</small>
         <input
           type="range"

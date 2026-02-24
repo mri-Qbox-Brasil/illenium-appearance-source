@@ -8,6 +8,7 @@ interface ButtonProps {
   width?: string;
   onClick: () => void;
   disabled?: boolean;
+  className?: string;
 }
 
 const StyledButton = styled(MriButton)`
@@ -29,9 +30,9 @@ const StyledButton = styled(MriButton)`
   }
 `;
 
-const Button = ({ children, onClick, margin, width, disabled }: ButtonProps) => {
+const Button = ({ children, onClick, margin, width, disabled, className }: ButtonProps) => {
   return (
-    <div style={{ width: width || 'auto', margin: margin || '0px' }}>
+    <div className={`button-container ${className || ''}`} style={{ width: width || 'auto', margin: margin || '0px' }}>
       <StyledButton
         onClick={onClick}
         disabled={disabled}

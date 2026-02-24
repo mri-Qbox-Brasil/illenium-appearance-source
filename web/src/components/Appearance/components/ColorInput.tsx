@@ -11,6 +11,7 @@ interface ColorInputProps {
   colorValue?: string;
   onChange?: (value: number) => void;
   onColorChange?: (color: string) => void;
+  className?: string;
 }
 
 // --- Utilities ---
@@ -249,7 +250,7 @@ const ValueInput = styled.input`
   }
 `;
 
-const ColorInput: React.FC<ColorInputProps> = ({ title, colors = [], defaultValue = 0, clientValue, colorValue, onChange, onColorChange }) => {
+const ColorInput: React.FC<ColorInputProps> = ({ title, colors = [], defaultValue = 0, clientValue, colorValue, onChange, onColorChange, className }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [format, setFormat] = useState<'HEX' | 'RGB' | 'HSL'>('HEX');
   const isDragging = useRef(false);
@@ -352,12 +353,12 @@ const ColorInput: React.FC<ColorInputProps> = ({ title, colors = [], defaultValu
   const isPickerSelected = !presets.some(p => isSelected(p.r, p.g, p.b));
 
   return (
-    <Container>
-      <span>
+    <Container className={`color-input-container ${className || ''}`}>
+      <span className="color-input-labels">
         <small>{title || locales?.headOverlays?.color || 'Cor'}</small>
         {clientValue !== undefined && <small>{clientValue}</small>}
       </span>
-      <div>
+      <div className="color-input-swatches">
         {presets.map((color, index) => (
           <Swatch
             key={index}

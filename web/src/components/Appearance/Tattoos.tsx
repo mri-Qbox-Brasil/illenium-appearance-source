@@ -3,6 +3,7 @@ import Section from './components/Section';
 import Item from './components/Item';
 import { Container, FlexWrapper } from './styles';
 import SelectTattoo from './components/SelectTattoo';
+import { FaSkull } from 'react-icons/fa';
 
 import { TattoosSettings, TattooList, Tattoo, AppearanceSettings } from './interfaces';
 import Button from './components/Button';
@@ -30,13 +31,14 @@ const Tattoos = ({ settings, fullSettings, data, storedData, handleApplyTattoo, 
   }
 
   return (
-    <Section title={locales.tattoos.title} forcedOpen={forcedOpen}>
+    <Section title={locales.tattoos.title} forcedOpen={forcedOpen} className="tattoos-section" icon={FaSkull}>
       {keys.map(key => (
         key !== 'ZONE_HAIR'
         &&
-        <Item key={key} title={locales.tattoos.items[key]}>
-          <FlexWrapper>
+        <Item key={key} title={locales.tattoos.items[key]} className="tattoos-item">
+          <FlexWrapper className="tattoos-flex-wrapper">
             <SelectTattoo
+              className="tattoos-select-tattoo"
               handlePreviewTattoo={handlePreviewTattoo}
               handleApplyTattoo={handleApplyTattoo}
               handleDeleteTattoo={handleDeleteTattoo}
@@ -48,9 +50,9 @@ const Tattoos = ({ settings, fullSettings, data, storedData, handleApplyTattoo, 
           </FlexWrapper>
         </Item>
       ))}
-      <Item>
-        <FlexWrapper>
-          <Button onClick={() => handleClearTattoos()} width="100%">{locales.tattoos.deleteAll}</Button>
+      <Item className="tattoos-item tattoos-item-clear">
+        <FlexWrapper className="tattoos-flex-wrapper">
+          <Button onClick={() => handleClearTattoos()} width="100%" className="tattoos-clear-button">{locales.tattoos.deleteAll}</Button>
         </FlexWrapper>
       </Item>
     </Section>

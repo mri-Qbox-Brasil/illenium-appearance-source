@@ -7,6 +7,7 @@ import Input from './components/Input';
 
 import { ComponentConfig, ComponentSettings, PedComponent, AppearanceSettings } from './interfaces';
 import ImageSelector from './components/ImageSelector';
+import { FaTshirt } from 'react-icons/fa';
 
 interface ComponentsProps {
   settings: AppearanceSettings;
@@ -92,10 +93,11 @@ const Components = ({
   }
 
   return (
-    <Section title={locales.components.title} forcedOpen={forcedOpen}>
-      {!isPedFreemodeModel && <Item title={locales.components.head}>
-        <FlexWrapper>
+    <Section title={locales.components.title} forcedOpen={forcedOpen} className="components-section" icon={FaTshirt}>
+      {!isPedFreemodeModel && <Item title={locales.components.head} className="components-item">
+        <FlexWrapper className="components-flex-wrapper">
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.drawable}
             items={getItems(settingsById[0].drawable.min, settingsById[0].drawable.max, 0)}
             selectedValue={componentsById[0].drawable.toString()}
@@ -103,6 +105,7 @@ const Components = ({
             onAdd={() => { }}
           />
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.texture}
             items={getTextureItems(settingsById[0].texture.min, settingsById[0].texture.max, 0, componentsById[0].drawable)}
             selectedValue={componentsById[0].texture.toString()}
@@ -111,9 +114,10 @@ const Components = ({
           />
         </FlexWrapper>
       </Item>}
-      {componentConfig.masks && <Item title={locales.components.mask}>
-        <FlexWrapper>
+      {componentConfig.masks && <Item title={locales.components.mask} className="components-item">
+        <FlexWrapper className="components-flex-wrapper">
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.drawable}
             items={getItems(settingsById[1].drawable.min, settingsById[1].drawable.max, 1)}
             selectedValue={componentsById[1].drawable.toString()}
@@ -121,6 +125,7 @@ const Components = ({
             onAdd={() => { }}
           />
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.texture}
             items={getTextureItems(settingsById[1].texture.min, settingsById[1].texture.max, 1, componentsById[1].drawable)}
             selectedValue={componentsById[1].texture.toString()}
@@ -129,9 +134,10 @@ const Components = ({
           />
         </FlexWrapper>
       </Item>}
-      {componentConfig.scarfAndChains && !hasTracker && <Item title={locales.components.scarfAndChains}>
-        <FlexWrapper>
+      {componentConfig.scarfAndChains && !hasTracker && <Item title={locales.components.scarfAndChains} className="components-item">
+        <FlexWrapper className="components-flex-wrapper">
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.drawable}
             items={getItems(settingsById[7].drawable.min, settingsById[7].drawable.max, 7)}
             selectedValue={componentsById[7].drawable.toString()}
@@ -139,6 +145,7 @@ const Components = ({
             onAdd={() => { }}
           />
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.texture}
             items={getTextureItems(settingsById[7].texture.min, settingsById[7].texture.max, 7, componentsById[7].drawable)}
             selectedValue={componentsById[7].texture.toString()}
@@ -147,9 +154,10 @@ const Components = ({
           />
         </FlexWrapper>
       </Item>}
-      {componentConfig.jackets && <Item title={locales.components.jackets}>
-        <FlexWrapper>
+      {componentConfig.jackets && <Item title={locales.components.jackets} className="components-item">
+        <FlexWrapper className="components-flex-wrapper">
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.drawable}
             items={getItems(settingsById[11].drawable.min, settingsById[11].drawable.max, 11)}
             selectedValue={componentsById[11].drawable.toString()}
@@ -157,6 +165,7 @@ const Components = ({
             onAdd={() => { }}
           />
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.texture}
             items={getTextureItems(settingsById[11].texture.min, settingsById[11].texture.max, 11, componentsById[11].drawable)}
             selectedValue={componentsById[11].texture.toString()}
@@ -165,9 +174,10 @@ const Components = ({
           />
         </FlexWrapper>
       </Item>}
-      {componentConfig.shirts && <Item title={locales.components.shirt}>
-        <FlexWrapper>
+      {componentConfig.shirts && <Item title={locales.components.shirt} className="components-item">
+        <FlexWrapper className="components-flex-wrapper">
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.drawable}
             items={getItems(settingsById[8].drawable.min, settingsById[8].drawable.max, 8)}
             selectedValue={componentsById[8].drawable.toString()}
@@ -175,6 +185,7 @@ const Components = ({
             onAdd={() => { }}
           />
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.texture}
             items={getTextureItems(settingsById[8].texture.min, settingsById[8].texture.max, 8, componentsById[8].drawable)}
             selectedValue={componentsById[8].texture.toString()}
@@ -183,9 +194,10 @@ const Components = ({
           />
         </FlexWrapper>
       </Item>}
-      {componentConfig.bodyArmor && <Item title={locales.components.bodyArmor}>
-        <FlexWrapper>
+      {componentConfig.bodyArmor && <Item title={locales.components.bodyArmor} className="components-item">
+        <FlexWrapper className="components-flex-wrapper">
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.drawable}
             items={getItems(settingsById[9].drawable.min, settingsById[9].drawable.max, 9)}
             selectedValue={componentsById[9].drawable.toString()}
@@ -193,6 +205,7 @@ const Components = ({
             onAdd={() => { }}
           />
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.texture}
             items={getTextureItems(settingsById[9].texture.min, settingsById[9].texture.max, 9, componentsById[9].drawable)}
             selectedValue={componentsById[9].texture.toString()}
@@ -201,9 +214,10 @@ const Components = ({
           />
         </FlexWrapper>
       </Item>}
-      {componentConfig.bags && <Item title={locales.components.bags}>
-        <FlexWrapper>
+      {componentConfig.bags && <Item title={locales.components.bags} className="components-item">
+        <FlexWrapper className="components-flex-wrapper">
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.drawable}
             items={getItems(settingsById[5].drawable.min, settingsById[5].drawable.max, 5)}
             selectedValue={componentsById[5].drawable.toString()}
@@ -211,6 +225,7 @@ const Components = ({
             onAdd={() => { }}
           />
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.texture}
             items={getTextureItems(settingsById[5].texture.min, settingsById[5].texture.max, 5, componentsById[5].drawable)}
             selectedValue={componentsById[5].texture.toString()}
@@ -219,9 +234,10 @@ const Components = ({
           />
         </FlexWrapper>
       </Item>}
-      {componentConfig.upperBody && <Item title={locales.components.upperBody}>
-        <FlexWrapper>
+      {componentConfig.upperBody && <Item title={locales.components.upperBody} className="components-item">
+        <FlexWrapper className="components-flex-wrapper">
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.drawable}
             items={getItems(settingsById[3].drawable.min, settingsById[3].drawable.max, 3)}
             selectedValue={componentsById[3].drawable.toString()}
@@ -229,6 +245,7 @@ const Components = ({
             onAdd={() => { }}
           />
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.texture}
             items={getTextureItems(settingsById[3].texture.min, settingsById[3].texture.max, 3, componentsById[3].drawable)}
             selectedValue={componentsById[3].texture.toString()}
@@ -237,9 +254,10 @@ const Components = ({
           />
         </FlexWrapper>
       </Item>}
-      {componentConfig.lowerBody && <Item title={locales.components.lowerBody}>
-        <FlexWrapper>
+      {componentConfig.lowerBody && <Item title={locales.components.lowerBody} className="components-item">
+        <FlexWrapper className="components-flex-wrapper">
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.drawable}
             items={getItems(settingsById[4].drawable.min, settingsById[4].drawable.max, 4)}
             selectedValue={componentsById[4].drawable.toString()}
@@ -247,6 +265,7 @@ const Components = ({
             onAdd={() => { }}
           />
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.texture}
             items={getTextureItems(settingsById[4].texture.min, settingsById[4].texture.max, 4, componentsById[4].drawable)}
             selectedValue={componentsById[4].texture.toString()}
@@ -255,9 +274,10 @@ const Components = ({
           />
         </FlexWrapper>
       </Item>}
-      {componentConfig.shoes && <Item title={locales.components.shoes}>
-        <FlexWrapper>
+      {componentConfig.shoes && <Item title={locales.components.shoes} className="components-item">
+        <FlexWrapper className="components-flex-wrapper">
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.drawable}
             items={getItems(settingsById[6].drawable.min, settingsById[6].drawable.max, 6)}
             selectedValue={componentsById[6].drawable.toString()}
@@ -265,6 +285,7 @@ const Components = ({
             onAdd={() => { }}
           />
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.texture}
             items={getTextureItems(settingsById[6].texture.min, settingsById[6].texture.max, 6, componentsById[6].drawable)}
             selectedValue={componentsById[6].texture.toString()}
@@ -273,9 +294,10 @@ const Components = ({
           />
         </FlexWrapper>
       </Item>}
-      {componentConfig.decals && <Item title={locales.components.decals}>
-        <FlexWrapper>
+      {componentConfig.decals && <Item title={locales.components.decals} className="components-item">
+        <FlexWrapper className="components-flex-wrapper">
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.drawable}
             items={getItems(settingsById[10].drawable.min, settingsById[10].drawable.max, 10)}
             selectedValue={componentsById[10].drawable.toString()}
@@ -283,6 +305,7 @@ const Components = ({
             onAdd={() => { }}
           />
           <ImageSelector
+            className="components-image-selector"
             label={locales.components.texture}
             items={getTextureItems(settingsById[10].texture.min, settingsById[10].texture.max, 10, componentsById[10].drawable)}
             selectedValue={componentsById[10].texture.toString()}

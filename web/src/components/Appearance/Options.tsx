@@ -132,25 +132,25 @@ const Options: React.FC<OptionsProps> = ({
   const theme = useTheme() as any;
 
   return (
-    <OptionsContainer>
+    <OptionsContainer className="options-container">
       {/* --- Top: Mode Toggles --- */}
-      <Strip>
+      <Strip className="options-strip">
         <div
           style={{ position: 'relative' }}
           onMouseEnter={() => setShowCamera(true)}
           onMouseLeave={() => setShowCamera(false)}
         >
-          <RoundButton active={showCamera} variant="primary">
+          <RoundButton className="options-round-button" active={showCamera} variant="primary">
             <FaCamera size={18} />
           </RoundButton>
-          <Flyout show={showCamera}>
-            <RoundButton onClick={() => handleSetCamera('head')} active={camera.head} title="Head">
+          <Flyout show={showCamera} className="options-flyout">
+            <RoundButton className="options-round-button" onClick={() => handleSetCamera('head')} active={camera.head} title="Head">
               <FaSmile size={16} />
             </RoundButton>
-            <RoundButton onClick={() => handleSetCamera('body')} active={camera.body} title="Body">
+            <RoundButton className="options-round-button" onClick={() => handleSetCamera('body')} active={camera.body} title="Body">
               <FaMale size={16} />
             </RoundButton>
-            <RoundButton onClick={() => handleSetCamera('bottom')} active={camera.bottom} title="Feet">
+            <RoundButton className="options-round-button" onClick={() => handleSetCamera('bottom')} active={camera.bottom} title="Feet">
               <FaShoePrints size={16} />
             </RoundButton>
           </Flyout>
@@ -161,17 +161,17 @@ const Options: React.FC<OptionsProps> = ({
           onMouseEnter={() => setShowClothes(true)}
           onMouseLeave={() => setShowClothes(false)}
         >
-          <RoundButton active={showClothes} variant="default">
+          <RoundButton className="options-round-button" active={showClothes} variant="default">
             <FaTshirt size={18} />
           </RoundButton>
-          <Flyout show={showClothes}>
-            <RoundButton onClick={() => handleSetClothes('head')} active={clothes.head} title="Hat">
+          <Flyout show={showClothes} className="options-flyout">
+            <RoundButton className="options-round-button" onClick={() => handleSetClothes('head')} active={clothes.head} title="Hat">
               <FaHatCowboy size={16} />
             </RoundButton>
-            <RoundButton onClick={() => handleSetClothes('body')} active={clothes.body} title="Shirt">
+            <RoundButton className="options-round-button" onClick={() => handleSetClothes('body')} active={clothes.body} title="Shirt">
               <FaTshirt size={16} />
             </RoundButton>
-            <RoundButton onClick={() => handleSetClothes('bottom')} active={clothes.bottom} title="Pants">
+            <RoundButton className="options-round-button" onClick={() => handleSetClothes('bottom')} active={clothes.bottom} title="Pants">
               <FaSocks size={16} />
             </RoundButton>
           </Flyout>
@@ -179,18 +179,18 @@ const Options: React.FC<OptionsProps> = ({
       </Strip>
 
       {/* --- Bottom: Actions --- */}
-      <Strip>
-        <RoundButton onClick={handleRotateLeft}>
+      <Strip className="options-strip">
+        <RoundButton className="options-round-button" onClick={handleRotateLeft}>
           <FaUndo size={14} />
         </RoundButton>
-        <RoundButton onClick={handleRotateRight}>
+        <RoundButton className="options-round-button" onClick={handleRotateRight}>
           <FaRedo size={14} />
         </RoundButton>
-        <RoundButton onClick={handleTurnAround} variant="primary">
+        <RoundButton className="options-round-button" onClick={handleTurnAround} variant="primary">
           <FaSyncAlt size={14} />
         </RoundButton>
         {enableExit && (
-          <RoundButton
+          <RoundButton className="options-round-button"
             onClick={handleExit}
             variant="primary"
           >
