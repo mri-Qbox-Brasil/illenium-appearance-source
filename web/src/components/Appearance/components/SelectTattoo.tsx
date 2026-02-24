@@ -4,6 +4,7 @@ import { useNuiState } from '../../../hooks/nuiState';
 import { FaCheck, FaTrash } from 'react-icons/fa';
 import Button from './Button';
 import { Tattoo, TattoosSettings, AppearanceSettings } from '../interfaces';
+import { SETTINGS_INITIAL_STATE } from '../settings';
 import RangeInput from './RangeInput';
 import ImageSelector from './ImageSelector';
 
@@ -131,11 +132,13 @@ const SelectTattoo = ({
 
   // Map tattoos to ImageSelector items
   const selectorItems = items.map(item => {
-    const imageLocal = fullSettings.imageLocal;
-    const imageUrl = fullSettings.imageUrl;
+    const defaultImageUrl = SETTINGS_INITIAL_STATE.imageUrl;
+    const imageLocal = fullSettings.imageLocal || SETTINGS_INITIAL_STATE.imageLocal;
+    const imageUrl = fullSettings.imageUrl && String(fullSettings.imageUrl).trim() !== '' ? fullSettings.imageUrl : defaultImageUrl;
+    const imageSources = { ...(SETTINGS_INITIAL_STATE.imageSources || {}), ...(fullSettings.imageSources || {}) };
     const isLocal = imageLocal === 'pasta';
     const baseUrl = isLocal ? 'peds/tattoos/' : imageUrl;
-    const tattoosFolder = fullSettings.imageSources?.tattoos || 'peds/tattoos/';
+    const tattoosFolder = imageSources?.tattoos || 'peds/tattoos/';
 
     const image = isLocal
       ? `${baseUrl}${item.name}.png`

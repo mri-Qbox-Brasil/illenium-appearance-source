@@ -6,6 +6,7 @@ import RangeInput from './components/RangeInput';
 import { FaUsers } from 'react-icons/fa';
 
 import { PedHeadBlend, AppearanceSettings } from './interfaces';
+import { SETTINGS_INITIAL_STATE } from './settings';
 import ImageSelector from './components/ImageSelector';
 
 interface HeadBlendProps {
@@ -23,9 +24,13 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
     return null;
   }
 
-  const isLocal = settings.imageLocal === 'pasta';
-  const host = isLocal ? '' : settings.imageUrl;
-  const categoryPath = settings.imageSources.heritage;
+  const defaultImageUrl = SETTINGS_INITIAL_STATE.imageUrl;
+  const imageLocal = settings.imageLocal || SETTINGS_INITIAL_STATE.imageLocal;
+  const imageUrl = settings.imageUrl && String(settings.imageUrl).trim() !== '' ? settings.imageUrl : defaultImageUrl;
+  const imageSources = { ...(SETTINGS_INITIAL_STATE.imageSources || {}), ...(settings.imageSources || {}) };
+  const isLocal = imageLocal === 'pasta';
+  const host = isLocal ? '' : imageUrl;
+  const categoryPath = imageSources.heritage || '';
   const finalBaseUrl = host
     ? `${host.replace(/\/+$/, '')}/${categoryPath.replace(/^\/+|\/+$/g, '')}/`
     : `${categoryPath.replace(/\/+$/, '')}/`;

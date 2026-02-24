@@ -6,6 +6,7 @@ import { FlexWrapper } from './styles';
 import Input from './components/Input';
 
 import { ComponentConfig, ComponentSettings, PedComponent, AppearanceSettings } from './interfaces';
+import { SETTINGS_INITIAL_STATE } from './settings';
 import ImageSelector from './components/ImageSelector';
 import { FaTshirt } from 'react-icons/fa';
 
@@ -40,9 +41,10 @@ const Components = ({
 }: ComponentsProps) => {
   const { locales } = useNuiState();
 
-  const imageLocal = settings.imageLocal;
-  const imageUrl = settings.imageUrl;
-  const imageSources = settings.imageSources;
+  const defaultImageUrl = SETTINGS_INITIAL_STATE.imageUrl;
+  const imageLocal = settings.imageLocal || SETTINGS_INITIAL_STATE.imageLocal;
+  const imageUrl = settings.imageUrl && String(settings.imageUrl).trim() !== '' ? settings.imageUrl : defaultImageUrl;
+  const imageSources = { ...(SETTINGS_INITIAL_STATE.imageSources || {}), ...(settings.imageSources || {}) };
   const isLocal = imageLocal === 'pasta';
   const baseUrl = isLocal ? 'peds/' : imageUrl;
   const clothesFolder = imageSources?.clothes || 'clothing/';

@@ -6,6 +6,7 @@ import { FaMale, FaFemale, FaUser } from 'react-icons/fa';
 import ImageSelector from './components/ImageSelector';
 
 import { AppearanceSettings } from './interfaces';
+import { SETTINGS_INITIAL_STATE } from './settings';
 
 interface PedProps {
   settings: AppearanceSettings;
@@ -30,8 +31,9 @@ const Ped = ({ settings, storedData, data, handleModelChange, forcedOpen }: PedP
       icon = <FaFemale />;
     }
 
+    const defaultImageUrl = SETTINGS_INITIAL_STATE.imageUrl;
     const imageLocal = settings.imageLocal;
-    const imageUrl = settings.imageUrl;
+    const imageUrl = settings.imageUrl && String(settings.imageUrl).trim() !== '' ? settings.imageUrl : defaultImageUrl;
     const isLocal = imageLocal === 'pasta';
     const baseUrl = isLocal ? 'peds/' : imageUrl;
     const pedsFolder = settings.imageSources?.peds || 'peds/';

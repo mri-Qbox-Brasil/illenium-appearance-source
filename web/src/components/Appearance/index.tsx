@@ -319,8 +319,20 @@ const Appearance = () => {
         'appearance_change_model',
         value,
       );
+      // Merge remote settings with local defaults to ensure required fields (like imageUrl)
+      const remoteSettings = _appearanceSettings || {};
+      const mergedSettings = {
+        ...SETTINGS_INITIAL_STATE,
+        ...remoteSettings,
+        imageUrl:
+          remoteSettings.imageUrl && String(remoteSettings.imageUrl).trim() !== ''
+            ? remoteSettings.imageUrl
+            : SETTINGS_INITIAL_STATE.imageUrl,
+        imageLocal: remoteSettings.imageLocal || SETTINGS_INITIAL_STATE.imageLocal,
+        imageSources: { ...(SETTINGS_INITIAL_STATE.imageSources || {}), ...(remoteSettings.imageSources || {}) },
+      } as AppearanceSettings;
 
-      setAppearanceSettings(_appearanceSettings);
+      setAppearanceSettings(mergedSettings);
       setData(appearanceData);
     },
     [setData, setAppearanceSettings],
@@ -678,7 +690,20 @@ const Appearance = () => {
   const fetchSettings = useCallback(async () => {
     if (appearanceSettings === undefined || appearanceSettings === SETTINGS_INITIAL_STATE) {
       const result = await Nui.post('appearance_get_settings');
-      setAppearanceSettings(result.appearanceSettings);
+      const remoteSettings = (result && result.appearanceSettings) || {};
+
+      const mergedSettings = {
+        ...SETTINGS_INITIAL_STATE,
+        ...remoteSettings,
+        imageUrl:
+          remoteSettings.imageUrl && String(remoteSettings.imageUrl).trim() !== ''
+            ? remoteSettings.imageUrl
+            : SETTINGS_INITIAL_STATE.imageUrl,
+        imageLocal: remoteSettings.imageLocal || SETTINGS_INITIAL_STATE.imageLocal,
+        imageSources: { ...(SETTINGS_INITIAL_STATE.imageSources || {}), ...(remoteSettings.imageSources || {}) },
+      } as AppearanceSettings;
+
+      setAppearanceSettings(mergedSettings);
     }
   }, []);
 

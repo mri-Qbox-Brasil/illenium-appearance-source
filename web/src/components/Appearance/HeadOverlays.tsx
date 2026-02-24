@@ -14,6 +14,7 @@ import {
   PedHeadOverlayValue,
   Tattoo
 } from './interfaces';
+import { SETTINGS_INITIAL_STATE } from './settings';
 import { useCallback } from 'react';
 import ImageSelector from './components/ImageSelector';
 
@@ -62,9 +63,13 @@ const HeadOverlays = ({
     return null;
   }
 
-  const isLocal = settings.imageLocal === 'pasta';
-  const host = isLocal ? '' : settings.imageUrl;
-  const categoryPath = settings.imageSources.appearance;
+  const defaultImageUrl = SETTINGS_INITIAL_STATE.imageUrl;
+  const imageLocal = settings.imageLocal || SETTINGS_INITIAL_STATE.imageLocal;
+  const imageUrl = settings.imageUrl && String(settings.imageUrl).trim() !== '' ? settings.imageUrl : defaultImageUrl;
+  const imageSources = { ...(SETTINGS_INITIAL_STATE.imageSources || {}), ...(settings.imageSources || {}) };
+  const isLocal = imageLocal === 'pasta';
+  const host = isLocal ? '' : imageUrl;
+  const categoryPath = imageSources.appearance || '';
   const finalBaseUrl = host
     ? `${host.replace(/\/+$/, '')}/${categoryPath.replace(/^\/+|\/+$/g, '')}/`
     : `${categoryPath.replace(/\/+$/, '')}/`;
