@@ -34,9 +34,10 @@ const Ped = ({ settings, storedData, data, handleModelChange, forcedOpen }: PedP
     const defaultImageUrl = SETTINGS_INITIAL_STATE.imageUrl;
     const imageLocal = settings.imageLocal;
     const imageUrl = settings.imageUrl && String(settings.imageUrl).trim() !== '' ? settings.imageUrl : defaultImageUrl;
+    const imageSources = { ...(SETTINGS_INITIAL_STATE.imageSources || {}), ...(settings.imageSources || {}) };
     const isLocal = imageLocal === 'pasta';
     const baseUrl = isLocal ? 'peds/' : imageUrl;
-    const pedsFolder = settings.imageSources?.peds || 'peds/';
+    const pedsFolder = imageSources.peds || 'peds/';
 
     const image = isLocal
       ? `${baseUrl}${model}.png`

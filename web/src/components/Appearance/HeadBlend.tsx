@@ -37,7 +37,7 @@ const HeadBlend = ({ settings, storedData, data, handleHeadBlendChange, forcedOp
 
   const getItems = (min: number, max: number) => {
     const items = [];
-    const heritageFolder = settings.imageSources?.heritage || 'peds/';
+    const heritageFolder = imageSources.heritage || 'peds/';
     for (let i = min; i <= max; i++) {
       const image = isLocal
         ? `${finalBaseUrl}${i}.png`

@@ -3,7 +3,6 @@ import { useNuiState } from '../../hooks/nuiState';
 import Section from './components/Section';
 import Item from './components/Item';
 import { FlexWrapper } from './styles';
-import Input from './components/Input';
 
 import { ComponentConfig, ComponentSettings, PedComponent, AppearanceSettings } from './interfaces';
 import { SETTINGS_INITIAL_STATE } from './settings';

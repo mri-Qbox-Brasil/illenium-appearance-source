@@ -13,23 +13,7 @@ interface RangeInputProps {
 }
 
 const Container = styled.div`
-  width: 100%;
-
-    color: ${({ theme }) => `rgb(${theme.fontColor || '255, 255, 255'})`};
-
-  > div {
-    display: flex;
-    align-items: center;
-
-    position: relative;
-
-    margin-top: 10px;
-
-    > small {
-      font-weight: 200;
-      font-size: 8px;
-    }
-  }
+  color: ${({ theme }) => `rgb(${theme.fontColor || '255, 255, 255'})`};
 
   input[type='range'] {
     -webkit-appearance: none;
@@ -82,15 +66,15 @@ const RangeInput: React.FC<RangeInputProps> = ({
   );
 
   return (
-    <Container className={`range-input-container ${className || ''}`} onClick={handleContainerClick}>
-      <span className="range-input-labels">
+    <Container className={`range-input-container w-full ${className || ''}`} onClick={handleContainerClick}>
+      <span className="range-input-labels flex justify-between">
         <small>
           {title}: {defaultValue}
         </small>
         <small>{clientValue}</small>
       </span>
-      <div className="range-input-slider-wrapper">
-        <small>{min}</small>
+      <div className="range-input-slider-wrapper flex items-center relative mt-[10px]">
+        <small className="font-extralight text-[8px]">{min}</small>
         <input
           type="range"
           ref={inputRef}
@@ -100,7 +84,7 @@ const RangeInput: React.FC<RangeInputProps> = ({
           step={factor}
           onChange={handleChange}
         />
-        <small>{max}</small>
+        <small className="font-extralight text-[8px]">{max}</small>
       </div>
     </Container>
   );

@@ -13,7 +13,8 @@ export const Wrapper = styled.div`
 
 export const Container = styled.div`
   height: calc(100vh - 40px);
-  width: 420px;
+  width: 100%;
+  max-width: 420px;
   display: flex;
   flex-direction: column;
   padding: 24px;
@@ -139,8 +140,8 @@ export const SwitchButton = styled.button<{ active?: boolean }>`
 
 export const TabbedContainer = styled.div`
   height: 90vh;
-  width: 75vw;
-  max-width: 1000px;
+  width: 95vw;
+  max-width: 850px;
   display: flex;
   gap: 24px;
   padding: 24px;
@@ -154,7 +155,8 @@ export const TabbedContainer = styled.div`
 `;
 
 export const SidebarNav = styled.div`
-  width: 220px;
+  width: 100%;
+  max-width: 220px;
   height: 100%;
   display: flex;
   flex-direction: column;

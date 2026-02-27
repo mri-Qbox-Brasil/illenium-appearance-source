@@ -117,8 +117,8 @@ const Dialog = styled.div`
   border: 1px solid ${({ theme }) => theme.cardBorder || 'rgba(255, 255, 255, 0.04)'};
   border-radius: 24px;
   padding: 24px;
-  width: 550px; /* Increased width for better grid display */
-  max-width: 90vw;
+  width: 90vw;
+  max-width: 600px;
   max-height: 85vh;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
   display: flex;
@@ -175,10 +175,11 @@ const SearchIcon = styled(FaSearch)`
 const GalleryGrid = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  justify-content: center;
+  gap: 12px;
   overflow-y: auto;
   padding: 6px;
-  max-height: 500px;
+  max-height: 55vh;
   
   &::-webkit-scrollbar {
     width: 6px;
@@ -190,8 +191,9 @@ const GalleryGrid = styled.div`
 `;
 
 const GalleryItem = styled.div`
-  width: calc(33.333% - 11px);
-  aspect-ratio: 1 / 1;
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
   background: ${({ theme }) => theme.id === 'dark' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.03)'};
   border: 1px solid ${({ theme }) => theme.id === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.08)'};
   border-radius: 12px;
@@ -212,16 +214,15 @@ const GalleryItem = styled.div`
 
   svg {
     font-size: 24px;
+    z-index: 1;
   }
 
   img {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: calc(100% - 10px);
-    height: calc(100% - 10px);
+    width: 90%;
+    height: 90%;
     object-fit: contain;
     display: block;
+    z-index: 1;
   }
 `;
 
@@ -275,6 +276,22 @@ const ActionButton = styled.button<{ variant?: 'primary' | 'ghost' }>`
   }
 `;
 
+const ImageWithFallback = ({ src, alt, fallback }: { src?: string; alt: string; fallback: React.ReactNode }) => {
+  const [error, setError] = useState(false);
+
+  if (error || !src) {
+    return <>{fallback}</>;
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      onError={() => setError(true)}
+    />
+  );
+};
+
 const ImageSelector: React.FC<ImageSelectorProps> = ({ label, items, selectedValue, onSelect, onAdd, className }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -309,7 +326,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({ label, items, selectedVal
         style={{ width: '100px', height: '100px' }}
       >
         {selectedItem?.image ? (
-          <img src={selectedItem.image} alt={selectedItem.id} />
+          <ImageWithFallback src={selectedItem.image} alt={selectedItem.id} fallback={selectedItem?.icon || <FaImage />} />
         ) : (
           selectedItem?.icon || <FaImage />
         )}
@@ -318,7 +335,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({ label, items, selectedVal
 
       {isDialogOpen && (
         <DialogOverlay onClick={handleClose}>
-          <Dialog onClick={(e) => e.stopPropagation()}>
+          <Dialog className="w-[90vw] sm:w-[500px] md:w-[600px] max-w-full" onClick={(e) => e.stopPropagation()}>
             <DialogTitle>
               Selecionar Modelo
               <small style={{ fontSize: '12px', fontWeight: 400, opacity: 0.5 }}>{filteredItems.length} opções disponíveis</small>
@@ -332,7 +349,7 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({ label, items, selectedVal
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </SearchContainer>
-            <GalleryGrid>
+            <GalleryGrid className="flex flex-wrap gap-3 justify-center">
               {filteredItems.map((item) => (
                 <GalleryItem
                   key={item.id}
@@ -343,9 +360,10 @@ const ImageSelector: React.FC<ImageSelectorProps> = ({ label, items, selectedVal
                   }}
                 >
                   {item.image ? (
-                    <img
+                    <ImageWithFallback
                       src={item.image}
                       alt={item.id}
+                      fallback={item.icon || <span style={{ fontSize: '18px', fontWeight: 700, opacity: 0.8 }}>{item.id}</span>}
                     />
                   ) : (
                     item.icon || <span style={{ fontSize: '18px', fontWeight: 700, opacity: 0.8 }}>{item.id}</span>

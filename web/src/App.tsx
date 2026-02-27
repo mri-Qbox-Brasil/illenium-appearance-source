@@ -85,18 +85,41 @@ export const ThemeToggleContext = createContext<ThemeContextInterface>({
   setLayout: () => { },
 });
 
+const useLocalStorage = <T,>(key: string, initialValue: T): [T, (value: T | ((val: T) => T)) => void] => {
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.warn(`Error reading localStorage key "${key}":`, error);
+      return initialValue;
+    }
+  });
+
+  const setValue = (value: T | ((val: T) => T)) => {
+    try {
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      setStoredValue(valueToStore);
+      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+    } catch (error) {
+      console.warn(`Error setting localStorage key "${key}":`, error);
+    }
+  };
+  return [storedValue, setValue];
+};
+
 const App: React.FC = () => {
-  const [themeMode, setThemeMode] = useState<'light' | 'dark'>('dark');
-  const [accentColor, setAccentColor] = useState('10, 213, 140'); // Default emerald
-  const [contentColor, setContentColor] = useState('255, 255, 255'); // Default white
-  const [titleColor, setTitleColor] = useState('255, 255, 255'); // Default white
-  const [interfaceScale, setInterfaceScale] = useState(98); // Matches image
-  const [language, setLanguage] = useState('Português (BR)');
-  const [layout, setLayout] = useState<'accordion' | 'tabs'>('tabs');
+  const [themeMode, setThemeMode] = useLocalStorage<'light' | 'dark'>('mri_qappearance_themeMode', 'dark');
+  const [accentColor, setAccentColor] = useLocalStorage('mri_qappearance_accentColor', '10, 213, 140'); // Default emerald
+  const [contentColor, setContentColor] = useLocalStorage('mri_qappearance_contentColor', '255, 255, 255'); // Default white
+  const [titleColor, setTitleColor] = useLocalStorage('mri_qappearance_titleColor', '255, 255, 255'); // Default white
+  const [interfaceScale, setInterfaceScale] = useLocalStorage('mri_qappearance_interfaceScale', 98); // Matches image
+  const [language, setLanguage] = useLocalStorage('mri_qappearance_language', 'Português (BR)');
+  const [layout, setLayout] = useLocalStorage<'accordion' | 'tabs'>('mri_qappearance_layout', 'tabs');
 
   const toggleTheme = useCallback(() => {
-    setThemeMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  }, []);
+    setThemeMode(themeMode === 'dark' ? 'light' : 'dark');
+  }, [themeMode, setThemeMode]);
 
   React.useEffect(() => {
     if (themeMode === 'dark') {

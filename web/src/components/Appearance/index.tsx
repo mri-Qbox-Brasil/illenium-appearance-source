@@ -43,12 +43,29 @@ import Modal from '../Modal';
 import Tattoos from './Tattoos';
 import SelectInput from './components/SelectInput';
 import { MriSidebar, MriButton } from '@mriqbox/ui-kit';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import { Wrapper, Container, ConfirmButton, HeaderContainer, TitleData, SwitchContainer, SwitchButton, TabbedContainer, ContentPanel, NavItem, SidebarNav, NavList } from './styles';
-import { ThemeContext } from 'styled-components';
-import { FaCheck, FaThLarge, FaList, FaAngleLeft, FaAngleRight, FaMale, FaUsers, FaSmile, FaPalette, FaTshirt, FaHatCowboy, FaSkull, FaCog, FaGlobe, FaUniversalAccess } from 'react-icons/fa';
+import { FaCheck, FaThLarge, FaList, FaAngleLeft, FaAngleRight, FaMale, FaUsers, FaSmile, FaPalette, FaTshirt, FaHatCowboy, FaSkull, FaCog, FaGlobe, FaUniversalAccess, FaSave } from 'react-icons/fa';
 import { ThemeToggleContext } from '../../App';
+
+const LANGUAGE_MAP: Record<string, string> = {
+  'Português (BR)': 'pt-BR',
+  'English': 'en',
+  'Español': 'es-ES',
+  'Français': 'fr',
+  'Deutsch': 'de',
+  'Italiano': 'it',
+  'Nederlands': 'nl',
+  'Română': 'ro-RO',
+  'български': 'bg',
+  'العربية': 'ar',
+  'Čeština': 'cs',
+  'Magyar': 'hu',
+  'Indonesian': 'id',
+  '简体中文': 'zh-CN',
+  '繁體中文': 'zh-TW',
+};
 import React, { useContext } from 'react';
 
 const StyledSidebar = styled(MriSidebar)`
@@ -178,6 +195,7 @@ const Appearance = () => {
 
   const { display, setDisplay, locales, setLocales } = useNuiState();
   const { theme, setTheme, layout, setLayout, accentColor, setAccentColor, contentColor, setContentColor, titleColor, setTitleColor, interfaceScale, setInterfaceScale, language, setLanguage } = useContext(ThemeToggleContext);
+  const activeTheme = useTheme() as any;
   const [activeTab, setActiveTab] = useState('ped');
   const [prevTab, setPrevTab] = useState('ped');
   const [activeOptionsTab, setActiveOptionsTab] = useState('interface');
@@ -662,10 +680,11 @@ const Appearance = () => {
   );
 
   useEffect(() => {
-    if (!locales) {
-      Nui.post('appearance_get_locales').then(result => setLocales(result || mockLocales));
-    }
+    const localeCode = LANGUAGE_MAP[language] || 'en';
+    Nui.post('appearance_get_locales', localeCode).then(result => setLocales(result || mockLocales));
+  }, [language, setLocales]);
 
+  useEffect(() => {
     Nui.onEvent('appearance_display', (data: any) => {
       setDisplay({ appearance: true, asynchronous: data.asynchronous });
     });
@@ -905,6 +924,29 @@ const Appearance = () => {
     }
   };
 
+  const handleSaveTheme = () => {
+    Nui.post('appearance_save_theme', {
+      id: "preset_" + Math.random().toString(36).substring(2, 7),
+      borderRadius: (activeTheme as any).borderRadius,
+      fontColor: contentColor,
+      fontColorHover: contentColor,
+      fontColorSelected: contentColor,
+      fontFamily: (activeTheme as any).fontFamily,
+      primaryBackground: (activeTheme as any).primaryBackground,
+      primaryBackgroundSelected: (activeTheme as any).primaryBackgroundSelected,
+      secondaryBackground: (activeTheme as any).secondaryBackground,
+      scaleOnHover: (activeTheme as any).scaleOnHover,
+      sectionFontWeight: (activeTheme as any).sectionFontWeight,
+      smoothBackgroundTransition: (activeTheme as any).smoothBackgroundTransition,
+      accent: accentColor,
+      titleColor: titleColor,
+      language: language
+    }).then(() => {
+      // Opcional: mostrar algum aviso visual
+      console.log('Preset saved');
+    });
+  };
+
   const renderOptionsContent = () => {
     switch (activeOptionsTab) {
       case 'interface':
@@ -947,11 +989,22 @@ const Appearance = () => {
                 <div style={{ background: 'rgba(0, 0, 0, 0.2)', borderRadius: '8px', padding: '12px', border: `1px solid rgba(${contentColor}, 0.05)` }}>
                   <SelectInput
                     title="Select Language"
-                    items={['Português (BR)', 'English', 'Español']}
+                    items={Object.keys(LANGUAGE_MAP)}
                     defaultValue={language}
                     clientValue=""
                     onChange={setLanguage}
                   />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', opacity: 0.8, marginTop: '24px' }}>
+                  <FaSave size={14} />
+                  <h4 style={{ fontSize: '12px', fontWeight: 700, margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Salvar Preset</h4>
+                </div>
+
+                <div
+                  onClick={handleSaveTheme}
+                  style={{ background: `rgba(${accentColor}, 0.1)`, borderRadius: '8px', padding: '12px', border: `1px solid rgba(${accentColor}, 0.3)`, cursor: 'pointer', textAlign: 'center', fontWeight: 600, color: `rgb(${accentColor})`, transition: 'all 0.2s', ...{ ':hover': { background: `rgba(${accentColor}, 0.2)` } } as any }}
+                >
+                  Exportar para themes.json
                 </div>
               </div>
             </div>
